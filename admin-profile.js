@@ -22,7 +22,7 @@ const ADMIN_EMAILS = [
 // ========================================
 
 const MEMBERS_SHEET_URL =
-    "https://docs.google.com/spreadsheets/d/1smFPrfox53yka9X4syIF7LPYrhCUim4AYmp9B8s4v8w/edit?gid=0#gid=0";
+    "https://docs.google.com/spreadsheets/d/1FcQHguViGIUU8pGz15Vx0Ir90kw9ynWSwKEdFpCEh5s/edit?resourcekey=&gid=687480466#gid=687480466";
 
 
 // ========================================

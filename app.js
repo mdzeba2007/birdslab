@@ -1,6 +1,6 @@
 
 const GOOGLE_SHEET_API =
-    "https://script.google.com/macros/s/AKfycbz89GhOCt2J-EJ59n29JTttKq0IB7t2weWpC0rjxGULq8NtLp8zecN3nlm05LCQXKa_pg/exec";
+    "https://script.google.com/macros/s/AKfycbx5XnFAMF0Sp0M5SXYA1v3RPFGt4XyJgwneAQFSXG2d_93pNRWWhxWs5zH00VA7ewTmpA/exec";
 
 // ========================================
 // GET FIELD FROM GOOGLE SHEETS
