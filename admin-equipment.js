@@ -32,7 +32,7 @@ const message =
 
 const ADMIN_EMAILS = [
     "mdzeba2007@gmail.com",
-    "nextgenlan1234@gmail.com"
+    "nextgenlab1234@gmail.com"
 ];
 
 
