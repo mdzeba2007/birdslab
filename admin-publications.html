@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Publications Admin</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+
+            margin: 0;
+
+            min-height: 100vh;
+
+            display: flex;
+
+            justify-content: center;
+
+            align-items: center;
+
+            font-family: Arial, sans-serif;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #3a4155,
+                    #657cda
+                );
+
+        }
+
+
+        .admin-container {
+
+            width: 420px;
+
+            max-width: 90%;
+
+            background: white;
+
+            padding: 40px;
+
+            border-radius: 15px;
+
+            box-shadow:
+                0 10px 30px
+                rgba(0,0,0,.2);
+
+            text-align: center;
+
+        }
+
+
+        .admin-container img {
+
+            width: 90px;
+
+            height: 90px;
+
+            object-fit: contain;
+
+            margin-bottom: 15px;
+
+        }
+
+
+        .admin-container h1 {
+
+            margin: 10px 0;
+
+            color: #333;
+
+        }
+
+
+        .admin-container p {
+
+            color: #666;
+
+            margin-bottom: 25px;
+
+        }
+
+
+        input {
+
+            width: 100%;
+
+            padding: 13px;
+
+            margin-bottom: 15px;
+
+            border: 1px solid #ccc;
+
+            border-radius: 8px;
+
+            font-size: 15px;
+
+            outline: none;
+
+        }
+
+
+        input:focus {
+
+            border-color: #657cda;
+
+        }
+
+
+        .login-btn {
+
+            width: 100%;
+
+            padding: 13px;
+
+            border: none;
+
+            border-radius: 8px;
+
+            background: #3a4155;
+
+            color: white;
+
+            font-size: 16px;
+
+            font-weight: 600;
+
+            cursor: pointer;
+
+        }
+
+
+        .login-btn:hover {
+
+            background: #657cda;
+
+        }
+
+
+        .login-btn:disabled {
+
+            opacity: .6;
+
+            cursor: not-allowed;
+
+        }
+
+
+        #message {
+
+            min-height: 20px;
+
+            margin-top: 15px;
+
+            font-size: 14px;
+
+        }
+
+
+        .back-btn {
+
+            display: inline-block;
+
+            margin-top: 20px;
+
+            color: #3a4155;
+
+            text-decoration: none;
+
+            font-size: 14px;
+
+        }
+
+
+        .back-btn:hover {
+
+            text-decoration: underline;
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div class="admin-container">
+
+
+    <img
+        src="iitjlogo.png"
+        alt="IIT Jodhpur"
+    >
+
+
+    <h1>
+        Publications Admin
+    </h1>
+
+
+    <p>
+        Login to manage BIRDLab publications.
+    </p>
+
+
+    <input
+        type="email"
+        id="email"
+        placeholder="Admin Email"
+    >
+
+
+    <input
+        type="password"
+        id="password"
+        placeholder="Password"
+    >
+
+
+    <button
+        class="login-btn"
+        id="loginBtn"
+    >
+        Login & Manage Publications
+    </button>
+
+
+    <p id="message"></p>
+
+
+    <a
+        href="publications.html"
+        class="back-btn"
+    >
+        ← Back to Publications
+    </a>
+
+
+</div>
+
+
+<script
+    type="module"
+    src="admin-publications.js"
+></script>
+
+
+</body>
+
+</html>

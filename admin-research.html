@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Research Admin Login</title>
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            min-height: 100vh;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #eef4fb,
+                    #dce8f5
+                );
+        }
+
+        .login-container {
+            width: 420px;
+            max-width: 90%;
+
+            background: white;
+
+            padding: 45px;
+
+            border-radius: 20px;
+
+            box-shadow:
+                0 15px 40px rgba(0, 0, 0, 0.15);
+
+            text-align: center;
+        }
+
+        .logo {
+            width: 80px;
+            height: 80px;
+
+            object-fit: contain;
+
+            margin-bottom: 15px;
+        }
+
+        h1 {
+            color: #17446C;
+
+            font-size: 30px;
+
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            color: #667085;
+
+            font-size: 15px;
+
+            margin-bottom: 30px;
+        }
+
+        .input-group {
+            text-align: left;
+
+            margin-bottom: 18px;
+        }
+
+        .input-group label {
+            display: block;
+
+            margin-bottom: 7px;
+
+            color: #26344f;
+
+            font-weight: 600;
+
+            font-size: 14px;
+        }
+
+        .input-group input {
+            width: 100%;
+
+            padding: 14px;
+
+            border: 1px solid #ccd6e2;
+
+            border-radius: 10px;
+
+            font-size: 15px;
+
+            outline: none;
+
+            transition: 0.2s ease;
+        }
+
+        .input-group input:focus {
+            border-color: #4e78c8;
+
+            box-shadow:
+                0 0 0 3px rgba(78, 120, 200, 0.12);
+        }
+
+        #loginBtn {
+            width: 100%;
+
+            padding: 14px;
+
+            margin-top: 10px;
+
+            border: none;
+
+            border-radius: 10px;
+
+            background: #17446C;
+
+            color: white;
+
+            font-size: 16px;
+
+            font-weight: 700;
+
+            cursor: pointer;
+
+            transition: 0.25s ease;
+        }
+
+        #loginBtn:hover {
+            background: #245d8e;
+
+            transform: translateY(-2px);
+        }
+
+        #loginBtn:disabled {
+            opacity: 0.6;
+
+            cursor: not-allowed;
+
+            transform: none;
+        }
+
+        #message {
+            margin-top: 18px;
+
+            min-height: 22px;
+
+            font-size: 14px;
+
+            font-weight: 600;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <div class="login-container">
+
+        <img
+            src="iitjlogo.png"
+            alt="IIT Jodhpur"
+            class="logo"
+        >
+
+        <h1>Research Admin</h1>
+
+        <p class="subtitle">
+            Login to manage Research information
+        </p>
+
+
+        <div class="input-group">
+
+            <label for="email">
+                Email
+            </label>
+
+            <input
+                type="email"
+                id="email"
+                placeholder="Enter admin email"
+            >
+
+        </div>
+
+
+        <div class="input-group">
+
+            <label for="password">
+                Password
+            </label>
+
+            <input
+                type="password"
+                id="password"
+                placeholder="Enter password"
+            >
+
+        </div>
+
+
+        <button id="loginBtn">
+            Login
+        </button>
+
+
+        <div id="message"></div>
+
+    </div>
+
+
+    <script type="module" src="admin-research.js"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Calendar</title>
+
+    <link rel="stylesheet" href="calendar.css">
+</head>
+
+<body>
+        <!-- LOGO -->
+    <header class="site-header">
+        <a href="indexlokesh.html" class="brand">
+            <img
+                src="iitjlogo.png"
+                alt="BIRDLab"
+                class="brand-logo"
+            >
+                <span class="brand-text">BIRDLab</span>
+        </a>
+    </header>
+<div class="page-layout">
+
+        <div class="main-content">
+    <div class="calendar-container">
+
+        <div class="calendar-header">
+            <button id="prev">←</button>
+
+            <h2 id="month-year"></h2>
+
+            <button id="next">→</button>
+        </div>
+
+        <div class="weekdays">
+            <div>Sun</div>
+            <div>Mon</div>
+            <div>Tue</div>
+            <div>Wed</div>
+            <div>Thu</div>
+            <div>Fri</div>
+            <div>Sat</div>
+        </div>
+
+        <!-- Dates -->
+        <div id="days" class="days"></div>
+
+        <!-- Event information -->
+        <div id="event-info" class="event-info">
+            <p>Select a date to see event information.</p>
+        </div>
+ <br>
+ <a href="login.html" class="nav-button">Add Events/Edit Events</a>
+    </div>
+   
+    <!-- =================================================
+         RIGHT FIXED NAVBAR
+    ================================================== -->
+
+  <nav class="navbar">
+<a href="indexlokesh.html" class="nav-button">Home</a>
+      <a href="index.html" class="nav-button">People</a>
+        <a href="research.html" class="nav-button">Research</a>
+        <a href="publications.html" class="nav-button">Publications</a>
+        <a href="lectures.html" class="nav-button">Lectures</a>
+        <a href="collabiration.html" class="nav-button">Collaboration</a>
+        <a href="facilities.html" class="nav-button">Facilities</a>
+        <a href="open-positions.html" class="nav-button">Open Positions</a>
+        <a href="events.html" class="nav-button">Events</a>
+        <a href="calendar.html" class="nav-button">Calender</a>
+
+
+    </nav>
+
+</div>
+    <script type="module" src="calendar.js"></script>
+
+</body>
+
+</html>

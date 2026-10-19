@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Admin Calendar Update</title>
+
+    <link rel="stylesheet" href="admin2.css">
+
+</head>
+
+<body>
+
+    <div class="admin-container">
+
+        <h1>Calendar Update</h1>
+
+        <p class="subtitle">
+            Add an announcement or event for a particular date.
+        </p>
+
+        <form id="event-form">
+
+            <!-- Date -->
+            <label for="event-date">
+                Select Date
+            </label>
+
+            <input
+                type="date"
+                id="event-date"
+                required
+            >
+
+
+            <!-- Title -->
+            <label for="event-title">
+                Title
+            </label>
+
+            <input
+                type="text"
+                id="event-title"
+                placeholder="Example: Robotics Workshop"
+                required
+            >
+
+
+            <!-- Information -->
+            <label for="event-description">
+                Information
+            </label>
+
+            <textarea
+                id="event-description"
+                placeholder="Enter the information..."
+                rows="5"
+                required
+            ></textarea>
+
+
+            <!-- Time -->
+            <label for="event-time">
+                Time
+            </label>
+
+            <input
+                type="time"
+                id="event-time"
+            >
+
+
+            <!-- Location -->
+            <label for="event-location">
+                Location
+            </label>
+
+            <input
+                type="text"
+                id="event-location"
+                placeholder="Example: Robotics Laboratory"
+            >
+
+
+            <!-- Save -->
+            <button type="submit">
+                Save Update
+            </button>
+
+
+            <!-- Logout -->
+            <button
+                type="button"
+                id="logoutBtn"
+            >
+                Logout
+            </button>
+
+        </form>
+
+    </div>
+
+    <script
+        type="module"
+        src="admin2.js"
+    ></script>
+
+</body>
+
+</html>

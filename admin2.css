@@ -1,0 +1,202 @@
+/* ===============================
+   RESET
+================================ */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+
+/* ===============================
+   BODY
+================================ */
+
+body {
+    font-family: Arial, sans-serif;
+    background: #f4f7f9;
+
+    min-height: 100vh;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    padding: 30px;
+}
+
+
+/* ===============================
+   ADMIN CONTAINER
+================================ */
+
+.admin-container {
+    width: 100%;
+    max-width: 550px;
+
+    background: white;
+
+    padding: 35px;
+
+    border-radius: 15px;
+
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+}
+
+
+/* ===============================
+   HEADING
+================================ */
+
+.admin-container h1 {
+    text-align: center;
+
+    font-size: 28px;
+
+    color: #222;
+
+    margin-bottom: 8px;
+}
+
+
+/* ===============================
+   SUBTITLE
+================================ */
+
+.subtitle {
+    text-align: center;
+
+    color: #666;
+
+    font-size: 15px;
+
+    margin-bottom: 30px;
+}
+
+
+/* ===============================
+   FORM
+================================ */
+
+#event-form {
+    display: flex;
+
+    flex-direction: column;
+}
+
+
+/* ===============================
+   LABELS
+================================ */
+
+#event-form label {
+    font-size: 15px;
+
+    font-weight: bold;
+
+    color: #333;
+
+    margin-bottom: 8px;
+
+    margin-top: 15px;
+}
+
+
+/* ===============================
+   INPUTS
+================================ */
+
+#event-form input,
+#event-form textarea {
+    width: 100%;
+
+    padding: 12px 14px;
+
+    border: 1px solid #d0d7de;
+
+    border-radius: 8px;
+
+    font-size: 15px;
+
+    outline: none;
+
+    font-family: Arial, sans-serif;
+}
+
+
+/* Input focus */
+
+#event-form input:focus,
+#event-form textarea:focus {
+    border-color: #555;
+
+    box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.05);
+}
+
+
+/* ===============================
+   TEXTAREA
+================================ */
+
+#event-form textarea {
+    resize: vertical;
+
+    min-height: 120px;
+}
+
+
+/* ===============================
+   SAVE BUTTON
+================================ */
+
+#event-form button {
+    margin-top: 30px;
+
+    padding: 13px;
+
+    border: none;
+
+    border-radius: 8px;
+
+    background: #222;
+
+    color: white;
+
+    font-size: 16px;
+
+    font-weight: bold;
+
+    cursor: pointer;
+
+    transition: 0.2s;
+}
+
+
+/* Button hover */
+
+#event-form button:hover {
+    background: #444;
+
+    transform: translateY(-1px);
+}
+
+
+/* ===============================
+   MOBILE
+================================ */
+
+@media (max-width: 600px) {
+
+    body {
+        padding: 15px;
+    }
+
+    .admin-container {
+        padding: 25px 20px;
+    }
+
+    .admin-container h1 {
+        font-size: 24px;
+    }
+}

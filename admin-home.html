@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>BIRDLab Equipment Admin</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            font-family: Arial, sans-serif;
+
+            background: linear-gradient(
+                135deg,
+                #3a4155,
+                #657cda
+            );
+        }
+
+        .admin-container {
+            width: 420px;
+            max-width: 90%;
+
+            background: white;
+
+            padding: 40px;
+
+            border-radius: 15px;
+
+            box-shadow:
+                0 10px 30px rgba(0, 0, 0, 0.2);
+
+            text-align: center;
+        }
+
+        .admin-container img {
+            width: 90px;
+            margin-bottom: 15px;
+        }
+
+        .admin-container h1 {
+            margin-bottom: 10px;
+
+            color: #333;
+        }
+
+        .admin-container p {
+            color: #666;
+
+            margin-bottom: 30px;
+        }
+
+        .admin-container input {
+            width: 100%;
+
+            padding: 13px;
+
+            margin-bottom: 15px;
+
+            border: 1px solid #ccc;
+
+            border-radius: 8px;
+
+            font-size: 15px;
+        }
+
+        .admin-container input:focus {
+            outline: none;
+
+            border-color: #657cda;
+        }
+
+        .login-btn {
+            width: 100%;
+
+            padding: 14px;
+
+            border: none;
+
+            border-radius: 8px;
+
+            background: #657cda;
+
+            color: white;
+
+            font-size: 16px;
+
+            font-weight: bold;
+
+            cursor: pointer;
+        }
+
+        .login-btn:hover {
+            background: #4f65c0;
+        }
+
+        #message {
+            margin-top: 18px;
+
+            min-height: 20px;
+
+            font-size: 14px;
+        }
+
+        .back-btn {
+            display: inline-block;
+
+            margin-top: 20px;
+
+            color: #657cda;
+
+            text-decoration: none;
+
+            font-size: 14px;
+        }
+
+        .back-btn:hover {
+            text-decoration: underline;
+        }
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <div class="admin-container">
+
+
+        <img
+            src="iitjlogo.png"
+            alt="IIT Jodhpur"
+        >
+
+
+        <h1>
+            Equipment Admin
+        </h1>
+
+
+        <p>
+            Login to manage BIRDLab laboratory equipment.
+        </p>
+
+
+        <input
+            type="email"
+            id="email"
+            placeholder="Admin Email"
+        >
+
+
+        <input
+            type="password"
+            id="password"
+            placeholder="Password"
+        >
+
+
+        <button
+            class="login-btn"
+            id="loginBtn"
+        >
+            Login & Manage Equipment
+        </button>
+
+
+        <p id="message"></p>
+
+
+        <a
+            href="indexlokesh.html"
+            class="back-btn"
+        >
+            ← Back to Home
+        </a>
+
+
+    </div>
+
+
+    <script
+        type="module"
+        src="admin-home.js"
+    ></script>
+
+
+</body>
+
+</html>

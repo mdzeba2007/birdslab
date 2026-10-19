@@ -1,0 +1,1003 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Bird | Explore</title>
+
+    <link rel="stylesheet" href="stylelokesh.css">
+
+
+    <style>
+
+        .footer {
+            width: 100%;
+            min-height: 400px;
+            background: linear-gradient(135deg, #3a4155, #657cda);
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 70px 20px;
+            box-sizing: border-box;
+        }
+
+        .footer-content {
+            width: 900px;
+            max-width: 90%;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 100px;
+            align-items: start;
+        }
+
+        .footer-left h2 {
+            margin: 0 0 20px;
+            font-size: 42px;
+            color: white;
+        }
+
+        .footer-left h2 span {
+            color: #00d9ff;
+        }
+
+        .footer-left p {
+            max-width: 400px;
+            margin: 0 0 20px;
+            font-size: 17px;
+            line-height: 1.7;
+            color: white;
+        }
+
+        .git-link {
+            display: inline-block;
+            margin-bottom: 25px;
+            color: #00d9ff;
+            text-decoration: none;
+            font-size: 17px;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 20px;
+        }
+
+        .social {
+            width: 55px;
+            height: 55px;
+            border: 1px solid white;
+            border-radius: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            text-decoration: none;
+            font-size: 22px;
+        }
+
+        .footer-right h2 {
+            margin: 0 0 30px;
+            font-size: 34px;
+            color: white;
+        }
+
+        .contact {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            margin-bottom: 22px;
+        }
+
+        .contact span {
+            width: 30px;
+            font-size: 22px;
+        }
+
+        .contact p {
+            margin: 0;
+            font-size: 17px;
+            line-height: 1.5;
+            color: white;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <!-- =====================================================
+         HERO SECTION
+    ====================================================== -->
+
+    <section class="hero">
+
+
+        <!-- Background Video -->
+
+        <video
+            class="background-video"
+            autoplay
+            muted
+            loop
+            playsinline
+            controls
+        >
+
+            <source
+                src="bird.mp4"
+                type="video/mp4"
+            >
+
+            Your browser does not support the video tag.
+
+        </video>
+
+
+
+        <!-- =================================================
+             NAVBAR
+        ================================================== -->
+
+        <nav class="navbar">
+
+
+            <a
+                id="nav-people"
+                href="index.html"
+                class="nav-button"
+            >
+                People
+            </a>
+
+
+            <a
+                id="nav-research"
+                href="research.html"
+                class="nav-button"
+            >
+                Research
+            </a>
+
+
+            <a
+                id="nav-publications"
+                href="publications.html"
+                class="nav-button"
+            >
+                Publications
+            </a>
+
+
+            <a
+                id="nav-lectures"
+                href="lectures.html"
+                class="nav-button"
+            >
+                Lectures
+            </a>
+
+
+            <a
+                id="nav-collaboration"
+                href="collabiration.html"
+                class="nav-button"
+            >
+                Collaboration
+            </a>
+
+
+            <a
+                id="nav-facilities"
+                href="facilities.html"
+                class="nav-button"
+            >
+                Facilities
+            </a>
+
+
+            <a
+                id="nav-positions"
+                href="open-positions.html"
+                class="nav-button"
+            >
+                Open Positions
+            </a>
+
+
+            <a
+                id="nav-events"
+                href="events.html"
+                class="nav-button"
+            >
+                Events
+            </a>
+
+
+            <a
+                id="nav-calendar"
+                href="calendar.html"
+                class="nav-button"
+            >
+                Calender
+            </a>
+
+
+        </nav>
+
+
+
+        <!-- Overlay -->
+
+        <div class="overlay"></div>
+
+
+
+        <!-- =================================================
+             LOGO
+        ================================================== -->
+
+        <header>
+
+            <div class="logo">
+
+
+                <header class="site-header">
+
+
+                    <a
+                        href="indexlokesh.html"
+                        class="brand"
+                    >
+
+                        <img
+                            src="iitjlogo.png"
+                            alt="BIRDLab"
+                            class="brand-logo"
+                        >
+
+
+                        <span class="brand-text">
+                            BIRDLab
+                        </span>
+                        <br>
+                        
+
+                    </a>
+
+
+                </header>
+
+
+            </div>
+
+        </header>
+
+
+
+        <!-- =================================================
+             HERO CONTENT
+        ================================================== -->
+
+        <main>
+
+
+            <p
+                class="welcome"
+                id="hero-welcome"
+            >
+                WELCOME TO THE WORLD OF
+            </p>
+
+
+            <h2
+                id="hero-title"
+                style="color: white;"
+            >
+            <br>
+
+                NEXT<br>
+                GENERATION<br>
+                BIO INSPIRED<br>
+                ROBOTICS<br>
+                DESIGN<br>
+                LABORATORY
+            </h2>
+
+
+            <p
+                class="description"
+                id="hero-description"
+            >
+                Pioneering the future through nature-inspired robotics research.
+                From bio-inspired mechanisms to collaborative systems, we're developing
+                the next generation of adaptive robotics technology.
+            </p>
+
+
+            <button id="hero-button">
+
+                Next-Gen BIRD Lab
+
+                <span>
+                    →
+                </span>
+
+            </button>
+
+
+        </main>
+
+
+    </section>
+
+
+
+    <!-- =====================================================
+         WELCOME SECTION
+    ====================================================== -->
+
+    <section class="welcome-section">
+
+
+        <div class="welcome-content">
+
+
+            <p
+                class="small-title"
+                id="welcome-small-title"
+            >
+                BIRD LABORATORY
+            </p>
+
+
+            <h1 id="welcome-title">
+
+                Welcome to BIRD Lab<br>
+
+                for your research
+
+            </h1>
+
+
+            <div class="title-line"></div>
+
+
+            <p id="welcome-description">
+
+                Exploring the future of robotics through inspiration from
+                nature, intelligent systems and innovative engineering.
+
+            </p>
+
+
+        </div>
+
+
+    </section>
+
+
+
+    <!-- =====================================================
+         ABOUT SECTION
+    ====================================================== -->
+
+    <section class="about-section">
+
+
+        <div class="about-container">
+
+
+            <div class="about-heading">
+
+
+                <p
+                    class="small-title"
+                    id="about-small-title"
+                >
+                    ABOUT US
+                </p>
+
+
+                <h1
+                    id="about-title"
+                    style="color: black;"
+                >
+                    About Our<br>
+                    College
+                </h1>
+
+
+            </div>
+
+
+
+            <div class="about-text">
+
+
+                <p id="about-text-1">
+
+                    Our college is committed to providing students with
+                    quality education, innovative learning opportunities
+                    and practical experience.
+
+                </p>
+
+
+                <p id="about-text-2">
+
+                    We encourage students to explore emerging technologies,
+                    develop creative solutions and contribute to research
+                    that can make a meaningful impact on society.
+
+                </p>
+
+
+            </div>
+
+
+        </div>
+
+
+
+        <!-- =================================================
+             VALUES
+        ================================================== -->
+
+        <div class="values-container">
+
+
+            <!-- VISION -->
+
+            <div class="value-card">
+
+
+                <span id="vision-number">
+                    01
+                </span>
+
+
+                <h1 id="vision-title">
+                    Our Vision
+                </h1>
+
+
+                <p id="vision-text">
+
+                    To become a center of excellence in education,
+                    innovation and research while preparing students
+                    for the future of technology.
+
+                </p>
+
+
+            </div>
+
+
+
+            <!-- MISSION -->
+
+            <div class="value-card">
+
+
+                <span id="mission-number">
+                    02
+                </span>
+
+
+                <h2 id="mission-title">
+                    Our Mission
+                </h2>
+
+
+                <p id="mission-text">
+
+                    To provide an environment that encourages learning,
+                    creativity, research and technological innovation.
+
+                </p>
+
+
+            </div>
+
+
+
+            <!-- GOAL -->
+
+            <div class="value-card">
+
+
+                <span id="goal-number">
+                    03
+                </span>
+
+
+                <h2 id="goal-title">
+                    Our Goal
+                </h2>
+
+
+                <p id="goal-text">
+
+                    To develop skilled professionals and researchers
+                    capable of creating innovative solutions for
+                    real-world challenges.
+
+                </p>
+
+
+            </div>
+
+
+        </div>
+
+
+    </section>
+
+
+
+    <!-- =====================================================
+         RESEARCH SECTION
+    ====================================================== -->
+
+    <section class="research-section">
+
+
+        <!-- Heading -->
+
+        <div class="heading">
+
+
+            <p id="research-small-title">
+                RESEARCH &amp; INNOVATION
+            </p>
+
+
+            <h1 id="research-title">
+
+                Advanced Research<br>
+
+                Capabilities
+
+            </h1>
+
+
+            <span id="research-description">
+
+                From autonomous systems to AI-powered robotics,
+                our laboratory leads innovation in cutting-edge
+                research and development.
+
+            </span>
+
+
+        </div>
+
+
+
+        <!-- =================================================
+             RESEARCH GRID
+        ================================================== -->
+
+        <div class="research-grid">
+
+
+            <!-- =================================================
+                 LEFT COLUMN
+            ================================================== -->
+
+            <div class="left-column">
+
+
+                <!-- Main Image -->
+
+                <div class="main-image">
+
+
+                    <img
+                        id="research-image-1"
+                        src="research1.jpg.jpeg"
+                        alt="Research"
+                    >
+
+
+                </div>
+
+
+
+                <!-- Image Row -->
+
+                <div class="image-row">
+
+
+                    <div>
+
+                        <img
+                            id="research-image-2"
+                            src="research2.jpg.jpeg"
+                            alt="Research"
+                        >
+
+                    </div>
+
+
+                    <div>
+
+                        <img
+                            id="research-image-3"
+                            src="research3.jpg.jpeg"
+                            alt="Research"
+                        >
+
+                    </div>
+
+
+                    <div>
+
+                        <img
+                            id="research-image-4"
+                            src="research4.jpg.jpeg"
+                            alt="Research"
+                        >
+
+                    </div>
+
+
+                </div>
+
+
+
+                <!-- Research Card -->
+
+                <div class="info-card">
+
+
+                    <div
+                        class="icon"
+                        id="research-card-1-icon"
+                    >
+                        🤖
+                    </div>
+
+
+                    <h2 id="research-card-1-title">
+
+                        Advanced Robotics Research
+
+                    </h2>
+
+
+                    <p id="research-card-1-text">
+
+                        Cutting-edge research in autonomous systems,
+                        machine learning, and bio-inspired robotics.
+
+                    </p>
+
+
+                    <br>
+
+
+                    <a
+                        href="research.html"
+                        id="research-card-1-button"
+                        class="nav-button"
+                    >
+                        Explore Research
+                    </a>
+
+
+                </div>
+
+
+            </div>
+
+
+
+            <!-- =================================================
+                 RIGHT COLUMN
+            ================================================== -->
+
+            <div class="right-column">
+
+
+                <!-- Gallery -->
+
+                <div class="gallery">
+
+
+                    <div>
+
+                        <img
+                            id="research-image-5"
+                            src="research5.jpg.jpeg"
+                            alt="Research"
+                        >
+
+                    </div>
+
+
+                    <div>
+
+                        <img
+                            id="research-image-6"
+                            src="research6.jpg.jpeg"
+                            alt="Research"
+                        >
+
+                    </div>
+
+
+                    <div>
+
+                        <img
+                            src="research4.jpg.jpeg"
+                            alt="Research"
+                        >
+
+                    </div>
+
+
+                    <div>
+
+                        <img
+                            src="research5.jpg.jpeg"
+                            alt="Research"
+                        >
+
+                    </div>
+
+
+                    <div>
+
+                        <img
+                            src="research6.jpg.jpeg"
+                            alt="Research"
+                        >
+
+                    </div>
+
+
+                    <div>
+
+                        <img
+                            src="research1.jpg.jpeg"
+                            alt="Research"
+                        >
+
+                    </div>
+
+
+                </div>
+
+
+
+                <!-- AI Vision Card -->
+
+                <div class="info-card side-card">
+
+
+                    <div
+                        class="icon"
+                        id="research-card-2-icon"
+                    >
+                        👁
+                    </div>
+
+
+                    <h2 id="research-card-2-title">
+
+                        AI-Powered Vision Systems
+
+                    </h2>
+
+
+                    <p id="research-card-2-text">
+
+                        Computer vision and deep learning solutions
+                        for real-world applications.
+
+                    </p>
+
+
+                </div>
+
+
+
+                <!-- Publications Card -->
+
+                <div class="info-card side-card">
+
+
+                    <div
+                        class="icon"
+                        id="research-card-3-icon"
+                    >
+                        📄
+                    </div>
+
+
+                    <h2 id="research-card-3-title">
+
+                        Research Publications
+
+                    </h2>
+
+
+                    <p id="research-card-3-text">
+
+                        Discover our latest research findings and
+                        breakthrough innovations in robotics.
+
+                    </p>
+
+
+                </div>
+
+
+            </div>
+
+
+        </div>
+
+
+    </section>
+
+<a href="admin-home.html" >
+                admin-access
+            </a>
+
+    <!-- =====================================================
+         FOOTER
+    ====================================================== -->
+
+    <footer class="footer">
+
+
+        <div class="footer-content">
+
+
+            <!-- =================================================
+                 FOOTER LEFT
+            ================================================== -->
+
+            <div class="footer-left">
+
+
+                <h2>
+
+                    <span id="footer-title">
+                        BIRD
+                    </span>
+
+                    <span id="footer-lab">
+                        Lab
+                    </span>
+
+                </h2>
+
+
+                <p id="footer-description">
+
+                    Advancing bio-inspired robotics through innovative
+                    research, nature-inspired design, and collaborative
+                    partnerships.
+
+                </p>
+
+  <a href="https://www.linkedin.com/in/bhivraj-s-823528294" class="social" aria-label="LinkedIn">
+                        in
+                    </a>
+
+                    <a href="https://www.youtube.com/@bhivrajsuthar2234" class="social" aria-label="YouTube">
+                        ▶
+                    </a>
+
+
+
+                </div>
+
+
+            </div>
+
+
+
+            <!-- =================================================
+                 FOOTER RIGHT
+            ================================================== -->
+
+            <div class="footer-right">
+
+
+                <h2 id="footer-contact-title">
+                    Contact Info
+                </h2>
+
+
+                <div class="contact">
+
+
+                    <span>
+                        📍
+                    </span>
+
+
+                    <p id="footer-address">
+
+                        SAIDE, IIT Jodhpur Permanent Campus
+
+                    </p>
+
+
+                </div>
+
+
+
+                <div class="contact">
+
+
+                    <span>
+                        ✉
+                    </span>
+
+
+                    <p id="footer-email">
+
+                        info@birdlab.edu
+
+                    </p>
+
+
+                </div>
+
+
+
+                <div class="contact">
+
+
+                    <span>
+                        ☎
+                    </span>
+
+
+                    <p id="footer-phone">
+
+                        +1 (555) 123-4567
+
+                    </p>
+
+
+                </div>
+
+
+            </div>
+
+
+        </div>
+
+
+    </footer>
+
+
+
+    <!-- =====================================================
+         EXISTING JAVASCRIPT
+         
+         This contains:
+         - Next button
+         - Scroll animation
+         - Google Sheet content loading
+    ====================================================== -->
+
+    <script src="scriptlokesh.js"></script>
+
+
+</body>
+
+</html>

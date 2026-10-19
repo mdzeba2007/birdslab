@@ -1,0 +1,1320 @@
+/* =========================================================
+   RESET
+========================================================= */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: #ffffff;
+    color: #172033;
+    line-height: 1.6;
+
+    /* Space for the fixed right navbar */
+    padding-right: 15%;
+}
+
+
+/* =========================================================
+   CONTAINER
+========================================================= */
+
+.container {
+    width: 92%;
+    max-width: 1500px;
+    margin: 0 auto;
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.header {
+    padding: 70px 0 50px;
+    text-align: center;
+
+    background:
+        linear-gradient(
+            135deg,
+            #ffffff 0%,
+            #acc6e7 50%,
+            #cbd0d3 100%
+        );
+
+    border-bottom: 1px solid #dce3eb;
+}
+
+.header h1 {
+    font-size: 52px;
+    font-weight: 800;
+    letter-spacing: 3px;
+
+    background: linear-gradient(
+        90deg,
+        #344a9a,
+        #009ec5
+    );
+
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.header p {
+    margin-top: 10px;
+    color: #596579;
+    font-size: 19px;
+}
+
+
+/* =========================================================
+   RESEARCH INTRO
+========================================================= */
+
+.research-intro {
+    padding: 60px 0 35px;
+    background: #ffffff;
+}
+
+.research-intro h2 {
+    font-size: 38px;
+    margin-bottom: 18px;
+    color: #263b78;
+}
+
+.research-intro p {
+    max-width: 850px;
+    color: #596579;
+    font-size: 18px;
+}
+
+
+/* =========================================================
+   RESEARCH AREA
+========================================================= */
+
+.research-areas {
+    padding: 30px 0 80px;
+    background: #ffffff;
+}
+
+
+/* =========================================================
+   RESEARCH GRID
+========================================================= */
+
+.research-grid {
+    width: 100%;
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, minmax(0, 1fr));
+
+    gap: 30px;
+}
+
+
+/* =========================================================
+   RESEARCH CARD
+========================================================= */
+
+.research-card {
+    position: relative;
+    width: 100%;
+    min-width: 0;
+
+    background:
+        linear-gradient(
+            145deg,
+            #f7f8fa 0%,
+            #e9edf3 45%,
+            #e2f1f7 100%
+        );
+
+    border: 1px solid #d5dce5;
+    border-radius: 22px;
+    overflow: hidden;
+
+    min-height: 480px;
+
+    display: flex;
+    flex-direction: column;
+
+    box-shadow:
+        0 8px 25px rgba(45, 65, 95, 0.10);
+
+    transition:
+        transform 0.35s ease,
+        box-shadow 0.35s ease,
+        border-color 0.35s ease;
+}
+
+
+/* =========================================================
+   BLUE TOP LINE
+========================================================= */
+
+.research-card::before {
+    content: "";
+
+    position: absolute;
+
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    height: 5px;
+
+    background: linear-gradient(
+        90deg,
+        #5367c9,
+        #00b8d9
+    );
+
+    opacity: 0;
+
+    transition: opacity 0.3s ease;
+}
+
+
+/* =========================================================
+   CARD HOVER
+========================================================= */
+
+.research-card:hover {
+    transform: translateY(-8px);
+
+    border-color: #9bb8d0;
+
+    box-shadow:
+        0 18px 40px rgba(48, 76, 110, 0.16);
+}
+
+.research-card:hover::before {
+    opacity: 1;
+}
+
+
+/* =========================================================
+   RESEARCH IMAGE
+========================================================= */
+
+.research-image {
+    width: 100%;
+    height: 210px;
+
+    overflow: hidden;
+
+    background: #dce3eb;
+}
+
+.research-image img {
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+
+    display: block;
+
+    transition: transform 0.5s ease;
+}
+
+.research-card:hover .research-image img {
+    transform: scale(1.06);
+}
+
+
+/* =========================================================
+   CARD CONTENT
+========================================================= */
+
+.research-content {
+    padding: 25px;
+
+    display: flex;
+    flex-direction: column;
+
+    flex: 1;
+}
+
+.research-content h3 {
+    font-size: 25px;
+    line-height: 1.25;
+
+    margin-bottom: 15px;
+
+    color: #1f2d4a;
+
+    order: 1;
+}
+
+.research-content > p {
+    color: #596579;
+
+    font-size: 16px;
+    line-height: 1.7;
+
+    order: 2;
+}
+
+
+/* =========================================================
+   MORE CONTENT
+========================================================= */
+
+.more-content {
+    max-height: 0;
+
+    overflow: hidden;
+
+    opacity: 0;
+
+    margin-top: 0;
+
+    order: 3;
+
+    transition:
+        max-height 0.5s ease,
+        opacity 0.3s ease,
+        margin-top 0.3s ease;
+}
+
+.more-content p {
+    padding-top: 15px;
+
+    color: #596579;
+
+    font-size: 16px;
+    line-height: 1.7;
+}
+
+.more-content.active {
+    max-height: 500px;
+
+    opacity: 1;
+
+    margin-top: 5px;
+}
+
+
+/* =========================================================
+   SHOW MORE BUTTON
+========================================================= */
+
+.show-more {
+    order: 4;
+
+    margin-top: 20px;
+
+    padding: 12px 20px;
+
+    width: 100%;
+
+    background: rgba(255, 255, 255, 0.55);
+
+    border: 1px solid #4e78c8;
+
+    border-radius: 30px;
+
+    color: #365ca5;
+
+    font-size: 16px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+        background 0.3s ease,
+        color 0.3s ease,
+        transform 0.3s ease;
+}
+
+.show-more:hover {
+    background: #4e78c8;
+
+    color: #ffffff;
+
+    transform: translateY(-2px);
+}
+
+
+/* =========================================================
+   CURRENT FOCUS
+========================================================= */
+
+.current-focus {
+    padding: 30px 0 100px;
+
+    background: #ffffff;
+}
+
+.focus-box {
+    position: relative;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 60px;
+
+    padding: 55px;
+
+    border-radius: 28px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #eef1f5 0%,
+            #e2e7ee 45%,
+            #dceff6 100%
+        );
+
+    border: 1px solid #ccd6e2;
+
+    box-shadow:
+        0 10px 30px rgba(45, 65, 95, 0.10);
+
+    overflow: hidden;
+}
+
+
+/* =========================================================
+   BLUE VERTICAL LINE
+========================================================= */
+
+.focus-box::before {
+    content: "";
+
+    position: absolute;
+
+    left: 0;
+    top: 0;
+
+    width: 5px;
+    height: 100%;
+
+    background: linear-gradient(
+        180deg,
+        #5367c9,
+        #00b8d9
+    );
+}
+
+
+/* =========================================================
+   FOCUS CONTENT
+========================================================= */
+
+.focus-content {
+    max-width: 750px;
+}
+
+.focus-label {
+    display: inline-block;
+
+    margin-bottom: 12px;
+
+    padding: 6px 14px;
+
+    border: 1px solid #6b9bc0;
+
+    border-radius: 20px;
+
+    color: #32618c;
+
+    font-size: 13px;
+
+    font-weight: 700;
+
+    letter-spacing: 2px;
+
+    background: rgba(255, 255, 255, 0.45);
+}
+
+.focus-content h2 {
+    margin-bottom: 20px;
+
+    font-size: 38px;
+
+    line-height: 1.2;
+
+    color: #243b73;
+}
+
+.focus-content > p {
+    margin-bottom: 15px;
+
+    color: #596579;
+
+    font-size: 17px;
+
+    line-height: 1.7;
+}
+
+
+/* =========================================================
+   FOCUS POINTS
+========================================================= */
+
+.focus-points {
+    margin-top: 30px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 18px;
+}
+
+.focus-point {
+    display: flex;
+
+    gap: 18px;
+
+    align-items: flex-start;
+}
+
+.focus-point > span {
+    min-width: 42px;
+
+    color: #3f70bd;
+
+    font-size: 15px;
+
+    font-weight: 700;
+}
+
+.focus-point h3 {
+    margin-bottom: 3px;
+
+    color: #26344f;
+
+    font-size: 18px;
+}
+
+.focus-point p {
+    color: #687386;
+
+    font-size: 14px;
+}
+
+
+/* =========================================================
+   FOCUS VISUAL
+========================================================= */
+
+.focus-visual {
+    width: 280px;
+    height: 280px;
+
+    flex-shrink: 0;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+}
+
+.focus-circle {
+    width: 220px;
+    height: 220px;
+
+    border-radius: 50%;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(0, 174, 214, 0.20),
+            rgba(83, 103, 201, 0.12) 50%,
+            transparent 70%
+        );
+
+    border: 1px solid rgba(66, 125, 180, 0.40);
+
+    box-shadow:
+        0 0 40px rgba(60, 120, 180, 0.12),
+        inset 0 0 35px rgba(60, 120, 180, 0.08);
+
+    animation:
+        focusPulse 3s ease-in-out infinite;
+}
+
+.focus-inner {
+    width: 130px;
+    height: 130px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #ffffff;
+
+    border: 1px solid #ccd8e5;
+
+    font-size: 55px;
+
+    box-shadow:
+        0 5px 20px rgba(45, 65, 95, 0.12);
+}
+
+
+/* =========================================================
+   ANIMATION
+========================================================= */
+
+@keyframes focusPulse {
+
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.04);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+
+}
+
+
+/* =========================================================
+   FOOTER
+========================================================= */
+
+.footer {
+    width: 100%;
+
+    min-height: 400px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #3a4155,
+            #657cda
+        );
+
+    color: white;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    padding: 70px 20px;
+}
+
+.footer-content {
+    width: 900px;
+
+    max-width: 90%;
+
+    display: grid;
+
+    grid-template-columns: 1fr 1fr;
+
+    gap: 100px;
+
+    align-items: start;
+}
+
+
+/* =========================================================
+   FOOTER LEFT
+========================================================= */
+
+.footer-left h2 {
+    margin: 0 0 20px;
+
+    font-size: 42px;
+
+    color: white;
+}
+
+.footer-left h2 span {
+    color: #00d9ff;
+}
+
+.footer-left p {
+    max-width: 400px;
+
+    margin: 0 0 20px;
+
+    font-size: 17px;
+
+    line-height: 1.7;
+
+    color: white;
+}
+
+
+/* =========================================================
+   GIT LINK
+========================================================= */
+
+.git-link {
+    display: inline-block;
+
+    margin-bottom: 25px;
+
+    color: #00d9ff;
+
+    text-decoration: none;
+
+    font-size: 17px;
+}
+
+.git-link:hover {
+    color: white;
+}
+
+
+/* =========================================================
+   SOCIAL LINKS
+========================================================= */
+
+.social-links {
+    display: flex;
+
+    gap: 20px;
+}
+
+.social {
+    width: 55px;
+    height: 55px;
+
+    border: 1px solid white;
+
+    border-radius: 10px;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    color: white;
+
+    text-decoration: none;
+
+    font-size: 22px;
+
+    transition: 0.3s ease;
+}
+
+.social:hover {
+    background: white;
+
+    color: #3a4155;
+
+    transform: translateY(-4px);
+}
+
+
+/* =========================================================
+   FOOTER RIGHT
+========================================================= */
+
+.footer-right h2 {
+    margin: 0 0 30px;
+
+    font-size: 34px;
+
+    color: white;
+}
+
+.contact {
+    display: flex;
+
+    align-items: flex-start;
+
+    gap: 15px;
+
+    margin-bottom: 22px;
+}
+
+.contact span {
+    width: 30px;
+
+    font-size: 22px;
+}
+
+.contact p {
+    margin: 0;
+
+    font-size: 17px;
+
+    line-height: 1.5;
+
+    color: white;
+}
+
+
+/* =========================================================
+   RIGHT FIXED NAVBAR
+========================================================= */
+
+.navbar {
+
+    width: 12%;
+
+    height: calc(100vh - 40px);
+
+    position: fixed;
+
+    right: 20px;
+
+    top: 20px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: center;
+
+    align-items: center;
+
+    gap: 12px;
+
+    padding: 30px 15px;
+
+    background: linear-gradient(
+        180deg,
+        #d6e3f5,
+        #b9cce6
+    );
+
+    border-radius: 20px;
+
+    box-shadow:
+        0 8px 25px
+        rgba(0, 0, 0, 0.12);
+
+    z-index: 1000;
+}
+
+
+/* =========================================================
+   NAVBAR BUTTONS
+========================================================= */
+
+.nav-button {
+
+    width: 90%;
+
+    padding: 12px 8px;
+
+    border-radius: 10px;
+
+    border: 1px solid
+        rgba(49, 91, 143, 0.3);
+
+    background:
+        rgba(255, 255, 255, 0.4);
+
+    color: #315b8f;
+
+    text-decoration: none;
+
+    text-align: center;
+
+    font-size: 15px;
+
+    font-weight: bold;
+
+    transition: 0.25s ease;
+}
+
+
+/* =========================================================
+   NAVBAR HOVER
+========================================================= */
+
+.nav-button:hover {
+
+    background: white;
+
+    color: #0756c9;
+
+    transform: translateX(-3px);
+
+    box-shadow:
+        0 4px 10px
+        rgba(0, 0, 0, 0.1);
+}
+
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 1100px) {
+
+    body {
+        padding-right: 0;
+    }
+
+    .navbar {
+        width: 14%;
+    }
+
+    .container {
+        width: 82%;
+        margin-left: 20px;
+    }
+
+    .research-grid {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
+        gap: 25px;
+    }
+
+    .header h1 {
+        font-size: 44px;
+    }
+
+}
+
+
+/* =========================================================
+   SMALL TABLET
+========================================================= */
+
+@media (max-width: 900px) {
+
+    body {
+        padding-right: 0;
+    }
+
+    .navbar {
+
+        width: calc(100% - 30px);
+
+        height: auto;
+
+        min-height: auto;
+
+        position: relative;
+
+        top: auto;
+
+        right: auto;
+
+        margin: 15px;
+
+        padding: 25px 20px;
+
+        border-radius: 20px;
+    }
+
+    .nav-button {
+        width: 90%;
+    }
+
+    .container {
+        width: 92%;
+        margin: 0 auto;
+    }
+
+    .research-grid {
+        grid-template-columns: 1fr;
+
+        gap: 25px;
+    }
+
+    .focus-box {
+        padding: 40px;
+
+        gap: 30px;
+    }
+
+    .focus-content h2 {
+        font-size: 32px;
+    }
+
+    .focus-visual {
+        width: 220px;
+        height: 220px;
+    }
+
+    .focus-circle {
+        width: 180px;
+        height: 180px;
+    }
+
+    .footer-content {
+        gap: 50px;
+    }
+
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 650px) {
+
+    body {
+        padding-right: 0;
+    }
+
+    .container {
+        width: 92%;
+    }
+
+
+    /* Header */
+
+    .header {
+        padding: 50px 0 40px;
+    }
+
+    .header h1 {
+        font-size: 36px;
+    }
+
+    .header p {
+        font-size: 16px;
+    }
+
+
+    /* Research */
+
+    .research-intro {
+        padding: 45px 0 25px;
+    }
+
+    .research-intro h2 {
+        font-size: 30px;
+    }
+
+    .research-intro p {
+        font-size: 16px;
+    }
+
+    .research-grid {
+        grid-template-columns: 1fr;
+
+        gap: 25px;
+    }
+
+    .research-card {
+        min-height: 450px;
+    }
+
+    .research-image {
+        height: 200px;
+    }
+
+    .research-content h3 {
+        font-size: 23px;
+    }
+
+
+    /* Current Focus */
+
+    .focus-box {
+        flex-direction: column;
+
+        padding: 35px 25px;
+
+        text-align: left;
+    }
+
+    .focus-content h2 {
+        font-size: 29px;
+    }
+
+    .focus-content > p {
+        font-size: 16px;
+    }
+
+    .focus-visual {
+        width: 200px;
+        height: 200px;
+    }
+
+    .focus-circle {
+        width: 170px;
+        height: 170px;
+    }
+
+    .focus-inner {
+        width: 105px;
+        height: 105px;
+
+        font-size: 45px;
+    }
+
+
+    /* Footer */
+
+    .footer {
+        min-height: auto;
+
+        padding: 55px 20px;
+    }
+
+    .footer-content {
+        width: 100%;
+
+        max-width: 100%;
+
+        grid-template-columns: 1fr;
+
+        gap: 50px;
+    }
+
+    .footer-left h2 {
+        font-size: 36px;
+    }
+
+    .footer-right h2 {
+        font-size: 30px;
+    }
+
+    .social {
+        width: 48px;
+        height: 48px;
+
+        font-size: 19px;
+    }
+
+}
+
+
+/* =========================================================
+   VERY SMALL MOBILE
+========================================================= */
+
+@media (max-width: 450px) {
+
+    .navbar {
+        padding: 20px 15px;
+    }
+
+    .nav-button {
+        font-size: 14px;
+
+        padding: 11px 7px;
+    }
+
+    .focus-box {
+        padding: 25px 18px;
+    }
+
+    .focus-content h2 {
+        font-size: 26px;
+    }
+
+    .show-more {
+        font-size: 16px;
+    }
+
+}
+/* =====================================================
+   BIRD LAB HEADER
+===================================================== */
+
+.site-header {
+    position: fixed;
+    top: 15px;
+    left: 20px;
+
+    width: auto;
+    height: auto;
+
+    z-index: 10000;
+
+    display: flex;
+    align-items: center;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+
+    padding: 8px 12px;
+
+    text-decoration: none;
+
+    background: #eeeff2;
+
+    border-radius: 10px;
+
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
+}
+
+.brand-logo {
+    width: 50px;
+    height: auto;
+
+    display: block;
+
+    object-fit: contain;
+}
+
+
+/* Mobile */
+@media (max-width: 700px) {
+
+    .site-header {
+        top: 10px;
+        left: 12px;
+    }
+
+    .brand-logo {
+        width: 120px;
+    }
+}
+
+/* =====================================================
+   BIRD LAB HEADER
+===================================================== */
+
+.site-header {
+    position: fixed;
+    top: 0px;
+    left: 0px;
+
+    width: auto;
+    height: auto;
+
+    z-index: 10000;
+
+    display: flex;
+    align-items: center;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+
+    padding: 8px 12px;
+
+    text-decoration: none;
+
+    background: #0f39b6;
+
+    border-radius: 10px;
+
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
+}
+
+.brand-logo {
+    width: 50px;
+    height: auto;
+
+    display: block;
+
+    object-fit: contain;
+}
+
+
+/* Mobile */
+@media (max-width: 700px) {
+
+    .site-header {
+        top: 10px;
+        left: 12px;
+    }
+
+    .brand-logo {
+        width: 120px;
+    }
+}
+/* =====================================================
+   FORCE BIRDLAB LOGO TO TOP-LEFT CORNER
+===================================================== */
+
+html,
+body {
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.site-header {
+    position: fixed !important;
+
+    top: 0 !important;
+    left: 0 !important;
+    right: auto !important;
+    bottom: auto !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    width: auto !important;
+    height: auto !important;
+
+    z-index: 99999 !important;
+}
+
+.site-header .brand {
+    margin: 0 !important;
+
+    display: flex !important;
+    align-items: center !important;
+
+    padding: 8px 12px !important;
+
+    gap: 8px;
+
+    background: #17446C;
+
+    text-decoration: none;
+
+    border-radius: 0 0 12px 0;
+}
+
+.site-header .iitj-logo {
+    width: 50px !important;
+    height: 50px !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    display: block !important;
+
+    object-fit: contain;
+}
+
+.site-header .brand-text {
+    margin: 0 !important;
+    padding: 0 !important;
+
+    color: #f5f6f8;
+
+    font-size: 32px;
+    font-weight: 700;
+
+    letter-spacing: 3px;
+}

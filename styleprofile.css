@@ -1,0 +1,2182 @@
+/* =========================================================
+   RESET
+========================================================= */
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+
+/* =========================================================
+   BODY
+========================================================= */
+
+body {
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+    background: white;
+
+    color: #111827;
+
+    padding: 40px 20px;
+
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+header {
+
+    text-align: center;
+
+    margin-bottom: 35px;
+
+}
+
+
+header h1 {
+
+    font-size: 42px;
+
+    color: #123b7a;
+
+    margin-bottom: 8px;
+
+}
+
+
+header p {
+
+    color: #64748b;
+
+    font-size: 18px;
+
+}
+
+
+/* =========================================================
+   MEMBERS SECTION
+========================================================= */
+
+.members-section {
+
+    max-width: 1500px;
+
+    margin: auto;
+
+}
+
+
+/* =========================================================
+   FEATURED BHIVRAJ PROFILE
+========================================================= */
+
+.featured-profile {
+
+    display: grid;
+
+    grid-template-columns:
+        440px 1fr;
+
+    gap: 40px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #4888e8,
+            #425271
+        );
+
+    color: white;
+
+    border-radius: 18px;
+
+    padding: 30px;
+
+    box-shadow:
+        0 15px 35px
+        rgba(0, 0, 0, 0.18);
+
+    margin-bottom: 50px;
+
+}
+
+
+/* =========================================================
+   FEATURED LEFT
+========================================================= */
+
+.featured-left {
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+}
+
+
+.profile-image-container {
+
+    width: 100%;
+
+    height: 430px;
+
+    background: white;
+
+    border-radius: 14px;
+
+    overflow: hidden;
+
+}
+
+
+.featured-image {
+
+    width: 100%;
+
+    height: 100%;
+
+    object-fit: cover;
+
+}
+
+
+/* =========================================================
+   FEATURED BUTTONS
+========================================================= */
+
+.profile-buttons {
+
+    display: flex;
+
+    gap: 12px;
+
+    width: 100%;
+
+    margin-top: 20px;
+
+}
+
+
+.linkedin-button,
+.email-button {
+
+    flex: 1;
+
+    padding: 14px;
+
+    border-radius: 9px;
+
+    border: 1px solid white;
+
+    text-decoration: none;
+
+    color: white;
+
+    text-align: center;
+
+    font-weight: bold;
+
+    transition: 0.2s;
+
+}
+
+
+.linkedin-button:hover,
+.email-button:hover {
+
+    background: white;
+
+    color: #0756c9;
+
+}
+
+
+/* =========================================================
+   FEATURED RIGHT
+========================================================= */
+
+.featured-right {
+
+    padding: 5px 10px;
+
+}
+
+
+.profile-heading h2 {
+
+    font-size: 34px;
+
+    margin-bottom: 10px;
+
+}
+
+
+.profile-role {
+
+    font-size: 21px;
+
+    font-weight: bold;
+
+    color: #8ed8ff;
+
+    margin-bottom: 8px;
+
+}
+
+
+.profile-organization {
+
+    font-size: 18px;
+
+    opacity: 0.9;
+
+}
+
+
+.profile-divider {
+
+    height: 1px;
+
+    background:
+        rgba(255,255,255,0.35);
+
+    margin: 30px 0;
+
+}
+
+
+/* =========================================================
+   FEATURED SECTIONS
+========================================================= */
+
+.profile-section {
+
+    margin-bottom: 30px;
+
+}
+
+
+.profile-section h3 {
+
+    font-size: 20px;
+
+    margin-bottom: 12px;
+
+}
+
+
+.profile-section p {
+
+    font-size: 17px;
+
+    line-height: 1.7;
+
+    color: #f1f5f9;
+
+}
+
+
+.research-pill {
+
+    display: inline-block;
+
+    background:
+        rgba(255,255,255,0.15);
+
+    border:
+        1px solid
+        rgba(255,255,255,0.3);
+
+    padding: 10px 16px;
+
+    border-radius: 20px;
+
+    font-weight: bold;
+
+}
+
+
+.education-box {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 20px;
+
+    background:
+        rgba(255,255,255,0.12);
+
+    border:
+        1px solid
+        rgba(255,255,255,0.25);
+
+    padding: 16px;
+
+    border-radius: 10px;
+
+}
+
+
+.education-box strong {
+
+    color: #8ed8ff;
+
+}
+
+
+/* =========================================================
+   OTHER MEMBERS TITLE
+========================================================= */
+
+.other-members-title {
+
+    text-align: center;
+
+    font-size: 28px;
+
+    color: #123b7a;
+
+    margin-bottom: 30px;
+
+}
+
+
+/* =========================================================
+   IMPORTANT
+   TWO CARDS SIDE BY SIDE
+========================================================= */
+
+#otherMembers {
+
+    width: 100%;
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 28px;
+
+}
+
+
+/* =========================================================
+   MEMBER CARD
+========================================================= */
+
+.member-card {
+
+    width: 100%;
+
+    min-width: 0;
+
+    background:
+        linear-gradient(
+            135deg,
+            #4888e8,
+            #425271
+        );
+
+    color: white;
+
+    border-radius: 18px;
+
+    overflow: hidden;
+
+    box-shadow:
+        0 12px 30px
+        rgba(0, 0, 0, 0.18);
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+
+}
+
+
+/* HOVER */
+
+.member-card:hover {
+
+    transform:
+        translateY(-4px);
+
+    box-shadow:
+        0 18px 35px
+        rgba(0, 0, 0, 0.25);
+
+}
+
+
+/* =========================================================
+   MEMBER CARD INNER
+========================================================= */
+
+.member-card-inner {
+
+    width: 100%;
+
+    min-height: 520px;
+
+    display: grid;
+
+    grid-template-columns:
+        40% 60%;
+
+}
+
+
+/* =========================================================
+   MEMBER LEFT
+========================================================= */
+
+.member-left {
+
+    padding: 24px;
+
+    display: flex;
+
+    flex-direction: column;
+
+}
+
+
+/* =========================================================
+   MEMBER PHOTO
+========================================================= */
+
+.member-image-container {
+
+    width: 100%;
+
+    height: 300px;
+
+    background: white;
+
+    border-radius: 12px;
+
+    overflow: hidden;
+
+}
+
+
+.member-image {
+
+    width: 100%;
+
+    height: 100%;
+
+    object-fit: cover;
+
+    display: block;
+
+}
+
+
+/* =========================================================
+   MEMBER BUTTONS
+========================================================= */
+
+.member-buttons {
+
+    display: flex;
+
+    gap: 10px;
+
+    margin-top: 18px;
+
+}
+
+
+.member-buttons a {
+
+    flex: 1;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 6px;
+
+    padding: 11px 10px;
+
+    border:
+        1px solid
+        rgba(255,255,255,0.7);
+
+    border-radius: 8px;
+
+    color: white;
+
+    text-decoration: none;
+
+    font-size: 13px;
+
+    font-weight: bold;
+
+    transition: 0.2s;
+
+}
+
+
+.member-buttons a:hover {
+
+    background: white;
+
+    color: #0756c9;
+
+}
+
+
+/* =========================================================
+   MEMBER RIGHT
+========================================================= */
+
+.member-right {
+
+    padding:
+        28px 30px;
+
+    min-width: 0;
+
+}
+
+
+/* =========================================================
+   MEMBER NAME
+========================================================= */
+
+.member-heading h2 {
+
+    color: white;
+
+    font-size: 28px;
+
+    font-weight: 800;
+
+    line-height: 1.2;
+
+    margin-bottom: 8px;
+
+    word-break: break-word;
+
+}
+
+
+/* =========================================================
+   MEMBER ROLE
+========================================================= */
+
+.member-role {
+
+    color: #8ed8ff;
+
+    font-size: 18px;
+
+    font-weight: bold;
+
+    margin-bottom: 5px;
+
+}
+
+
+/* =========================================================
+   MEMBER ORGANIZATION
+========================================================= */
+
+.member-organization {
+
+    color: white;
+
+    font-size: 15px;
+
+    opacity: 0.9;
+
+}
+
+
+/* =========================================================
+   MEMBER DIVIDER
+========================================================= */
+
+.member-divider {
+
+    height: 1px;
+
+    background:
+        rgba(255,255,255,0.35);
+
+    margin:
+        22px 0;
+
+}
+
+
+/* =========================================================
+   MEMBER SECTIONS
+========================================================= */
+
+.member-section {
+
+    margin-bottom: 22px;
+
+}
+
+
+.member-section h3 {
+
+    color: white;
+
+    font-size: 18px;
+
+    font-weight: bold;
+
+    margin-bottom: 9px;
+
+}
+
+
+/* THIS OVERRIDES YOUR OLD .member-card p */
+
+.member-section p {
+
+    color: #f1f5f9;
+
+    font-size: 14px;
+
+    line-height: 1.6;
+
+    margin: 0;
+
+}
+
+
+/* =========================================================
+   MEMBER RESEARCH PILL
+========================================================= */
+
+.member-research-pill {
+
+    display: inline-block;
+
+    max-width: 100%;
+
+    background:
+        rgba(255,255,255,0.15);
+
+    border:
+        1px solid
+        rgba(255,255,255,0.3);
+
+    color: white;
+
+    padding:
+        9px 14px;
+
+    border-radius: 20px;
+
+    font-size: 13px;
+
+    font-weight: bold;
+
+    line-height: 1.4;
+
+}
+
+
+/* =========================================================
+   MEMBER EDUCATION
+========================================================= */
+
+.member-education-box {
+
+    display: flex;
+
+    align-items: flex-start;
+
+    gap: 14px;
+
+    background:
+        rgba(255,255,255,0.12);
+
+    border:
+        1px solid
+        rgba(255,255,255,0.25);
+
+    padding:
+        12px 14px;
+
+    border-radius: 9px;
+
+}
+
+
+.member-education-box strong {
+
+    color: #8ed8ff;
+
+    font-size: 13px;
+
+    flex-shrink: 0;
+
+}
+
+
+.member-education-box span {
+
+    color: #f1f5f9;
+
+    font-size: 13px;
+
+    line-height: 1.5;
+
+}
+
+
+/* =========================================================
+   NO MEMBERS
+========================================================= */
+
+.no-members {
+
+    grid-column:
+        1 / -1;
+
+    background: #eff6ff;
+
+    border:
+        1px solid #bfdbfe;
+
+    padding: 25px;
+
+    border-radius: 10px;
+
+    color: #1e40af;
+
+    text-align: center;
+
+    margin-bottom: 40px;
+
+}
+
+
+/* =========================================================
+   GOOGLE FORM SECTION
+========================================================= */
+
+.join-section {
+
+    max-width: 1200px;
+
+    margin: 50px auto;
+
+    padding: 45px;
+
+    text-align: center;
+
+    border:
+        2px dashed #60a5fa;
+
+    border-radius: 16px;
+
+    background: white;
+
+}
+
+
+.join-section h2 {
+
+    font-size: 30px;
+
+    color: #123b7a;
+
+    margin-bottom: 12px;
+
+}
+
+
+.join-section p {
+
+    color: #64748b;
+
+    margin-bottom: 20px;
+
+    font-size: 17px;
+
+}
+
+
+.form-button {
+
+    display: inline-block;
+
+    background: #0756c9;
+
+    color: white;
+
+    text-decoration: none;
+
+    padding: 15px 30px;
+
+    border-radius: 9px;
+
+    font-size: 18px;
+
+    font-weight: bold;
+
+    transition: 0.2s;
+
+}
+
+
+.form-button:hover {
+
+    background: #063b9d;
+
+    transform:
+        translateY(-2px);
+
+}
+
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 1100px) {
+
+    #otherMembers {
+
+        grid-template-columns:
+            1fr;
+
+    }
+
+
+    .member-card-inner {
+
+        grid-template-columns:
+            38% 62%;
+
+    }
+
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 800px) {
+
+    body {
+
+        padding:
+            20px 12px;
+
+    }
+
+
+    .featured-profile {
+
+        grid-template-columns:
+            1fr;
+
+    }
+
+
+    .profile-image-container {
+
+        height: 350px;
+
+    }
+
+
+    .profile-heading h2 {
+
+        font-size: 28px;
+
+    }
+
+
+    .profile-buttons {
+
+        flex-direction: column;
+
+    }
+
+
+    /* MEMBER CARD */
+
+    #otherMembers {
+
+        grid-template-columns:
+            1fr;
+
+    }
+
+
+    .member-card-inner {
+
+        grid-template-columns:
+            1fr;
+
+    }
+
+
+    .member-left {
+
+        padding:
+            20px;
+
+    }
+
+
+    .member-image-container {
+
+        height: 300px;
+
+    }
+
+
+    .member-right {
+
+        padding:
+            25px 20px 30px;
+
+    }
+
+
+    .member-heading h2 {
+
+        font-size: 25px;
+
+    }
+
+
+    .member-role {
+
+        font-size: 17px;
+
+    }
+
+}
+
+
+/* =========================================================
+   SMALL MOBILE
+========================================================= */
+
+@media (max-width: 500px) {
+
+    .member-buttons {
+
+        flex-direction: column;
+
+    }
+
+
+    .member-image-container {
+
+        height: 260px;
+
+    }
+
+
+    .member-right {
+
+        padding:
+            20px 16px 25px;
+
+    }
+
+}
+/* =========================================================
+   FINAL GOOGLE SHEET MEMBER CARDS
+   Paste this at the VERY BOTTOM of styleprofile.css
+========================================================= */
+
+#otherMembers {
+
+    width: 100%;
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 30px;
+
+    align-items: start;
+
+}
+
+
+/* =========================================================
+   CARD
+========================================================= */
+
+#otherMembers .member-card {
+
+    width: 100%;
+
+    height: auto;
+
+    min-height: 0;
+
+    background:
+        linear-gradient(
+            135deg,
+            #4888e8,
+            #425271
+        );
+
+    color: white;
+
+    border-radius: 18px;
+
+    padding: 24px;
+
+    margin: 0;
+
+    overflow: hidden;
+
+    box-shadow:
+        0 12px 30px
+        rgba(0, 0, 0, 0.18);
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+
+}
+
+
+#otherMembers .member-card:hover {
+
+    transform: translateY(-4px);
+
+    box-shadow:
+        0 18px 35px
+        rgba(0, 0, 0, 0.25);
+
+}
+
+
+/* =========================================================
+   CARD INNER
+========================================================= */
+
+#otherMembers .member-card-inner {
+
+    width: 100%;
+
+    height: auto;
+
+    min-height: 0;
+
+    display: grid;
+
+    grid-template-columns:
+        42% 58%;
+
+    gap: 24px;
+
+    align-items: start;
+
+}
+
+
+/* =========================================================
+   PHOTO
+========================================================= */
+
+#otherMembers .member-photo-section {
+
+    width: 100%;
+
+}
+
+
+#otherMembers .member-photo-container {
+
+    width: 100%;
+
+    height: 330px;
+
+    background: white;
+
+    border-radius: 14px;
+
+    overflow: hidden;
+
+}
+
+
+#otherMembers .member-photo {
+
+    width: 100% !important;
+
+    height: 100% !important;
+
+    display: block;
+
+    object-fit: cover !important;
+
+    border-radius: 14px;
+
+}
+
+
+/* =========================================================
+   PHOTO NOT AVAILABLE
+========================================================= */
+
+#otherMembers .member-photo-placeholder {
+
+    width: 100%;
+
+    height: 330px;
+
+    background: white;
+
+    color: #64748b;
+
+    border-radius: 14px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    text-align: center;
+
+    font-size: 14px;
+
+}
+
+
+/* =========================================================
+   MEMBER INFORMATION
+========================================================= */
+
+#otherMembers .member-info {
+
+    width: 100%;
+
+    min-width: 0;
+
+    padding: 5px 5px 0 0;
+
+}
+
+
+/* =========================================================
+   NAME
+========================================================= */
+
+#otherMembers .member-name {
+
+    color: white !important;
+
+    font-size: 30px !important;
+
+    font-weight: 800;
+
+    line-height: 1.2;
+
+    margin: 0 0 22px !important;
+
+}
+
+
+/* =========================================================
+   QUESTION + ANSWER
+========================================================= */
+
+#otherMembers .dynamic-detail {
+
+    margin-bottom: 17px;
+
+    padding-bottom: 13px;
+
+    border-bottom:
+        1px solid
+        rgba(255,255,255,0.30);
+
+}
+
+
+/* QUESTION */
+
+#otherMembers .dynamic-question {
+
+    color: #8ed8ff;
+
+    font-size: 15px;
+
+    font-weight: 700;
+
+    margin-bottom: 5px;
+
+}
+
+
+/* ANSWER */
+
+#otherMembers .dynamic-answer {
+
+    color: white;
+
+    font-size: 16px;
+
+    line-height: 1.5;
+
+    word-break: break-word;
+
+}
+
+
+/* =========================================================
+   LAST DETAIL
+========================================================= */
+
+#otherMembers .dynamic-detail:last-child {
+
+    border-bottom: none;
+
+    margin-bottom: 0;
+
+    padding-bottom: 0;
+
+}
+
+
+/* =========================================================
+   LINKEDIN
+========================================================= */
+
+#otherMembers .question-link {
+
+    display: inline-block;
+
+    color: white;
+
+    background:
+        rgba(255,255,255,0.12);
+
+    border:
+        1px solid
+        rgba(255,255,255,0.5);
+
+    padding: 8px 14px;
+
+    border-radius: 8px;
+
+    text-decoration: none;
+
+    font-size: 14px;
+
+    font-weight: bold;
+
+}
+
+
+#otherMembers .question-link:hover {
+
+    background: white;
+
+    color: #0756c9;
+
+}
+
+
+/* =========================================================
+   TWO CARDS UNTIL TABLET
+========================================================= */
+
+@media (max-width: 1100px) {
+
+    #otherMembers {
+
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
+        gap: 20px;
+
+    }
+
+
+    #otherMembers .member-card-inner {
+
+        grid-template-columns:
+            1fr;
+
+    }
+
+
+    #otherMembers .member-photo-container {
+
+        height: 280px;
+
+    }
+
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 650px) {
+
+    #otherMembers {
+
+        grid-template-columns: 1fr;
+
+    }
+
+
+    #otherMembers .member-card-inner {
+
+        grid-template-columns: 1fr;
+
+    }
+
+
+    #otherMembers .member-photo-container {
+
+        height: 300px;
+
+    }
+
+
+    #otherMembers .member-name {
+
+        font-size: 27px !important;
+
+    }
+
+}
+/* =========================================================
+   PAGE LAYOUT
+========================================================= */
+
+.page-layout {
+
+    width: 100%;
+
+    min-height: 100vh;
+
+    display: flex;
+
+    align-items: flex-start;
+
+}
+
+
+/* =========================================================
+   LEFT MEMBER CONTENT - 60%
+========================================================= */
+
+.member-content {
+
+    width: 60%;
+
+    padding: 35px 25px;
+
+    min-width: 0;
+
+}
+
+
+/* =========================================================
+   MEMBER SECTION
+========================================================= */
+
+.member-content .members-section {
+
+    width: 100%;
+
+    max-width: none;
+
+    margin: 0;
+
+}
+
+
+/* =========================================================
+   RIGHT NAVBAR - 40%
+========================================================= */
+
+/* =====================================================
+   PAGE LAYOUT
+===================================================== */
+
+.page-layout {
+
+    width: 100%;
+    min-height: 100vh;
+
+    display: flex;
+
+    align-items: flex-start;
+
+}
+
+
+/* =====================================================
+   LEFT CONTENT - 80%
+===================================================== */
+
+.member-content {
+
+    width: 87%;
+
+    min-width: 0;
+
+    padding: 30px 25px;
+
+}
+
+
+/* =====================================================
+   RIGHT NAVBAR - 20%
+===================================================== */
+
+.page-layout .navbar { 
+ 
+    width: 13%; 
+ 
+    min-height: 100vh; 
+ 
+    position: sticky; 
+ 
+    top: 0; 
+ 
+    display: flex; 
+ 
+    flex-direction: column; 
+ 
+    justify-content: center; 
+ 
+    align-items: center; 
+ 
+    gap: 12px; 
+ 
+    padding: 30px 15px; 
+ 
+    background: 
+        linear-gradient( 
+            180deg, 
+            #718db4, 
+            #6a87b2 
+        ); 
+ min-height: calc(100vh - 40px);
+margin: 20px 10px;
+border-radius: 20px;
+}
+
+
+/* =====================================================
+   NAV BUTTONS
+===================================================== */
+
+.page-layout .nav-button {
+
+    width: 90%;
+
+    padding: 13px 8px;
+
+    border-radius: 10px;
+
+    border: 1px solid
+        rgba(255,255,255,0.45);
+
+    background:
+        rgba(255,255,255,0.08);
+
+    color: white;
+
+    text-decoration: none;
+
+    text-align: center;
+
+    font-size: 15px;
+
+    font-weight: bold;
+
+    transition: 0.25s ease;
+
+}
+
+
+.page-layout .nav-button:hover {
+
+    background: white;
+
+    color: #0756c9;
+
+    transform: translateX(-3px);
+
+}
+
+
+/* =====================================================
+   MEMBER SECTION
+===================================================== */
+
+.member-content .members-section {
+
+    width: 100%;
+
+    max-width: none;
+
+    margin: 0;
+
+}
+
+
+/* =====================================================
+   SIR'S PROFILE
+===================================================== */
+
+.member-content .featured-profile {
+
+    width: 100%;
+
+}
+
+
+/* =====================================================
+   OTHER MEMBER CARDS
+===================================================== */
+
+.member-content #otherMembers {
+
+    width: 100%;
+
+}
+
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media (max-width: 900px) {
+
+    .page-layout {
+
+        flex-direction: column;
+
+    }
+
+
+    .member-content {
+
+        width: 100%;
+
+    }
+
+
+    .page-layout .navbar {
+
+        width: 100%;
+
+        min-height: auto;
+
+        position: relative;
+
+        padding: 25px 20px;
+
+    }
+
+
+    .page-layout .nav-button {
+
+        width: 90%;
+
+    }
+
+}
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.member-content header {
+
+    margin-bottom: 35px;
+
+}
+
+
+.member-content header h1 {
+
+    font-size: 38px;
+
+}
+
+
+/* =========================================================
+   SIR'S PROFILE
+========================================================= */
+
+.member-content .featured-profile {
+
+    width: 100%;
+
+    grid-template-columns:
+        40% 60%;
+
+    gap: 25px;
+
+    padding: 25px;
+
+}
+
+
+/* =========================================================
+   GOOGLE MEMBER GRID
+========================================================= */
+
+.member-content #otherMembers {
+
+    width: 100%;
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 20px;
+
+}
+
+
+/* =========================================================
+   GOOGLE MEMBER CARD
+========================================================= */
+
+.member-content #otherMembers .member-card {
+
+    width: 100%;
+
+    height: auto;
+
+    min-height: 0;
+
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 1000px) {
+
+    .page-layout {
+
+        flex-direction: column;
+
+    }
+
+
+    .member-content {
+
+        width: 100%;
+
+    }
+
+
+    .navbar {
+
+        width: 100%;
+
+        min-height: auto;
+
+        position: relative;
+
+        padding: 30px 20px;
+
+    }
+
+
+    .nav-button {
+
+        width: 100%;
+
+    }
+
+}
+
+
+@media (max-width: 700px) {
+
+    .member-content #otherMembers {
+
+        grid-template-columns: 1fr;
+
+    }
+
+}
+/* =====================================================
+   FOOTER
+   DO NOT AFFECT NAVBAR OR MEMBER CARDS
+===================================================== */
+
+.footer {
+
+    width: 100%;
+
+    min-height: 400px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #3a4155,
+            #657cda
+        );
+
+    color: white;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    padding: 70px 20px;
+
+    box-sizing: border-box;
+
+}
+
+
+.footer-content {
+
+    width: 900px;
+
+    max-width: 90%;
+
+    display: grid;
+
+    grid-template-columns:
+        1fr 1fr;
+
+    gap: 100px;
+
+    align-items: start;
+
+}
+
+
+.footer-left h2 {
+
+    margin: 0 0 20px;
+
+    font-size: 42px;
+
+    color: white;
+
+}
+
+
+.footer-left h2 span {
+
+    color: #00d9ff;
+
+}
+
+
+.footer-left p {
+
+    max-width: 400px;
+
+    margin: 0 0 20px;
+
+    font-size: 17px;
+
+    line-height: 1.7;
+
+    color: white;
+
+}
+
+
+.git-link {
+
+    display: inline-block;
+
+    margin-bottom: 25px;
+
+    color: #00d9ff;
+
+    text-decoration: none;
+
+    font-size: 17px;
+
+}
+
+
+.social-links {
+
+    display: flex;
+
+    gap: 20px;
+
+}
+
+
+.social {
+
+    width: 55px;
+
+    height: 55px;
+
+    border: 1px solid white;
+
+    border-radius: 10px;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    color: white;
+
+    text-decoration: none;
+
+    font-size: 22px;
+
+}
+
+
+.footer-right h2 {
+
+    margin: 0 0 30px;
+
+    font-size: 34px;
+
+    color: white;
+
+}
+
+
+.contact {
+
+    display: flex;
+
+    align-items: flex-start;
+
+    gap: 15px;
+
+    margin-bottom: 22px;
+
+}
+
+
+.contact span {
+
+    width: 30px;
+
+    font-size: 22px;
+
+}
+
+
+.contact p {
+
+    margin: 0;
+
+    font-size: 17px;
+
+    line-height: 1.5;
+
+    color: white;
+
+}
+
+
+/* =====================================================
+   FOOTER ON 80% LEFT SIDE
+===================================================== */
+
+.member-content .footer {
+
+    width: 100%;
+
+}
+
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media (max-width: 700px) {
+
+    .footer-content {
+
+        grid-template-columns: 1fr;
+
+        gap: 40px;
+
+    }
+
+}
+/* =====================================================
+   BIRD LAB HEADER
+===================================================== */
+
+.site-header {
+    position: fixed;
+    top: 15px;
+    left: 20px;
+
+    width: auto;
+    height: auto;
+
+    z-index: 10000;
+
+    display: flex;
+    align-items: center;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+
+    padding: 8px 12px;
+
+    text-decoration: none;
+
+    background: #eeeff2;
+
+    border-radius: 10px;
+
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
+}
+
+.brand-logo {
+    width: 50px;
+    height: auto;
+
+    display: block;
+
+    object-fit: contain;
+}
+
+
+/* Mobile */
+@media (max-width: 700px) {
+
+    .site-header {
+        top: 10px;
+        left: 12px;
+    }
+
+    .brand-logo {
+        width: 120px;
+    }
+}
+* {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: transparent;
+            color: #ffffff;
+            padding: 35px;
+        }
+
+        .people-section {
+            width: 100%;
+            max-width: 1500px;
+            margin: auto;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 38px;
+            font-weight: 700;
+            margin-bottom: 35px;
+            color: #2563eb;
+        }
+
+        .title-line {
+            width: 150px;
+            height: 4px;
+            background: #2563eb;
+            margin: 10px auto 0;
+            border-radius: 5px;
+        }
+
+        .people-container {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 35px;
+        }
+
+        .person-card {
+            display: flex;
+            align-items: stretch;
+            gap: 28px;
+            padding: 25px;
+            border: 1px solid #2563eb;
+            border-radius: 20px;
+            background: transparent;
+            min-width: 0;
+            transition: border-color 0.3s ease,
+                        transform 0.3s ease;
+        }
+
+        .person-card:hover {
+            border-color: #60a5fa;
+            transform: translateY(-5px);
+        }
+
+        .person-image {
+            width: 48%;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+        }
+
+        .person-image img {
+            width: 100%;
+            height: 350px;
+            object-fit: cover;
+            border-radius: 14px;
+            display: block;
+        }
+
+        .person-info {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 18px;
+        }
+
+        .person-name {
+            color: #2563eb;
+            font-size: 29px;
+            line-height: 1.3;
+            font-weight: 700;
+            overflow-wrap: anywhere;
+        }
+
+        .person-role {
+            color: #60a5fa;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .research {
+            width: 100%;
+        }
+
+        .research h3 {
+            font-size: 16px;
+            margin-bottom: 9px;
+            color: #ffffff;
+        }
+
+        .research p {
+            color: #2563eb;
+            border: 1px solid #2563eb;
+            border-radius: 12px;
+            padding: 12px;
+            font-size: 15px;
+            line-height: 1.6;
+            overflow-wrap: anywhere;
+        }
+
+        .education {
+            width: 100%;
+            margin-top: auto;
+            padding: 15px 12px;
+            border-left: 4px solid #2563eb;
+            border-radius: 10px;
+            color: #b0b7c3;
+            font-size: 15px;
+            line-height: 1.6;
+            text-align: left;
+        }
+
+        .education strong {
+            color: #60a5fa;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        /* Tablets and mobile screens */
+        @media (max-width: 1000px) {
+            .people-container {
+                grid-template-columns: 1fr;
+            }
+
+            .person-card {
+                max-width: 750px;
+                width: 100%;
+                margin: auto;
+            }
+        }
+
+        @media (max-width: 550px) {
+            body {
+                padding: 18px;
+            }
+
+            .section-title {
+                font-size: 30px;
+            }
+
+            .person-card {
+                flex-direction: column;
+                align-items: center;
+                padding: 18px;
+                gap: 20px;
+            }
+
+            .person-image {
+                width: 100%;
+            }
+
+            .person-image img {
+                height: 300px;
+            }
+
+            .person-info {
+                width: 100%;
+            }
+
+            .person-name {
+                font-size: 25px;
+            }
+
+            .education {
+                text-align: center;
+            }
+        }

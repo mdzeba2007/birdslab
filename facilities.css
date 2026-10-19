@@ -1,0 +1,1189 @@
+/* =========================================================
+   RESET
+========================================================= */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: #ffffff;
+    color: #243b55;
+}
+
+
+/* =========================================================
+   CONTAINER
+========================================================= */
+
+.container {
+    width: 92%;
+    max-width: 1500px;
+    margin: 0 auto;
+}
+
+
+/* =========================================================
+   PAGE HEADER
+========================================================= */
+
+.page-header {
+    padding: 55px 0 40px;
+    text-align: center;
+
+    background: linear-gradient(
+        135deg,
+        #ffffff 0%,
+        #f7fcff 45%,
+        #e8f7fc 100%
+    );
+
+    border-bottom: 1px solid #d7e8ef;
+}
+
+.page-header h1 {
+    font-size: 46px;
+    font-weight: 700;
+    color: #234b6d;
+    margin-bottom: 12px;
+}
+
+.page-header p {
+    font-size: 18px;
+    color: #667f92;
+    line-height: 1.6;
+}
+
+
+/* =========================================================
+   MACHINE SECTION
+========================================================= */
+
+.machine-section {
+    padding: 55px 0 100px;
+    background: #ffffff;
+}
+
+
+/* =========================================================
+   MACHINE GRID
+========================================================= */
+
+.machine-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 38px;
+}
+
+
+/* =========================================================
+   MACHINE CARD
+========================================================= */
+
+.machine-card {
+    overflow: hidden;
+
+    background: linear-gradient(
+        145deg,
+        #f9fcfe 0%,
+        #edf6fa 55%,
+        #e3f2f8 100%
+    );
+
+    border: 1px solid #cbdfe8;
+    border-radius: 25px;
+
+    box-shadow:
+        0 10px 28px rgba(70, 120, 145, 0.10);
+
+    transition:
+        transform 0.3s ease,
+        box-shadow 0.3s ease,
+        border-color 0.3s ease;
+}
+
+.machine-card:hover {
+    transform: translateY(-7px);
+
+    border-color: #9bcddd;
+
+    box-shadow:
+        0 18px 40px rgba(60, 130, 160, 0.16);
+}
+
+
+/* =========================================================
+   MACHINE IMAGE
+========================================================= */
+
+.machine-image {
+    width: 100%;
+    height: 260px;
+
+    overflow: hidden;
+
+    background: #ffffff;
+}
+
+.machine-image img {
+    width: 100%;
+    height: 100%;
+
+    display: block;
+
+    object-fit: contain;
+    object-position: center;
+
+    background: #ffffff;
+
+    transition: transform 0.3s ease;
+}
+
+.machine-card:hover .machine-image img {
+    transform: scale(1.04);
+}
+
+
+/* =========================================================
+   MACHINE CONTENT
+========================================================= */
+
+.machine-content {
+    padding: 32px;
+}
+
+.machine-content h2 {
+    font-size: 27px;
+    line-height: 1.25;
+
+    color: #1f4264;
+
+    margin-bottom: 16px;
+}
+
+
+/* =========================================================
+   CATEGORY
+========================================================= */
+
+.category {
+    display: inline-block;
+
+    padding: 8px 18px;
+
+    margin-bottom: 20px;
+
+    border-radius: 25px;
+
+    background: linear-gradient(
+        90deg,
+        #5c82e8,
+        #20cde4
+    );
+
+    color: #ffffff;
+
+    font-size: 14px;
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   CARD DESCRIPTION
+========================================================= */
+
+.machine-content > p {
+    color: #5c7488;
+
+    font-size: 17px;
+    line-height: 1.65;
+
+    min-height: 112px;
+
+    margin-bottom: 22px;
+}
+
+
+/* =========================================================
+   SHOW MORE BUTTON
+========================================================= */
+
+.show-more {
+    width: 100%;
+
+    padding: 13px 20px;
+
+    border: 1.5px solid #4e83df;
+
+    border-radius: 30px;
+
+    background: rgba(255, 255, 255, 0.65);
+
+    color: #3564aa;
+
+    font-size: 17px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition:
+        background 0.3s ease,
+        color 0.3s ease,
+        transform 0.2s ease;
+}
+
+.show-more:hover {
+    background: #4e83df;
+
+    color: #ffffff;
+
+    transform: translateY(-2px);
+}
+
+
+/* =========================================================
+   OLD INLINE DETAILS
+========================================================= */
+
+.machine-details-content {
+    display: none;
+}
+
+
+/* =========================================================
+   DETAILS OVERLAY
+========================================================= */
+
+.details-overlay {
+    position: fixed;
+
+    inset: 0;
+
+    width: 100%;
+    height: 100vh;
+
+    z-index: 9999;
+
+    display: none;
+
+    align-items: flex-start;
+    justify-content: center;
+
+    padding: 25px;
+
+    background: #ffffff;
+
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.details-overlay.active {
+    display: flex;
+}
+
+
+/* =========================================================
+   DETAILS MODAL
+========================================================= */
+
+.details-modal {
+    position: relative;
+
+    width: 96%;
+    max-width: 1700px;
+
+    height: calc(100vh - 50px);
+
+    display: grid;
+
+    grid-template-columns: 50% 50%;
+
+    overflow: hidden;
+
+    border-radius: 20px;
+
+    background: #ffffff;
+
+    border: 1px solid #dce8ee;
+
+    box-shadow:
+        0 15px 45px
+        rgba(60, 100, 120, 0.15);
+}
+
+
+/* =========================================================
+   LEFT IMAGE AREA
+========================================================= */
+
+.details-image {
+    width: 100%;
+    height: 100%;
+
+    padding: 25px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    background: #ffffff;
+
+    overflow: hidden;
+}
+
+
+/* COMPLETE IMAGE - NO CROPPING */
+
+.details-image img {
+    display: block;
+
+    width: 100%;
+    height: 100%;
+
+    max-width: 100%;
+    max-height: 100%;
+
+    object-fit: contain;
+    object-position: center;
+
+    background: #ffffff;
+
+    border-radius: 15px;
+}
+
+
+/* =========================================================
+   RIGHT DETAILS AREA
+========================================================= */
+
+.details-content {
+    width: 100%;
+    height: 100%;
+
+    padding: 45px 55px;
+
+    background: linear-gradient(
+        135deg,
+        #ffffff,
+        #f5fbfe
+    );
+
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+
+/* =========================================================
+   RIGHT SIDE SCROLLBAR
+========================================================= */
+
+.details-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.details-content::-webkit-scrollbar-track {
+    background: #edf5f8;
+
+    border-radius: 10px;
+}
+
+.details-content::-webkit-scrollbar-thumb {
+    background: #a4cbd7;
+
+    border-radius: 10px;
+}
+
+.details-content::-webkit-scrollbar-thumb:hover {
+    background: #6fa7bb;
+}
+
+
+/* =========================================================
+   MACHINE TITLE
+========================================================= */
+
+.details-content h1 {
+    font-size: 42px;
+
+    line-height: 1.2;
+
+    color: #1e4264;
+
+    margin-bottom: 20px;
+
+    padding-right: 60px;
+}
+
+
+/* =========================================================
+   DETAILS CATEGORY
+========================================================= */
+
+.details-content .category {
+    display: inline-block;
+
+    padding: 10px 25px;
+
+    margin-bottom: 60px;
+
+    border-radius: 30px;
+
+    background: linear-gradient(
+        90deg,
+        #5d7ff0,
+        #15d7e7
+    );
+
+    color: #ffffff;
+
+    font-size: 16px;
+
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   SPECIFICATIONS TITLE
+========================================================= */
+
+.details-content h2 {
+    color: #00cbdc;
+
+    font-size: 30px;
+
+    padding-bottom: 15px;
+
+    margin-bottom: 25px;
+
+    border-bottom: 2px solid #b7dce3;
+}
+
+
+/* =========================================================
+   SPECIFICATIONS
+========================================================= */
+
+.specifications {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 15px;
+
+    padding-bottom: 35px;
+}
+
+
+/* =========================================================
+   SPECIFICATION BOX
+========================================================= */
+
+.spec-box {
+    width: 100%;
+
+    min-height: 70px;
+
+    padding: 18px 20px;
+
+    display: grid;
+
+    grid-template-columns: 250px minmax(0, 1fr);
+
+    align-items: center;
+
+    gap: 20px;
+
+    background: linear-gradient(
+        135deg,
+        #f5f9fb,
+        #eaf4f8
+    );
+
+    border-left: 3px solid #00dce9;
+
+    border-radius: 10px;
+
+    box-shadow:
+        0 4px 12px
+        rgba(70, 120, 145, 0.06);
+}
+
+
+/* =========================================================
+   SPECIFICATION LABEL
+========================================================= */
+
+.spec-label {
+    color: #65727d;
+
+    font-size: 17px;
+
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   SPECIFICATION VALUE
+========================================================= */
+
+.spec-value {
+    color: #263f53;
+
+    font-size: 17px;
+
+    line-height: 1.5;
+
+    overflow-wrap: anywhere;
+}
+
+
+/* =========================================================
+   CLOSE BUTTON
+========================================================= */
+
+.close-button {
+    position: absolute;
+
+    top: 15px;
+    right: 15px;
+
+    z-index: 20;
+
+    width: 50px;
+    height: 50px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    border: 1px solid #d2dce2;
+
+    background: #ffffff;
+
+    color: #52616d;
+
+    font-size: 32px;
+
+    cursor: pointer;
+
+    transition:
+        background 0.25s ease,
+        color 0.25s ease,
+        transform 0.25s ease;
+}
+
+.close-button:hover {
+    background: #eaf6fa;
+
+    color: #168ca0;
+
+    transform: rotate(90deg);
+}
+
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 1100px) {
+
+    .machine-grid {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+    .details-modal {
+        width: 98%;
+
+        grid-template-columns:
+            50% 50%;
+    }
+
+    .details-content {
+        padding: 35px 30px;
+    }
+
+    .details-content h1 {
+        font-size: 34px;
+    }
+
+    .spec-box {
+        grid-template-columns:
+            180px minmax(0, 1fr);
+    }
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 700px) {
+
+    .machine-grid {
+        grid-template-columns: 1fr;
+
+        gap: 25px;
+    }
+
+    .page-header h1 {
+        font-size: 36px;
+    }
+
+    .machine-image {
+        height: 240px;
+    }
+
+    .details-overlay {
+        padding: 10px;
+
+        align-items: flex-start;
+    }
+
+    .details-modal {
+        width: 100%;
+
+        height: auto;
+
+        min-height: 0;
+
+        display: block;
+
+        overflow: visible;
+
+        border-radius: 16px;
+    }
+
+    .details-image {
+        width: 100%;
+
+        height: auto;
+
+        min-height: 280px;
+
+        padding: 15px;
+    }
+
+    .details-image img {
+        width: 100%;
+
+        height: auto;
+
+        max-height: none;
+
+        object-fit: contain;
+    }
+
+    .details-content {
+        width: 100%;
+
+        height: auto;
+
+        max-height: none;
+
+        overflow: visible;
+
+        padding: 30px 22px;
+    }
+
+    .details-content h1 {
+        font-size: 29px;
+
+        padding-right: 45px;
+    }
+
+    .details-content .category {
+        margin-bottom: 40px;
+    }
+
+    .details-content h2 {
+        font-size: 25px;
+    }
+
+    .spec-box {
+        grid-template-columns: 1fr;
+
+        gap: 6px;
+
+        padding: 15px 17px;
+    }
+
+    .spec-label {
+        font-size: 15px;
+    }
+
+    .spec-value {
+        font-size: 15px;
+    }
+
+    .close-button {
+        width: 45px;
+
+        height: 45px;
+
+        font-size: 28px;
+
+        top: 10px;
+
+        right: 10px;
+    }
+}
+
+
+/* =====================================================
+   PAGE LAYOUT
+===================================================== */
+
+.page-layout {
+    width: 100%;
+
+    min-height: 100vh;
+
+    display: flex;
+
+    align-items: flex-start;
+
+    /*
+       IMPORTANT:
+       Reserve space on the right for
+       the fixed navbar.
+    */
+    padding-right: calc(15% + 40px);
+}
+
+
+/* =====================================================
+   MAIN CONTENT
+===================================================== */
+
+.page-layout .member-content {
+    width: 100%;
+
+    min-width: 0;
+
+    padding: 30px 25px;
+}
+
+
+/* =====================================================
+   CONTAINER INSIDE CONTENT
+===================================================== */
+
+.page-layout .member-content .container {
+    width: 100%;
+
+    max-width: none;
+
+    margin: 0;
+}
+
+
+/* =====================================================
+   MACHINE GRID INSIDE CONTENT
+===================================================== */
+
+.page-layout .machine-grid {
+    width: 100%;
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, minmax(0, 1fr));
+
+    gap: 25px;
+}
+
+
+/* =====================================================
+   RIGHT NAVBAR
+===================================================== */
+
+.page-layout .navbar {
+    width: 12%;
+
+    height: calc(100vh - 40px);
+
+    position: fixed;
+
+    right: 20px;
+
+    top: 20px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: center;
+
+    align-items: center;
+
+    gap: 12px;
+
+    padding: 30px 15px;
+
+    background: linear-gradient(
+        180deg,
+        #d6e3f5,
+        #b9cce6
+    );
+
+    border-radius: 20px;
+
+    box-shadow:
+        0 8px 25px
+        rgba(0, 0, 0, 0.12);
+
+    z-index: 1000;
+}
+
+
+/* =====================================================
+   NAVBAR BUTTONS
+===================================================== */
+
+.page-layout .nav-button {
+    width: 90%;
+
+    padding: 12px 8px;
+
+    border-radius: 10px;
+
+    border: 1px solid
+        rgba(49, 91, 143, 0.3);
+
+    background:
+        rgba(255, 255, 255, 0.4);
+
+    color: #315b8f;
+
+    text-decoration: none;
+
+    text-align: center;
+
+    font-size: 15px;
+
+    font-weight: bold;
+
+    transition: 0.25s ease;
+}
+
+
+/* =====================================================
+   NAVBAR HOVER
+===================================================== */
+
+.page-layout .nav-button:hover {
+    background: white;
+
+    color: #0756c9;
+
+    transform: translateX(-3px);
+
+    box-shadow:
+        0 4px 10px
+        rgba(0, 0, 0, 0.1);
+}
+
+
+/* =====================================================
+   NAVBAR + CONTENT RESPONSIVE
+===================================================== */
+
+@media (max-width: 900px) {
+
+    .page-layout {
+
+        flex-direction: column;
+
+        padding-right: 0;
+    }
+
+    .page-layout .member-content {
+
+        width: 100%;
+    }
+
+    .page-layout .member-content .container {
+
+        width: 92%;
+
+        max-width: 1500px;
+
+        margin: 0 auto;
+    }
+
+    .page-layout .machine-grid {
+
+        grid-template-columns: 1fr;
+
+        gap: 25px;
+    }
+
+    .page-layout .navbar {
+
+        width: calc(100% - 30px);
+
+        height: auto;
+
+        min-height: auto;
+
+        position: relative;
+
+        top: auto;
+
+        right: auto;
+
+        margin: 15px;
+
+        padding: 25px 20px;
+
+        border-radius: 20px;
+    }
+
+    .page-layout .nav-button {
+
+        width: 90%;
+    }
+}
+
+
+/* =====================================================
+   VERY SMALL MOBILE
+===================================================== */
+
+@media (max-width: 450px) {
+
+    .details-image {
+
+        min-height: 240px;
+
+        padding: 12px;
+    }
+
+    .details-content {
+
+        padding: 25px 18px;
+    }
+
+    .details-content h1 {
+
+        font-size: 26px;
+    }
+
+    .show-more {
+
+        font-size: 16px;
+    }
+}
+/* =====================================================
+   EQUIPMENT AREA
+===================================================== */
+
+.page-layout .machine-section {
+    width: 100%;
+    padding-right: 0;
+    box-sizing: border-box;
+}
+
+.page-layout .machine-section .container {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+.page-layout .machine-grid {
+    width: 100%;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 25px;
+    box-sizing: border-box;
+}
+/* =====================================================
+   BIRD LAB HEADER
+===================================================== */
+
+.site-header {
+    position: fixed;
+    top: 15px;
+    left: 20px;
+
+    width: auto;
+    height: auto;
+
+    z-index: 10000;
+
+    display: flex;
+    align-items: center;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+
+    padding: 8px 12px;
+
+    text-decoration: none;
+
+    background: #eeeff2;
+
+    border-radius: 10px;
+
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
+}
+
+.brand-logo {
+    width: 50px;
+    height: auto;
+
+    display: block;
+
+    object-fit: contain;
+}
+
+
+/* Mobile */
+@media (max-width: 700px) {
+
+    .site-header {
+        top: 10px;
+        left: 12px;
+    }
+
+    .brand-logo {
+        width: 120px;
+    }
+}
+
+/* =====================================================
+   BIRD LAB HEADER
+===================================================== */
+
+.site-header {
+    position: fixed;
+    top: 0px;
+    left: 0px;
+
+    width: auto;
+    height: auto;
+
+    z-index: 10000;
+
+    display: flex;
+    align-items: center;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+
+    padding: 8px 12px;
+
+    text-decoration: none;
+
+    background: #0f39b6;
+
+    border-radius: 10px;
+
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
+}
+
+.brand-logo {
+    width: 50px;
+    height: auto;
+
+    display: block;
+
+    object-fit: contain;
+}
+
+
+/* Mobile */
+@media (max-width: 700px) {
+
+    .site-header {
+        top: 10px;
+        left: 12px;
+    }
+
+    .brand-logo {
+        width: 120px;
+    }
+}
+/* =====================================================
+   FORCE BIRDLAB LOGO TO TOP-LEFT CORNER
+===================================================== */
+
+html,
+body {
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.site-header {
+    position: fixed !important;
+
+    top: 0 !important;
+    left: 0 !important;
+    right: auto !important;
+    bottom: auto !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    width: auto !important;
+    height: auto !important;
+
+    z-index: 99999 !important;
+}
+
+.site-header .brand {
+    margin: 0 !important;
+
+    display: flex !important;
+    align-items: center !important;
+
+    padding: 8px 12px !important;
+
+    gap: 8px;
+
+    background: #17446C;
+
+    text-decoration: none;
+
+    border-radius: 0 0 12px 0;
+}
+
+.site-header .iitj-logo {
+    width: 50px !important;
+    height: 50px !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    display: block !important;
+
+    object-fit: contain;
+}
+
+.site-header .brand-text {
+    margin: 0 !important;
+    padding: 0 !important;
+
+    color: #f5f6f8;
+
+    font-size: 32px;
+    font-weight: 700;
+
+    letter-spacing: 3px;
+}

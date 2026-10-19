@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Laboratory Equipment</title>
+
+    <link rel="stylesheet" href="facilities.css">
+</head>
+
+
+<style>
+
+/* =====================================================
+   FOOTER
+===================================================== */
+
+.footer {
+    width: 100%;
+    min-height: 400px;
+
+    background: linear-gradient(
+        135deg,
+        #3a4155,
+        #657cda
+    );
+
+    color: white;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    padding: 70px 20px;
+
+    box-sizing: border-box;
+}
+
+.footer-content {
+    width: 900px;
+    max-width: 90%;
+
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+
+    gap: 100px;
+
+    align-items: start;
+}
+
+.footer-left h2 {
+    margin: 0 0 20px;
+    font-size: 42px;
+    color: white;
+}
+
+.footer-left h2 span {
+    color: #00d9ff;
+}
+
+.footer-left p {
+    max-width: 400px;
+
+    margin: 0 0 20px;
+
+    font-size: 17px;
+    line-height: 1.7;
+
+    color: white;
+}
+
+.git-link {
+    display: inline-block;
+
+    margin-bottom: 25px;
+
+    color: #00d9ff;
+
+    text-decoration: none;
+
+    font-size: 17px;
+}
+
+.social-links {
+    display: flex;
+    gap: 20px;
+}
+
+.social {
+    width: 55px;
+    height: 55px;
+
+    border: 1px solid white;
+    border-radius: 10px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    color: white;
+
+    text-decoration: none;
+
+    font-size: 22px;
+}
+
+.footer-right h2 {
+    margin: 0 0 30px;
+
+    font-size: 34px;
+
+    color: white;
+}
+
+.contact {
+    display: flex;
+
+    align-items: flex-start;
+
+    gap: 15px;
+
+    margin-bottom: 22px;
+}
+
+.contact span {
+    width: 30px;
+
+    font-size: 22px;
+}
+
+.contact p {
+    margin: 0;
+
+    font-size: 17px;
+    line-height: 1.5;
+
+    color: white;
+}
+
+</style>
+
+
+<body>
+
+
+<!-- =====================================================
+     LOGO
+===================================================== -->
+
+<header class="site-header">
+
+    <a href="indexlokesh.html" class="brand">
+
+        <img
+            src="iitjlogo.png"
+            alt="BIRDLab"
+            class="brand-logo"
+        >
+
+        <span class="brand-text">
+            BIRDLab
+        </span>
+
+    </a>
+
+</header>
+
+
+
+<!-- =====================================================
+     PAGE HEADER
+===================================================== -->
+
+<header class="page-header">
+
+    <div class="container">
+
+        <h1>
+            Laboratory Equipment
+        </h1>
+
+        <p>
+            Explore the machines and equipment available
+            in our laboratory.
+        </p>
+
+    </div>
+
+</header>
+
+
+
+<!-- =====================================================
+     PAGE LAYOUT
+===================================================== -->
+
+<div class="page-layout">
+
+
+    <!-- =================================================
+         LEFT CONTENT
+    ================================================== -->
+
+    <main class="member-content">
+
+
+        <!-- =================================================
+             MACHINE SECTION
+        ================================================== -->
+
+        <section class="machine-section">
+
+            <div class="container">
+
+
+                <!-- =================================================
+                     DYNAMIC MACHINE GRID
+
+                     IMPORTANT:
+                     JavaScript will create all equipment
+                     cards here from Google Sheet.
+                ================================================== -->
+
+                <div
+                    class="machine-grid"
+                    id="machineGrid"
+                ></div>
+
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+
+    <!-- =================================================
+         RIGHT FIXED NAVBAR
+    ================================================== -->
+
+    <nav class="navbar">
+
+        <a
+            href="indexlokesh.html"
+            class="nav-button"
+        >
+            Home
+        </a>
+
+        <a
+            href="index.html"
+            class="nav-button"
+        >
+            People
+        </a>
+
+        <a
+            href="research.html"
+            class="nav-button"
+        >
+            Research
+        </a>
+
+        <a
+            href="publications.html"
+            class="nav-button"
+        >
+            Publications
+        </a>
+
+        <a
+            href="lectures.html"
+            class="nav-button"
+        >
+            Lectures
+        </a>
+
+        <a
+            href="collabiration.html"
+            class="nav-button"
+        >
+            Collaboration
+        </a>
+
+        <a
+            href="facilities.html"
+            class="nav-button"
+        >
+            Facilities
+        </a>
+
+        <a
+            href="open-positions.html"
+            class="nav-button"
+        >
+            Open Positions
+        </a>
+
+        <a
+            href="events.html"
+            class="nav-button"
+        >
+            Events
+        </a>
+
+        <a
+            href="calendar.html"
+            class="nav-button"
+        >
+            Calender
+        </a>
+
+    </nav>
+
+</div>
+
+
+
+<!-- =====================================================
+     MACHINE DETAILS MODAL
+===================================================== -->
+
+<div
+    class="details-overlay"
+    id="detailsOverlay"
+>
+
+
+    <div class="details-modal">
+
+
+        <!-- CLOSE BUTTON -->
+
+        <button
+            class="close-button"
+            onclick="closeDetails()"
+        >
+            ×
+        </button>
+
+
+
+        <!-- LEFT SIDE - IMAGE -->
+
+        <div class="details-image">
+
+            <img
+                id="detailImage"
+                src=""
+                alt=""
+            >
+
+        </div>
+
+
+
+        <!-- RIGHT SIDE - DETAILS -->
+
+        <div class="details-content">
+
+            <h1 id="detailName"></h1>
+
+
+            <span
+                class="category"
+                id="detailCategory"
+            ></span>
+
+
+            <h2>
+                Specifications
+            </h2>
+
+
+            <div
+                class="specifications"
+                id="specifications"
+            >
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+  <a href="admin-equipment.html" >
+                admin-access
+            </a>
+
+<!-- =====================================================
+     FOOTER
+===================================================== -->
+
+<footer class="footer">
+
+    <div class="footer-content">
+
+
+        <!-- LEFT -->
+
+        <div class="footer-left">
+
+            <h2>
+                BIRD <span>Lab</span>
+            </h2>
+
+
+            <p>
+                Advancing bio-inspired robotics through innovative
+                research, nature-inspired design, and collaborative
+                partnerships.
+            </p>
+
+
+            <div class="social-links">
+
+                    <a href="https://www.linkedin.com/in/bhivraj-s-823528294" class="social" aria-label="LinkedIn">
+                        in
+                    </a>
+
+                    <a href="https://www.youtube.com/@bhivrajsuthar2234" class="social" aria-label="YouTube">
+                        ▶
+                    </a>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- RIGHT -->
+
+        <div class="footer-right">
+
+            <h2>
+                Contact Info
+            </h2>
+
+
+            <div class="contact">
+
+                <span>
+                    📍
+                </span>
+
+                <p>
+                    SAIDE, IIT Jodhpur Permanent Campus
+                </p>
+
+            </div>
+
+
+            <div class="contact">
+
+                <span>
+                    ✉
+                </span>
+
+                <p>
+                    info@birdlab.edu
+                </p>
+
+            </div>
+
+
+            <div class="contact">
+
+                <span>
+                    ☎
+                </span>
+
+                <p>
+                    +1 (555) 123-4567
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</footer>
+
+
+
+<!-- =====================================================
+     JAVASCRIPT
+===================================================== -->
+
+<script src="facilities.js"></script>
+
+
+</body>
+
+</html>
