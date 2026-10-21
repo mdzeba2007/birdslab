@@ -998,7 +998,8 @@
       abstract: "Book chapter providing design guidelines, mathematical frameworks, and clinical case studies for implementing TSAs in soft exosuits and upper-limb prosthetics.",
       doiUrl: "https://doi.org/10.1007/978-3-030-89123-4_11"
     },
-    {id: 63,
+    {
+      id: 63,
       title: "Actuation Systems in Reconfigurable Robotics: Evolution and Future Prospects",
       authors: "B Suthar, S Mukherjee",
       journal: "Advances in Mechanism and Machine Science, Springer, pp. 312-335",
