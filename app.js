@@ -26,7 +26,7 @@ function getField(data, possibleNames) {
 }
 
 // ========================================
-// UPDATE EXISTING FEATURED BHIVRAJ CARD
+// FEATURED BHIVRAJ PROFILE
 // ========================================
 
 function isBhivrajProfile(profile) {
@@ -61,11 +61,13 @@ function updateFeaturedProfile(profile) {
     const linkedin = getField(profile, ["LinkedIn Profile", "LinkedIn"]);
 
     const emailLink = document.getElementById("featuredEmail");
+
     if (emailLink && email) {
         emailLink.href = "mailto:" + email;
     }
 
     const linkedinLink = document.getElementById("featuredLinkedin");
+
     if (linkedinLink && linkedin) {
         if (/^https?:\/\//i.test(linkedin)) {
             linkedinLink.href = linkedin;
@@ -76,18 +78,88 @@ function updateFeaturedProfile(profile) {
 }
 
 // ========================================
+// CATEGORY MAPPING
+// ========================================
+
+function getCategory(education) {
+    const value = String(education)
+        .trim()
+        .toLowerCase()
+        .replace(/[^a-z0-9]/g, "");
+
+    if (
+        value.includes("postdoctoral") ||
+        value.includes("postdoc") ||
+        value.includes("scientist")
+    ) {
+        return "postDoctoralMembers";
+    }
+
+    if (
+        value.includes("phd") ||
+        value.includes("doctoral")
+    ) {
+        return "phdMembers";
+    }
+
+    if (value.includes("projectstaff")) {
+        return "projectStaffMembers";
+    }
+
+    if (
+        value.includes("masterstudent") ||
+        value === "masterstudents" ||
+        value === "mtech" ||
+        value.includes("mtechstudent")
+    ) {
+        return "masterMembers";
+    }
+
+    if (
+        value.includes("bachelorstudent") ||
+        value === "bachelorstudents" ||
+        value === "btech" ||
+        value.includes("btechstudent")
+    ) {
+        return "bachelorMembers";
+    }
+
+    return "otherMembers";
+}
+
+// ========================================
 // LOAD MEMBERS FROM GOOGLE SHEETS
 // ========================================
 
 async function loadGoogleProfiles() {
-    const container = document.getElementById("otherMembers");
+    const categoryContainers = {
+        postDoctoralMembers: "Post-Doctoral Fellows / Scientists",
+        phdMembers: "PhD Scholars",
+        projectStaffMembers: "Project Staff",
+        masterMembers: "Master Students",
+        bachelorMembers: "Bachelor Students",
+        otherMembers: "Other Members"
+    };
 
-    if (!container) {
-        console.error("otherMembers element not found");
+    const containers = {};
+
+    Object.entries(categoryContainers).forEach(([id, title]) => {
+        containers[id] = document.getElementById(id);
+    });
+
+    if (!containers.otherMembers) {
+        console.error(
+            "Member containers not found. Check the IDs in people.html."
+        );
         return;
     }
 
-    container.innerHTML = '<div class="no-members">Loading members...</div>';
+    Object.values(containers).forEach(container => {
+        if (container) {
+            container.innerHTML =
+                '<div class="no-members">Loading members...</div>';
+        }
+    });
 
     try {
         const response = await fetch(
@@ -99,6 +171,7 @@ async function loadGoogleProfiles() {
         }
 
         const result = await response.json();
+
         console.log("Google Sheets response:", result);
 
         let profiles = [];
@@ -108,7 +181,9 @@ async function loadGoogleProfiles() {
         } else if (Array.isArray(result.profiles)) {
             profiles = result.profiles;
         } else if (result.success === false) {
-            throw new Error(result.error || result.message || "Apps Script error");
+            throw new Error(
+                result.error || result.message || "Apps Script error"
+            );
         }
 
         profiles = profiles.filter(profile => {
@@ -116,53 +191,86 @@ async function loadGoogleProfiles() {
             return !status || status.toLowerCase() === "approved";
         });
 
-        // Update the existing featured card.
+        // Update the existing featured professor card.
         const featuredProfile = profiles.find(isBhivrajProfile);
 
         if (featuredProfile) {
             updateFeaturedProfile(featuredProfile);
         }
 
-        // Never create another card for the featured professor.
-        const otherProfiles = profiles.filter(
-            profile => !isBhivrajProfile(profile)
-        );
+        // Clear all category containers.
+        Object.values(containers).forEach(container => {
+            if (container) {
+                container.innerHTML = "";
+            }
+        });
 
-        container.innerHTML = "";
+        const counts = {};
 
-        if (otherProfiles.length === 0) {
-            container.innerHTML = `
-                <div class="no-members">
-                    No other members have joined yet.
-                </div>
-            `;
-            return;
-        }
+        Object.keys(categoryContainers).forEach(id => {
+            counts[id] = 0;
+        });
 
-        otherProfiles.forEach(profile => {
-            container.appendChild(createMemberCard(profile));
+        // Sort approved profiles into their categories.
+        profiles
+            .filter(profile => !isBhivrajProfile(profile))
+            .forEach(profile => {
+                const education = getField(profile, ["Education"]);
+                const categoryId = getCategory(education);
+
+                let container = containers[categoryId];
+
+                // If a category container is missing,
+                // place the profile under Other Members.
+                if (!container) {
+                    container = containers.otherMembers;
+                    counts.otherMembers++;
+                } else {
+                    counts[categoryId]++;
+                }
+
+                container.appendChild(createMemberCard(profile));
+            });
+
+        // Display a message when a category is empty.
+        Object.entries(containers).forEach(([id, container]) => {
+            if (container && counts[id] === 0) {
+                container.innerHTML = `
+                    <div class="no-members">
+                        No ${categoryContainers[id].toLowerCase()}
+                        have joined yet.
+                    </div>
+                `;
+            }
         });
 
     } catch (error) {
         console.error("Error loading Google Sheets profiles:", error);
 
-        container.innerHTML = `
-            <div class="no-members">
-                Unable to load member profiles. Please try again later.
-            </div>
-        `;
+        Object.values(containers).forEach(container => {
+            if (container) {
+                container.innerHTML = `
+                    <div class="no-members">
+                        Unable to load member profiles.
+                        Please try again later.
+                    </div>
+                `;
+            }
+        });
     }
 }
 
 // ========================================
-// CREATE OTHER MEMBER CARDS
+// CREATE MEMBER CARDS
 // ========================================
 
 function createMemberCard(data) {
     const card = document.createElement("div");
     card.className = "member-card";
 
-    const name = getField(data, ["Name", "Full Name"]) || "Member";
+    const name =
+        getField(data, ["Name", "Full Name"]) || "Member";
+
     const role = getField(data, ["Current Role", "Role"]);
     const affiliation = getField(data, ["Affiliation", "Organization"]);
     const about = getField(data, ["About", "Description"]);
@@ -189,8 +297,12 @@ function createMemberCard(data) {
 
         detailsHTML += `
             <div class="dynamic-detail">
-                <div class="dynamic-question">${escapeHTML(label)}</div>
-                <div class="dynamic-answer">${escapeHTML(value)}</div>
+                <div class="dynamic-question">
+                    ${escapeHTML(label)}
+                </div>
+                <div class="dynamic-answer">
+                    ${escapeHTML(value)}
+                </div>
             </div>
         `;
     }
@@ -243,9 +355,10 @@ function createMemberCard(data) {
                 ${
                     photoURL
                         ? `<div class="member-photo-container">
-                               <img src="${escapeAttribute(photoURL)}"
-                                    class="member-photo"
-                                    alt="${escapeAttribute(name)}">
+                               <img
+                                   src="${escapeAttribute(photoURL)}"
+                                   class="member-photo"
+                                   alt="${escapeAttribute(name)}">
                            </div>`
                         : `<div class="member-photo-placeholder">
                                Photo not available
@@ -278,8 +391,11 @@ function convertDriveURL(url) {
         url.match(/drive\.google\.com\/thumbnail\?id=([^&]+)/i);
 
     if (match) {
-        return "https://drive.google.com/thumbnail?id=" +
-            encodeURIComponent(match[1]) + "&sz=w800";
+        return (
+            "https://drive.google.com/thumbnail?id=" +
+            encodeURIComponent(match[1]) +
+            "&sz=w800"
+        );
     }
 
     return url;
