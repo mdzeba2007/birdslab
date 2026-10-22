@@ -1,431 +1,299 @@
 
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Member Directory</title>
+    <title>BIRD Lab | People</title>
     <link rel="stylesheet" href="styleprofile.css">
 </head>
-
 <body>
 
-    <!-- LOGO -->
-    <header class="site-header">
-        <a href="indexlokesh.html" class="brand">
-            <img src="iitjlogo.png" alt="BIRDLab" class="brand-logo">
-            <span class="brand-text">BIRDLab</span>
-        </a>
+<header class="site-header">
+    <a href="indexlokesh.html" class="brand">
+        <img src="iitjlogo.png" alt="BIRDLab" class="brand-logo">
+        <span class="brand-text">BIRDLab</span>
+    </a>
+</header>
+
+<div class="page-layout">
+<div class="member-content">
+
+    <header>
+        <h1>Lab Director</h1>
+        <p>Explore the members of our community</p>
     </header>
 
-    <!-- MAIN PAGE LAYOUT -->
-    <div class="page-layout">
+    <main>
+    <section class="members-section">
 
-        <!-- LEFT SIDE: CONTENT -->
-        <div class="member-content">
+        <!-- FEATURED PROFILE: EDITED THROUGH GOOGLE SHEETS -->
+        <div id="profiles">
+            <div class="featured-profile">
 
-            <header>
-                <h1>Lab Director</h1>
-                <p>Explore the members of our community</p>
-            </header>
+                <div class="featured-left">
+                    <div class="profile-image-container">
+                        <img
+                            id="featuredImage"
+                            src="Bhivrajsuthar.png"
+                            alt="Dr. Bhivraj Suthar"
+                            class="featured-image">
+                    </div>
 
-            <main>
-                <section class="members-section">
+                    <div class="profile-buttons">
+                        <a
+                            id="featuredLinkedin"
+                            href="https://www.linkedin.com/in/bhivraj-s-823528294"
+                            class="linkedin-button"
+                            target="_blank"
+                            rel="noopener noreferrer">
+                            LinkedIn
+                        </a>
 
-                    <!-- ====================================
-                         EXISTING FEATURED BHIVRAJ CARD
-                    ===================================== -->
+                        <a
+                            id="featuredEmail"
+                            href="mailto:"
+                            class="email-button">
+                            ✉ Email
+                        </a>
+                    </div>
+                </div>
 
-                    <div id="profiles">
-                        <div class="featured-profile">
+                <div class="featured-right">
+                    <div class="profile-heading">
+                        <h2 id="featuredName">Dr. Bhivraj Suthar</h2>
+                    </div>
 
-                            <!-- LEFT SIDE: PHOTO AND BUTTONS -->
-                            <div class="featured-left">
+                    <div class="profile-role" id="featuredRole">
+                        Professor
+                    </div>
 
-                                <div class="profile-image-container">
-                                    <img
-                                        src="Bhivrajsuthar.png"
-                                        alt="Bhivraj Suthar"
-                                        class="featured-image"
-                                    >
-                                </div>
+                    <div class="profile-organization" id="featuredOrganization">
+                        IIT Jodhpur
+                    </div>
 
-                                <div class="profile-buttons">
+                    <div class="profile-divider"></div>
 
-                                    <a
-                                        id="featuredLinkedin"
-                                        href="#"
-                                        class="linkedin-button"
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                    >
-                                        LinkedIn
-                                    </a>
+                    <div class="profile-section">
+                        <h3>About</h3>
+                        <p id="featuredAbout">
+                            Currently at IIT Jodhpur. Specializes in
+                            Bio-inspired Robotics and Applied Artificial
+                            Intelligence. Completed PhD from KOREATECH
+                            and KAIST, South Korea.
+                        </p>
+                    </div>
 
-                                    <a
-                                        id="featuredEmail"
-                                        href="mailto:"
-                                        class="email-button"
-                                    >
-                                        ✉ Email
-                                    </a>
+                    <div class="profile-section">
+                        <h3>Research Interests</h3>
+                        <span class="research-pill" id="featuredResearch">
+                            Bio-inspired Robotics and Applied Artificial Intelligence
+                        </span>
+                    </div>
 
-                                </div>
-                            </div>
-
-                            <!-- RIGHT SIDE: EDITABLE DETAILS -->
-                            <div class="featured-right">
-
-                                <div class="profile-heading">
-                                    <h2 id="featuredName">
-                                        Dr. Bhivraj Suthar
-                                    </h2>
-                                </div>
-
-                                <div
-                                    class="profile-role"
-                                    id="featuredRole"
-                                >
-                                    Professor
-                                </div>
-
-                                <div
-                                    class="profile-organization"
-                                    id="featuredOrganization"
-                                >
-                                    IIT Jodhpur
-                                </div>
-
-                                <div class="profile-divider"></div>
-
-                                <!-- ABOUT -->
-                                <div class="profile-section">
-                                    <h3>About</h3>
-
-                                    <p id="featuredAbout">
-                                        Currently at IIT Jodhpur.
-                                        Specializes in Bio-inspired Robotics
-                                        and Applied Artificial Intelligence.
-                                        Completed PhD from KOREATECH and KAIST,
-                                        South Korea.
-                                    </p>
-                                </div>
-
-                                <!-- RESEARCH INTERESTS -->
-                                <div class="profile-section">
-                                    <h3>Research Interests</h3>
-
-                                    <span
-                                        class="research-pill"
-                                        id="featuredResearch"
-                                    >
-                                        Bio-inspired Robotics and Applied
-                                        Artificial Intelligence
-                                    </span>
-                                </div>
-
-                                <!-- EDUCATION -->
-                                <div class="profile-section">
-                                    <h3>Education</h3>
-
-                                    <div class="education-box">
-                                        <strong>PhD</strong>
-
-                                        <span id="featuredEducation">
-                                            Ph.D. from KOREATECH and KAIST,
-                                            South Korea (2016 - 2020)
-                                        </span>
-                                    </div>
-                                </div>
-
-                            </div>
+                    <div class="profile-section">
+                        <h3>Education</h3>
+                        <div class="education-box">
+                            <strong id="featuredEducationDegree">PhD</strong>
+                            <span id="featuredEducation">
+                                Ph.D. from KOREATECH and KAIST,
+                                South Korea (2016 - 2020)
+                            </span>
                         </div>
                     </div>
-<body>
-<!-- MEMBER CATEGORIES FROM GOOGLE SHEETS -->
-
-<section class="category-section">
-    <h2 class="other-members-title">Post-Doctoral Fellows / Scientists</h2>
-    <div id="postDoctoralMembers" class="members-grid"></div>
-</section>
-
-<section class="category-section">
-    <h2 class="other-members-title">PhD Scholars</h2>
-    <div id="phdMembers" class="members-grid"></div>
-</section>
-
-<section class="category-section">
-    <h2 class="other-members-title">Project Staff</h2>
-    <div id="projectStaffMembers" class="members-grid"></div>
-</section>
-
-<section class="category-section">
-    <h2 class="other-members-title">Master Students</h2>
-    <div id="masterMembers" class="members-grid"></div>
-</section>
-
-<section class="category-section">
-    <h2 class="other-members-title">Bachelor Students</h2>
-    <div id="bachelorMembers" class="members-grid"></div>
-</section>
-
-<section class="category-section">
-    <h2 class="other-members-title">Other Members</h2>
-    <div id="otherMembers" class="members-grid"></div>
-</section>
-
-<section class="people-section">
-
-    <h1 class="section-title">
-        WEB MASTERS
-        <div class="title-line"></div>
-    </h1>
-
-    <div class="people-container">
-
-        <!-- Person 1 -->
-        <article class="person-card">
-
-            <div class="person-image">
-                <img src="zeba.jpeg"
-                     alt="Profile photo of Person One">
-            </div>
-
-            <div class="person-info">
-
-                <h2 class="person-name">ZEBA</h2>
-<br>
-
-                <p class="person-role">Interests: Web Developement</p>
-
-                <div class="research">
-                    <h3>Research Interests</h3>
-                    <p>
-                   Research:  BirdRobotics<br>
-                    Lab Website
-                    </p>
                 </div>
-
-                <div class="education">
-                    <strong>Education</strong>
-                    B.Tech in Computer Science<br>
-                   From IITJ (2025–2029)
-                </div>
-
             </div>
-        </article>
-
-        <!-- Person 2 -->
-        <article class="person-card">
-
-            <div class="person-image">
-                <img src="rani.jpeg"
-                     alt="Profile photo of Person Two">
-            </div>
-
-            <div class="person-info">
-
-                <h2 class="person-name">RANI</h2>
-<br>
-                <p class="person-role"> Interests: Web Developement</p>
-
-                <div class="research">
-                    <h3>Research Interests</h3>
-                    <p>
-                   Research:  BirdRobotics<br>
-                    Lab Website
-                    </p>
-                </div>
-
-                <div class="education">
-                    <strong>Education</strong>
-                     B.Tech <br>
-                   From IITJ(2025–2029)
-                </div>
-
-            </div>
-        </article>
-
-    </div>
-</section>
-                   
-
-                <!-- ====================================
-                     JOIN COMMUNITY / GOOGLE FORM
-                ===================================== -->
-
-                <section class="join-section">
-
-                    <h2>Want to Join Our Community?</h2>
-
-                    <p>
-                        Fill out the form to submit your profile
-                        and join our member directory.
-                    </p>
-
-                    <a
-                        href="https://forms.gle/z8jfXkFm7nnmx2tdA"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        class="form-button"
-                    >
-                        Submit Your Profile
-                    </a>
-
-                    <p>
-                        You will be redirected to Google Form.
-                    </p>
-
-                </section>
-
-                <!-- ====================================
-                     WEBSITE ADMINISTRATION
-                ===================================== -->
-
-                <section class="admin-access">
-
-                    <h3>Website Administration</h3>
-
-                    <a
-                        href="admin.html"
-                        class="admin-button"
-                    >
-                        Admin Access
-                    </a>
-
-                    <br>
-
-                    <a
-                        href="admin-profile.html"
-                        class="admin-button"
-                    >
-                        Admin Access for Google Sheets
-                    </a>
-
-                </section>
-
-                <!-- ====================================
-                     FOOTER
-                ===================================== -->
-
-                <footer class="footer">
-
-                    <div class="footer-content">
-
-                        <!-- FOOTER LEFT -->
-                        <div class="footer-left">
-
-                            <h2>
-                                BIRD<span>Lab</span>
-                            </h2>
-
-                            <p>
-                                Advancing bio-inspired robotics
-                                through innovative research,
-                                nature-inspired design, and
-                                collaborative partnerships.
-                            </p>
- <p>© 2026 BIRDLab, IIT Jodhpur. All rights reserved. Designed by IIT Jodhpur.</p>
- <br>
- 
-                            <div class="social-links">
-
-                              
-                    <a href="https://www.linkedin.com/in/bhivraj-s-823528294" class="social" aria-label="LinkedIn">
-                        in
-                    </a>
-
-                    <a href="www.youtube.com/@bhivrajsuthar2234" class="social" aria-label="YouTube">
-                        ▶
-                    </a>
-
-                            </div>
-                        </div>
-
-                        <!-- FOOTER RIGHT -->
-                        <div class="footer-right">
-
-                            <h2>Contact Info</h2>
-
-                            <div class="contact">
-                                <span>📍</span>
-                                <p>
-                                    SAIDE, IIT Jodhpur
-                                    Permanent Campus
-                                </p>
-                            </div>
-
-                            <div class="contact">
-                                <span>✉</span>
-                                <p>info@birdlab.edu</p>
-                            </div>
-
-                            <div class="contact">
-                                <span>☎</span>
-                                <p>+1 (555) 123-4567</p>
-                            </div>
-
-                        </div>
-
-                    </div>
-                </footer>
-
-            </main>
         </div>
 
-        <!-- ====================================
-             RIGHT SIDE NAVIGATION
-        ===================================== -->
+        <!-- AUTOMATIC MEMBER CATEGORIES -->
+        <section class="category-section">
+            <h2 class="other-members-title">Post-Doctoral Fellows / Scientists</h2>
+            <div id="postDoctoralMembers" class="members-grid">
+                <div class="no-members">Loading members...</div>
+            </div>
+        </section>
 
-        <nav class="navbar">
+        <section class="category-section">
+            <h2 class="other-members-title">PhD Scholars</h2>
+            <div id="phdMembers" class="members-grid">
+                <div class="no-members">Loading members...</div>
+            </div>
+        </section>
 
-            <a href="indexlokesh.html" class="nav-button">
-                Home
-            </a>
+        <section class="category-section">
+            <h2 class="other-members-title">Project Staff</h2>
+            <div id="projectStaffMembers" class="members-grid">
+                <div class="no-members">Loading members...</div>
+            </div>
+        </section>
 
-            <a href="index.html" class="nav-button">
-                People
-            </a>
+        <section class="category-section">
+            <h2 class="other-members-title">Master Students</h2>
+            <div id="masterMembers" class="members-grid">
+                <div class="no-members">Loading members...</div>
+            </div>
+        </section>
 
-            <a href="research.html" class="nav-button">
-                Research
-            </a>
+        <section class="category-section">
+            <h2 class="other-members-title">Bachelor Students</h2>
+            <div id="bachelorMembers" class="members-grid">
+                <div class="no-members">Loading members...</div>
+            </div>
+        </section>
 
-            <a href="publications.html" class="nav-button">
-                Publications
-            </a>
+        <section class="category-section">
+            <h2 class="other-members-title">Other Members</h2>
+            <div id="otherMembers" class="members-grid">
+                <div class="no-members">Loading members...</div>
+            </div>
+        </section>
 
-            <a href="lectures.html" class="nav-button">
-                Lectures
-            </a>
+        <!-- WEB MASTERS: ALWAYS AFTER ALL OTHER CATEGORIES -->
+        <section class="people-section">
+            <h2 class="section-title">
+                WEB MASTERS
+                <div class="title-line"></div>
+            </h2>
 
-            <a href="collabiration.html" class="nav-button">
-                Collaboration
-            </a>
+            <div class="people-container">
+                <article class="person-card">
+                    <div class="person-image">
+                        <img src="zeba.jpeg" alt="Zeba">
+                    </div>
 
-            <a href="facilities.html" class="nav-button">
-                Facilities
-            </a>
+                    <div class="person-info">
+                        <h2 class="person-name">ZEBA</h2>
+                        <p class="person-role">Interests: Web Development</p>
 
-            <a href="open-positions.html" class="nav-button">
-                Open Positions
-            </a>
+                        <div class="research">
+                            <h3>Research Interests</h3>
+                            <p>Research: BirdRobotics<br>Lab Website</p>
+                        </div>
 
-            <a href="events.html" class="nav-button">
-                Events
-            </a>
+                        <div class="education">
+                            <strong>Education</strong><br>
+                            B.Tech in Computer Science<br>
+                            From IITJ (2025–2029)
+                        </div>
+                    </div>
+                </article>
 
-            <a href="calendar.html" class="nav-button">
-                Calender
-            </a>
+                <article class="person-card">
+                    <div class="person-image">
+                        <img src="rani.jpeg" alt="Rani">
+                    </div>
 
-        </nav>
+                    <div class="person-info">
+                        <h2 class="person-name">RANI</h2>
+                        <p class="person-role">Interests: Web Development</p>
 
-    </div>
+                        <div class="research">
+                            <h3>Research Interests</h3>
+                            <p>Research: BirdRobotics<br>Lab Website</p>
+                        </div>
 
-    <!-- JAVASCRIPT -->
-    <script type="module" src="app.js"></script>
+                        <div class="education">
+                            <strong>Education</strong><br>
+                            B.Tech<br>
+                            From IITJ (2025–2029)
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </section>
 
+    </section>
+
+    <!-- JOIN COMMUNITY -->
+    <section class="join-section">
+        <h2>Want to Join Our Community?</h2>
+        <p>Fill out the form to submit your profile and join our member directory.</p>
+
+        <a
+            href="https://forms.gle/z8jfXkFm7nnmx2tdA"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="form-button">
+            Submit Your Profile
+        </a>
+
+        <p>You will be redirected to Google Form.</p>
+    </section>
+
+    <!-- ADMINISTRATION -->
+    <section class="admin-access">
+        <h3>Website Administration</h3>
+        <a href="admin.html" class="admin-button">Admin Access</a>
+        <br>
+        <a href="admin-profile.html" class="admin-button">
+            Admin Access for Google Sheets
+        </a>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-left">
+                <h2>BIRD<span>Lab</span></h2>
+                <p>
+                    Advancing bio-inspired robotics through innovative research,
+                    nature-inspired design, and collaborative partnerships.
+                </p>
+                <p>© 2026 BIRDLab, IIT Jodhpur. All rights reserved. Designed by IIT Jodhpur.</p>
+
+                <div class="social-links">
+                    <a
+                        href="https://www.linkedin.com/in/bhivraj-s-823528294"
+                        class="social"
+                        aria-label="LinkedIn">in</a>
+
+                    <a
+                        href="https://www.youtube.com/@bhivrajsuthar2234"
+                        class="social"
+                        aria-label="YouTube">▶</a>
+                </div>
+            </div>
+
+            <div class="footer-right">
+                <h2>Contact Info</h2>
+
+                <div class="contact">
+                    <span>📍</span>
+                    <p>SAIDE, IIT Jodhpur<br>Permanent Campus</p>
+                </div>
+
+                <div class="contact">
+                    <span>✉</span>
+                    <p>info@birdlab.edu</p>
+                </div>
+
+                <div class="contact">
+                    <span>☎</span>
+                    <p>+1 (555) 123-4567</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    </main>
+</div>
+
+<!-- RIGHT NAVIGATION -->
+<nav class="navbar">
+    <a href="indexlokesh.html" class="nav-button">Home</a>
+    <a href="index.html" class="nav-button">People</a>
+    <a href="research.html" class="nav-button">Research</a>
+    <a href="publications.html" class="nav-button">Publications</a>
+    <a href="lectures.html" class="nav-button">Lectures</a>
+    <a href="collabiration.html" class="nav-button">Collaboration</a>
+    <a href="facilities.html" class="nav-button">Facilities</a>
+    <a href="open-positions.html" class="nav-button">Open Positions</a>
+    <a href="events.html" class="nav-button">Events</a>
+    <a href="calendar.html" class="nav-button">Calendar</a>
+</nav>
+
+</div>
+
+<script type="module" src="app.js"></script>
 </body>
 </html>
