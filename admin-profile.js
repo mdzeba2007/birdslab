@@ -12,7 +12,7 @@ import {
 // ========================================
 
 const ADMIN_EMAILS = [
-    "mdzeba2007@gmail.com",
+     "bhivraj.iitd@gmail.com",
     "nextgenlab1234@gmail.com"
 ];
 
