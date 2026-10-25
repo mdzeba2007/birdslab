@@ -89,23 +89,61 @@
 
 
 
-                <!-- =================================================
-                     EVENTS GRID
-                     Events are loaded automatically from Google Sheet
-                ================================================== -->
+<!-- EVENT FILTERS -->
+<section class="event-filters" aria-label="Filter events">
 
-                <section
-                    class="events-grid"
-                    id="eventsGrid"
-                >
+    <div class="filter-group">
+        <label for="eventDate">Filter by date</label>
+        <input type="date" id="eventDate">
+    </div>
 
-                    <!-- Google Sheet events will appear here -->
+    <div class="filter-group">
+        <label for="eventYear">Filter by year</label>
+        <select id="eventYear">
+            <option value="all">All years</option>
+        </select>
+    </div>
 
-                </section>
- <a href="admin-events.html" >
-                admin-access
-            </a>
+    <div class="filter-group">
+        <label for="eventCategory">Filter by category</label>
+        <select id="eventCategory">
+            <option value="all">All categories</option>
+            <option value="conference">Conferences</option>
+            <option value="workshop">Workshops</option>
+            <option value="seminar">Seminars</option>
+            <option value="other">Other events & activities</option>
+        </select>
+    </div>
 
+    <button type="button" id="clearFilters" class="clear-filters">
+        Clear Filters
+    </button>
+
+</section>
+
+<!-- UPCOMING EVENTS -->
+<section class="event-section">
+    <h2 class="event-section-title">Upcoming Events</h2>
+    <p class="event-section-description">
+        Explore upcoming conferences, workshops, seminars, and activities.
+    </p>
+
+    <div class="events-grid" id="upcomingEventsGrid">
+        <p class="events-message">Loading upcoming events...</p>
+    </div>
+</section>
+
+<!-- PAST EVENTS -->
+<section class="event-section">
+    <h2 class="event-section-title">Past Events</h2>
+    <p class="event-section-description">
+        Explore previous events and activities organized by BIRD Lab.
+    </p>
+
+    <div class="events-grid" id="pastEventsGrid">
+        <p class="events-message">Loading past events...</p>
+    </div>
+</section>
 
             </main>
 
