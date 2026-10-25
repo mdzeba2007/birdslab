@@ -4,635 +4,50 @@
     box-sizing: border-box;
 }
 
+html,
 body {
-    font-family: Arial, sans-serif;
-    background: #f4f7f9;
-    min-height: 100vh;
-
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-/* Calendar box */
-.calendar-container {
-    width: 420px;
-    background: white;
-    padding: 25px;
-    border-radius: 15px;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
-}
-
-/* Month header */
-.calendar-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 25px;
-}
-
-.calendar-header h2 {
-    font-size: 24px;
-    color: #222;
-}
-
-/* Previous / Next buttons */
-.calendar-header button {
-    width: 40px;
-    height: 40px;
-
-    border: none;
-    border-radius: 50%;
-
-    background: #222;
-    color: white;
-
-    font-size: 20px;
-    cursor: pointer;
-}
-
-.calendar-header button:hover {
-    background: #444;
-}
-
-/* Weekdays */
-.weekdays {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-
-    text-align: center;
-    font-weight: bold;
-    color: #666;
-
-    margin-bottom: 10px;
-}
-
-/* Dates */
-.days {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 8px;
-}
-
-/* Each date */
-.days div {
-    height: 45px;
-
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    border-radius: 8px;
-    cursor: pointer;
-
-    transition: 0.2s;
-
-    position: relative;
-}
-
-.days div:hover {
-    background: #e8eef3;
-}
-
-/* Today's date */
-.today {
-    background: #222;
-    color: white;
-    font-weight: bold;
-}
-
-.today:hover {
-    background: #444 !important;
-}
-
-/* Event dot */
-.event-dot {
-    position: absolute;
-
-    bottom: 5px;
-
-    width: 7px;
-    height: 7px;
-
-    background: red;
-
-    border-radius: 50%;
-}
-
-/* Empty spaces */
-.empty {
-    cursor: default !important;
-}
-
-.empty:hover {
-    background: transparent !important;
-}
-
-/* Mobile */
-@media (max-width: 500px) {
-
-    .calendar-container {
-        width: 90%;
-        padding: 20px;
-    }
-
-    .days {
-        gap: 5px;
-    }
-
-    .days div {
-        height: 40px;
-    }
-
-    /* Event information */
-.event-info {
-    width: 420px;
-    background: white;
-    margin-top: 20px;
-    padding: 20px;
-    border-radius: 15px;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
-}
-
-.event-info h2 {
-    margin-bottom: 10px;
-}
-
-.event-info p {
-    margin: 8px 0;
-}
-
-.show-more {
-    margin-top: 12px;
-    padding: 8px 15px;
-    border: none;
-    border-radius: 8px;
-    background: #222;
-    color: white;
-    cursor: pointer;
-}
-
-.show-more:hover {
-    background: #444;
-}
-
-.date {
-    position: relative;
-}
-
-.event-dot {
-    position: absolute;
-    bottom: 5px;
-
-    width: 7px;
-    height: 7px;
-
-    background: red;
-    border-radius: 50%;
-}
-
-
-/* Event information */
-.event-info {
-    margin-top: 25px;
-    padding: 20px;
-
-    border-top: 1px solid #ddd;
-
-    text-align: left;
-}
-
-.event-info h3 {
-    margin-bottom: 10px;
-    font-size: 24px;
-}
-
-.event-info p {
-    margin: 8px 0;
-}
-
-#show-more {
-    margin-top: 12px;
-    padding: 10px 18px;
-
-    border: none;
-    border-radius: 8px;
-
-    background: #222;
-    color: white;
-
-    cursor: pointer;
-}
-}
-/* =========================================================
-   MAIN PAGE LAYOUT
-========================================================= */
-
-.page-layout {
     width: 100%;
     min-height: 100vh;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+                 Roboto, Helvetica, Arial, sans-serif;
+    background: #f4f7fa;
+    color: #1f2937;
 }
 
-/* =========================================================
-   MAIN CONTENT
-========================================================= */
-
-.main-content {
-    width: 100%;
-    min-width: 0;
-    box-sizing: border-box;
-    padding: 100px 30px 20px;
-}
-
-/* =========================================================
-   TOP FIXED NAVBAR
-========================================================= */
-
-.page-layout .navbar {
-    position: fixed !important;
-
-    top: 10px !important;
-    left: 180px !important;
-    right: 10px !important;
-
-    width: auto !important;
-    height: auto !important;
-    min-height: 0 !important;
-
-    margin: 0 !important;
-    padding: 12px 15px !important;
-
-    box-sizing: border-box;
-
-    display: flex !important;
-    flex-direction: row !important;
-
-    justify-content: center !important;
-    align-items: center !important;
-    flex-wrap: wrap !important;
-
-    gap: 8px !important;
-
-    background: linear-gradient(
-        90deg,
-        #a6b8d0,
-        #8da2c1
-    ) !important;
-
-    border-radius: 15px;
-    z-index: 9999;
-}
-
-/* =========================================================
-   NAV BUTTONS
-========================================================= */
-
-.page-layout .navbar .nav-button {
-    width: auto;
-    flex: 0 1 auto;
-
-    padding: 10px 14px;
-
-    box-sizing: border-box;
-    border-radius: 10px;
-
-    border: 1px solid rgba(255, 255, 255, 0.45);
-    background: rgba(255, 255, 255, 0.08);
-
-    color: white;
-    text-decoration: none;
-    text-align: center;
-
-    font-size: 14px;
-    font-weight: 700;
-
-    transition: all 0.25s ease;
-}
-
-/* Hover */
-
-.page-layout .navbar .nav-button:hover {
-    background: rgb(116, 142, 182);
-    color: #0756c9;
-    transform: translateY(-2px);
-}
-
-/* =========================================================
-   MOBILE RESPONSIVENESS
-========================================================= */
-
-@media (max-width: 768px) {
-    .page-layout .navbar {
-        top: 8px !important;
-        left: 8px !important;
-        right: 8px !important;
-
-        padding: 10px !important;
-        gap: 6px !important;
-    }
-
-    .page-layout .navbar .nav-button {
-        padding: 8px 10px;
-        font-size: 12px;
-    }
-
-    .main-content {
-        padding: 130px 12px 20px;
-    }
-}
-
-/* =========================================================
-   TABLET
-========================================================= */
-
-@media (max-width: 1000px) {
-
-    .main-content {
-        width: 100%;
-        padding-right: 0;
-    }
-
-    .page-layout .navbar {
-        position: relative !important;
-
-        top: auto !important;
-        right: auto !important;
-        left: auto !important;
-
-        width: calc(100% - 20px) !important;
-        height: auto !important;
-
-        min-height: auto !important;
-
-        margin: 20px 10px !important;
-
-        padding: 25px 20px !important;
-    }
-
-}
-
-
-/* =========================================================
-   MOBILE
-========================================================= */
-
-@media (max-width: 700px) {
-
-    .page-layout .navbar {
-        width: calc(100% - 20px) !important;
-
-        padding: 20px 15px !important;
-
-        gap: 10px !important;
-    }
-
-    .page-layout .navbar .nav-button {
-        width: 95%;
-
-        font-size: 14px;
-
-        padding: 12px 8px;
-    }
-
-}
-
-/* =====================================================
-   BIRD LAB HEADER
-===================================================== */
+/* =========================================
+   BIRDLAB LOGO - TOP LEFT
+========================================= */
 
 .site-header {
     position: fixed;
-    top: 0px;
-    left: 0px;
-
-    width: auto;
-    height: auto;
-
-    z-index: 10000;
-
-    display: flex;
-    align-items: center;
+    top: 0;
+    left: 0;
+    z-index: 10001;
+    margin: 0;
+    padding: 0;
 }
 
-.brand {
+.site-header .brand {
     display: flex;
     align-items: center;
-
+    gap: 8px;
     padding: 8px 12px;
-
-    text-decoration: none;
-
-    background: #0f39b6;
-
-    border-radius: 10px;
-
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
-}
-
-.brand-logo {
-    width: 50px;
-    height: auto;
-
-    display: block;
-
-    object-fit: contain;
-}
-
-
-/* Mobile */
-@media (max-width: 700px) {
-
-    .site-header {
-        top: 10px;
-        left: 12px;
-    }
-
-    .brand-logo {
-        width: 120px;
-    }
-}
-/* =====================================================
-   FORCE BIRDLAB LOGO TO TOP-LEFT CORNER
-===================================================== */
-
-html,
-body {
-    margin: 0 !important;
-    padding: 0 !important;
-}
-
-.site-header {
-    position: fixed !important;
-
-    top: 0 !important;
-    left: 0 !important;
-    right: auto !important;
-    bottom: auto !important;
-
-    margin: 0 !important;
-    padding: 0 !important;
-
-    width: auto !important;
-    height: auto !important;
-
-    z-index: 99999 !important;
-}
-
-.site-header .brand {
-    margin: 0 !important;
-
-    display: flex !important;
-    align-items: center !important;
-
-    padding: 8px 12px !important;
-
-    gap: 8px;
-
-    background: #17446C;
-
-    text-decoration: none;
-
+    background: #17446c;
     border-radius: 0 0 12px 0;
+    text-decoration: none;
+    box-shadow: 0 5px 14px rgba(0, 0, 0, 0.18);
 }
 
+.site-header .brand-logo,
 .site-header .iitj-logo {
-    width: 50px !important;
-    height: 50px !important;
-
-    margin: 0 !important;
-    padding: 0 !important;
-
-    display: block !important;
-
-    object-fit: contain;
-}
-
-.site-header .brand-text {
-    margin: 0 !important;
-    padding: 0 !important;
-
-    color: #f5f6f8;
-
-    font-size: 32px;
-    font-weight: 700;
-
-    letter-spacing: 3px;
-}
-```css
-/* =========================================
-   BODY AND PAGE
-========================================= */
-
-html,
-body {
-    margin: 0;
-    padding: 0;
-    min-height: 100vh;
-    width: 100%;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
-                 Roboto, Helvetica, Arial, sans-serif;
-    background: #f4f7fa;
-    box-sizing: border-box;
-}
-
-* {
-    box-sizing: border-box;
-}
-
-/* =========================================
-   BIRDLAB LOGO - TOP LEFT
-========================================= */
-
-.site-header {
-    position: fixed !important;
-    top: 0 !important;
-    left: 0 !important;
-    z-index: 10001 !important;
-    margin: 0 !important;
-    padding: 0 !important;
-}
-
-.site-header .brand {
-    display: flex !important;
-    align-items: center !important;
-    gap: 8px;
-    padding: 8px 12px !important;
-    background: #17446c !important;
-    border-radius: 0 0 12px 0;
-    text-decoration: none;
-    box-shadow: 0 5px 14px rgba(0, 0, 0, 0.18);
-}
-
-.site-header .iitj-logo,
-.site-header .brand-logo {
-    width: 50px !important;
-    height: 50px !important;
+    width: 50px;
+    height: 50px;
     object-fit: contain;
     display: block;
 }
 
 .site-header .brand-text {
-    color: #f5f8fc !important;
-    font-size: 32px;
-    font-weight: 700;
-    letter-spacing: 2px;
-    white-space: nowrap;
-}
-```css
-/* =========================================
-   BODY AND PAGE
-========================================= */
-
-html,
-body {
-    margin: 0;
-    padding: 0;
-    min-height: 100vh;
-    width: 100%;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
-                 Roboto, Helvetica, Arial, sans-serif;
-    background: #f4f7fa;
-    box-sizing: border-box;
-}
-
-* {
-    box-sizing: border-box;
-}
-
-/* =========================================
-   BIRDLAB LOGO - TOP LEFT
-========================================= */
-
-.site-header {
-    position: fixed !important;
-    top: 0 !important;
-    left: 0 !important;
-    z-index: 10001 !important;
-    margin: 0 !important;
-    padding: 0 !important;
-}
-
-.site-header .brand {
-    display: flex !important;
-    align-items: center !important;
-    gap: 8px;
-    padding: 8px 12px !important;
-    background: #17446c !important;
-    border-radius: 0 0 12px 0;
-    text-decoration: none;
-    box-shadow: 0 5px 14px rgba(0, 0, 0, 0.18);
-}
-
-.site-header .iitj-logo,
-.site-header .brand-logo {
-    width: 50px !important;
-    height: 50px !important;
-    object-fit: contain;
-    display: block;
-}
-
-.site-header .brand-text {
-    color: #f5f8fc !important;
+    color: #f5f8fc;
     font-size: 32px;
     font-weight: 700;
     letter-spacing: 2px;
@@ -717,53 +132,211 @@ body {
 }
 
 /* =========================================
-   CENTER THE CALENDAR BOX
+   CALENDAR PAGE LAYOUT
 ========================================= */
 
-.calendar-container,
-.calendar-wrapper,
-.calendar-card,
-.calendar-box,
-#calendar-container {
-    margin-left: auto;
-    margin-right: auto;
-}
-
-/* Main calendar card */
-.calendar-container,
-.calendar-wrapper,
-.calendar-card,
-.calendar-box {
-    width: min(92%, 650px);
-}
-
-/* Center the calendar in the available page area.
-   Adjust the selector if your calendar uses another
-   main container class. */
-
-body:has(.calendar-container),
-body:has(.calendar-wrapper),
-body:has(.calendar-card),
-body:has(.calendar-box) {
+.calendar-page {
     min-height: 100vh;
-}
-
-/* Calendar area */
-.calendar-container,
-.calendar-wrapper {
-    position: relative;
-    margin-top: 0;
-}
-
-/* If your calendar is the main content inside a wrapper */
-main,
-.main-content {
-    min-width: 0;
     width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 110px 20px 40px;
 }
 
 /* =========================================
-   RESPONSIVE NAVBAR AND CALENDAR
+   CALENDAR BOX
+========================================= */
+
+.calendar-container {
+    width: min(100%, 500px);
+    background: #ffffff;
+    padding: 25px;
+    border-radius: 18px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+}
+
+/* Month header */
+
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 25px;
+}
+
+.calendar-header h2 {
+    font-size: 24px;
+    color: #17446c;
+    text-align: center;
+}
+
+/* Previous / Next buttons */
+
+.calendar-header button {
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+
+    border: 1px solid #8abcf2;
+    border-radius: 50%;
+
+    background: #e4f2ff;
+    color: #2866a5;
+
+    font-size: 20px;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.calendar-header button:hover {
+    background: #c4e3ff;
+}
+
+/* Weekdays */
+
+.weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    text-align: center;
+    font-weight: 700;
+    color: #526b83;
+    margin-bottom: 10px;
+    gap: 4px;
+}
+
+/* Dates */
+
+.days {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 8px;
+}
+
+.days div {
+    min-width: 0;
+    height: 45px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    border-radius: 8px;
+    cursor: pointer;
+    position: relative;
+
+    transition: background 0.2s ease;
+}
+
+.days div:hover {
+    background: #e4f2ff;
+}
+
+/* Today's date */
+
+.days div.today {
+    background: #397fc1;
+    color: #ffffff;
+    font-weight: 700;
+}
+
+.days div.today:hover {
+    background: #2866a5;
+}
+
+/* Event dates */
+
+.days div.date {
+    position: relative;
+}
+
+/* Event dot */
+
+.event-dot {
+    position: absolute;
+    bottom: 5px;
+
+    width: 7px;
+    height: 7px;
+
+    background: #e5484d;
+    border-radius: 50%;
+}
+
+/* Empty dates */
+
+.days div.empty {
+    cursor: default;
+}
+
+.days div.empty:hover {
+    background: transparent;
+}
+
+/* =========================================
+   EVENT INFORMATION
+========================================= */
+
+.event-info {
+    width: min(100%, 500px);
+    margin-top: 20px;
+    padding: 22px;
+
+    background: #ffffff;
+    border: 1px solid #d7e5f1;
+    border-radius: 16px;
+
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+    text-align: left;
+}
+
+.event-info h2,
+.event-info h3 {
+    margin-bottom: 12px;
+    color: #17446c;
+    font-size: 23px;
+}
+
+.event-info p {
+    margin: 8px 0;
+    line-height: 1.6;
+    color: #526b83;
+}
+
+.show-more,
+#show-more {
+    margin-top: 12px;
+    padding: 10px 18px;
+
+    border: 1px solid #8abcf2;
+    border-radius: 10px;
+
+    background: #e4f2ff;
+    color: #2866a5;
+
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.show-more:hover,
+#show-more:hover {
+    background: #c4e3ff;
+}
+
+/* =========================================
+   OTHER PAGE CONTENT
+========================================= */
+
+.main-content {
+    width: 100%;
+    min-width: 0;
+    padding: 120px 25px 30px;
+}
+
+/* =========================================
+   TABLET
 ========================================= */
 
 @media (max-width: 1100px) {
@@ -780,15 +353,20 @@ main,
     }
 }
 
+/* =========================================
+   MOBILE
+========================================= */
+
 @media (max-width: 760px) {
     .site-header .brand {
-        padding: 6px 8px !important;
+        padding: 6px 8px;
+        gap: 6px;
     }
 
-    .site-header .iitj-logo,
-    .site-header .brand-logo {
-        width: 36px !important;
-        height: 36px !important;
+    .site-header .brand-logo,
+    .site-header .iitj-logo {
+        width: 36px;
+        height: 36px;
     }
 
     .site-header .brand-text {
@@ -804,6 +382,8 @@ main,
         padding: 8px !important;
         gap: 6px !important;
         border-radius: 13px !important;
+
+        justify-content: center !important;
     }
 
     .navbar .nav-button {
@@ -812,18 +392,38 @@ main,
         border-radius: 10px !important;
     }
 
-    main,
-    .main-content {
-        padding-top: 160px !important;
+    .calendar-page {
+        padding: 180px 12px 30px;
     }
 
-    .calendar-container,
-    .calendar-wrapper,
-    .calendar-card,
-    .calendar-box {
-        width: 94%;
+    .calendar-container {
+        padding: 20px 15px;
+    }
+
+    .calendar-header h2 {
+        font-size: 20px;
+    }
+
+    .days {
+        gap: 5px;
+    }
+
+    .days div {
+        height: 40px;
+    }
+
+    .event-info {
+        padding: 18px;
+    }
+
+    .main-content {
+        padding: 180px 12px 25px;
     }
 }
+
+/* =========================================
+   SMALL MOBILE
+========================================= */
 
 @media (max-width: 450px) {
     .site-header .brand-text {
@@ -837,5 +437,24 @@ main,
     .navbar .nav-button {
         padding: 7px 8px !important;
         font-size: 11px !important;
+    }
+
+    .calendar-page {
+        padding-top: 200px;
+    }
+
+    .calendar-container {
+        padding: 16px 10px;
+    }
+
+    .calendar-header button {
+        width: 34px;
+        height: 34px;
+        font-size: 18px;
+    }
+
+    .days div {
+        height: 36px;
+        font-size: 13px;
     }
 }
