@@ -224,89 +224,122 @@ body {
     cursor: pointer;
 }
 }
+/* =========================================================
+   MAIN PAGE LAYOUT
+========================================================= */
 
+.page-layout {
+    width: 100%;
+    min-height: 100vh;
+}
 
 /* =========================================================
-   RIGHT NAVBAR - FIXED
+   MAIN CONTENT
+========================================================= */
+
+.main-content {
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    padding: 100px 30px 20px;
+}
+
+/* =========================================================
+   TOP FIXED NAVBAR
 ========================================================= */
 
 .page-layout .navbar {
     position: fixed !important;
 
-    top: 20px !important;
+    top: 10px !important;
+    left: 180px !important;
     right: 10px !important;
-    left: auto !important;
 
-    width: calc(12% - 20px) !important;
-    height: calc(100vh - 40px) !important;
-
+    width: auto !important;
+    height: auto !important;
     min-height: 0 !important;
 
     margin: 0 !important;
-    padding: 30px 15px !important;
+    padding: 12px 15px !important;
 
     box-sizing: border-box;
 
     display: flex !important;
-    flex-direction: column !important;
+    flex-direction: row !important;
 
     justify-content: center !important;
     align-items: center !important;
+    flex-wrap: wrap !important;
 
-    gap: 12px !important;
+    gap: 8px !important;
 
     background: linear-gradient(
-        180deg,
-         #9ab3d6,
-        #b5c1d4
+        90deg,
+        #a6b8d0,
+        #8da2c1
     ) !important;
 
-    border-radius: 20px;
-
+    border-radius: 15px;
     z-index: 9999;
 }
-
 
 /* =========================================================
    NAV BUTTONS
 ========================================================= */
 
 .page-layout .navbar .nav-button {
-    width: 90%;
+    width: auto;
+    flex: 0 1 auto;
 
-    padding: 13px 8px;
+    padding: 10px 14px;
 
     box-sizing: border-box;
-
     border-radius: 10px;
 
     border: 1px solid rgba(255, 255, 255, 0.45);
-
     background: rgba(255, 255, 255, 0.08);
 
     color: white;
-
     text-decoration: none;
-
     text-align: center;
 
-    font-size: 15px;
-
+    font-size: 14px;
     font-weight: 700;
 
     transition: all 0.25s ease;
 }
 
-
 /* Hover */
+
 .page-layout .navbar .nav-button:hover {
-    background: white;
-
+    background: rgb(116, 142, 182);
     color: #0756c9;
-
-    transform: translateX(-3px);
+    transform: translateY(-2px);
 }
 
+/* =========================================================
+   MOBILE RESPONSIVENESS
+========================================================= */
+
+@media (max-width: 768px) {
+    .page-layout .navbar {
+        top: 8px !important;
+        left: 8px !important;
+        right: 8px !important;
+
+        padding: 10px !important;
+        gap: 6px !important;
+    }
+
+    .page-layout .navbar .nav-button {
+        padding: 8px 10px;
+        font-size: 12px;
+    }
+
+    .main-content {
+        padding: 130px 12px 20px;
+    }
+}
 
 /* =========================================================
    TABLET
@@ -484,4 +517,325 @@ body {
     font-weight: 700;
 
     letter-spacing: 3px;
+}
+```css
+/* =========================================
+   BODY AND PAGE
+========================================= */
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    width: 100%;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+                 Roboto, Helvetica, Arial, sans-serif;
+    background: #f4f7fa;
+    box-sizing: border-box;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+/* =========================================
+   BIRDLAB LOGO - TOP LEFT
+========================================= */
+
+.site-header {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    z-index: 10001 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.site-header .brand {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px;
+    padding: 8px 12px !important;
+    background: #17446c !important;
+    border-radius: 0 0 12px 0;
+    text-decoration: none;
+    box-shadow: 0 5px 14px rgba(0, 0, 0, 0.18);
+}
+
+.site-header .iitj-logo,
+.site-header .brand-logo {
+    width: 50px !important;
+    height: 50px !important;
+    object-fit: contain;
+    display: block;
+}
+
+.site-header .brand-text {
+    color: #f5f8fc !important;
+    font-size: 32px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    white-space: nowrap;
+}
+```css
+/* =========================================
+   BODY AND PAGE
+========================================= */
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    width: 100%;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+                 Roboto, Helvetica, Arial, sans-serif;
+    background: #f4f7fa;
+    box-sizing: border-box;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+/* =========================================
+   BIRDLAB LOGO - TOP LEFT
+========================================= */
+
+.site-header {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    z-index: 10001 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.site-header .brand {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px;
+    padding: 8px 12px !important;
+    background: #17446c !important;
+    border-radius: 0 0 12px 0;
+    text-decoration: none;
+    box-shadow: 0 5px 14px rgba(0, 0, 0, 0.18);
+}
+
+.site-header .iitj-logo,
+.site-header .brand-logo {
+    width: 50px !important;
+    height: 50px !important;
+    object-fit: contain;
+    display: block;
+}
+
+.site-header .brand-text {
+    color: #f5f8fc !important;
+    font-size: 32px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    white-space: nowrap;
+}
+
+/* =========================================
+   FIXED TOP NAVBAR
+========================================= */
+
+.navbar {
+    position: fixed !important;
+    top: 15px !important;
+    left: 300px !important;
+    right: 15px !important;
+
+    width: auto !important;
+    height: auto !important;
+    min-height: 0 !important;
+
+    margin: 0 !important;
+    padding: 10px 14px !important;
+
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    justify-content: center !important;
+    align-items: center !important;
+
+    gap: 10px !important;
+
+    background: linear-gradient(
+        90deg,
+        #dcecf8,
+        #c4ddf2
+    ) !important;
+
+    border: 1px solid #a9d0f3 !important;
+    border-radius: 18px !important;
+
+    box-shadow: 0 5px 16px rgba(40, 100, 150, 0.10);
+    z-index: 10000 !important;
+}
+
+/* =========================================
+   NAVBAR BUTTONS
+========================================= */
+
+.navbar .nav-button {
+    flex: 0 1 auto !important;
+    width: auto !important;
+
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    padding: 10px 18px !important;
+
+    background: #ffffff !important;
+    color: #3978bd !important;
+
+    border: 1px solid #8abcf2 !important;
+    border-radius: 14px !important;
+
+    text-decoration: none !important;
+    text-align: center;
+
+    font-size: 14px !important;
+    font-weight: 700 !important;
+    white-space: nowrap;
+
+    transition: background 0.2s ease,
+                color 0.2s ease,
+                transform 0.2s ease;
+}
+
+.navbar .nav-button:hover {
+    background: #dff2ff !important;
+    color: #174f8a !important;
+    border-color: #5599e8 !important;
+    transform: translateY(-1px);
+}
+
+/* =========================================
+   CENTER THE CALENDAR BOX
+========================================= */
+
+.calendar-container,
+.calendar-wrapper,
+.calendar-card,
+.calendar-box,
+#calendar-container {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Main calendar card */
+.calendar-container,
+.calendar-wrapper,
+.calendar-card,
+.calendar-box {
+    width: min(92%, 650px);
+}
+
+/* Center the calendar in the available page area.
+   Adjust the selector if your calendar uses another
+   main container class. */
+
+body:has(.calendar-container),
+body:has(.calendar-wrapper),
+body:has(.calendar-card),
+body:has(.calendar-box) {
+    min-height: 100vh;
+}
+
+/* Calendar area */
+.calendar-container,
+.calendar-wrapper {
+    position: relative;
+    margin-top: 0;
+}
+
+/* If your calendar is the main content inside a wrapper */
+main,
+.main-content {
+    min-width: 0;
+    width: 100%;
+}
+
+/* =========================================
+   RESPONSIVE NAVBAR AND CALENDAR
+========================================= */
+
+@media (max-width: 1100px) {
+    .navbar {
+        left: 270px !important;
+        right: 10px !important;
+        gap: 7px !important;
+        padding: 9px !important;
+    }
+
+    .navbar .nav-button {
+        padding: 9px 12px !important;
+        font-size: 13px !important;
+    }
+}
+
+@media (max-width: 760px) {
+    .site-header .brand {
+        padding: 6px 8px !important;
+    }
+
+    .site-header .iitj-logo,
+    .site-header .brand-logo {
+        width: 36px !important;
+        height: 36px !important;
+    }
+
+    .site-header .brand-text {
+        font-size: 20px;
+        letter-spacing: 1px;
+    }
+
+    .navbar {
+        top: 82px !important;
+        left: 8px !important;
+        right: 8px !important;
+
+        padding: 8px !important;
+        gap: 6px !important;
+        border-radius: 13px !important;
+    }
+
+    .navbar .nav-button {
+        padding: 8px 10px !important;
+        font-size: 12px !important;
+        border-radius: 10px !important;
+    }
+
+    main,
+    .main-content {
+        padding-top: 160px !important;
+    }
+
+    .calendar-container,
+    .calendar-wrapper,
+    .calendar-card,
+    .calendar-box {
+        width: 94%;
+    }
+}
+
+@media (max-width: 450px) {
+    .site-header .brand-text {
+        font-size: 17px;
+    }
+
+    .navbar {
+        gap: 5px !important;
+    }
+
+    .navbar .nav-button {
+        padding: 7px 8px !important;
+        font-size: 11px !important;
+    }
 }

@@ -1087,112 +1087,122 @@ body {
   }
 
 }
-
 /* =========================================================
-   RIGHT FIXED NAVBAR
+   MAIN PAGE LAYOUT
 ========================================================= */
 
-/* Main page layout */
 .page-layout {
     width: 100%;
     min-height: 100vh;
 }
 
-
 /* =========================================================
-   MAIN CONTENT - 80%
+   MAIN CONTENT
 ========================================================= */
 
 .main-content {
-    width: 85%;
+    width: 100%;
     min-width: 0;
     box-sizing: border-box;
-    padding-right: 20px;
+    padding: 100px 30px 20px;
 }
 
-
 /* =========================================================
-   RIGHT NAVBAR - FIXED
+   TOP FIXED NAVBAR
 ========================================================= */
 
 .page-layout .navbar {
     position: fixed !important;
 
-    top: 20px !important;
+    top: 10px !important;
+    left: 180px !important;
     right: 10px !important;
-    left: auto !important;
 
-    width: calc(15% - 20px) !important;
-    height: calc(100vh - 40px) !important;
-
+    width: auto !important;
+    height: auto !important;
     min-height: 0 !important;
 
     margin: 0 !important;
-    padding: 30px 15px !important;
+    padding: 12px 15px !important;
 
     box-sizing: border-box;
 
     display: flex !important;
-    flex-direction: column !important;
+    flex-direction: row !important;
 
     justify-content: center !important;
     align-items: center !important;
+    flex-wrap: wrap !important;
 
-    gap: 12px !important;
+    gap: 8px !important;
 
     background: linear-gradient(
-        180deg,
+        90deg,
         #a6b8d0,
         #8da2c1
     ) !important;
 
-    border-radius: 20px;
-
+    border-radius: 15px;
     z-index: 9999;
 }
-
 
 /* =========================================================
    NAV BUTTONS
 ========================================================= */
 
 .page-layout .navbar .nav-button {
-    width: 90%;
+    width: auto;
+    flex: 0 1 auto;
 
-    padding: 13px 8px;
+    padding: 10px 14px;
 
     box-sizing: border-box;
-
     border-radius: 10px;
 
-    border: 1px solid rgba(93, 82, 82, 0.45);
-
+    border: 1px solid rgba(255, 255, 255, 0.45);
     background: rgba(255, 255, 255, 0.08);
 
     color: white;
-
     text-decoration: none;
-
     text-align: center;
 
-    font-size: 15px;
-
+    font-size: 14px;
     font-weight: 700;
 
     transition: all 0.25s ease;
 }
 
-
 /* Hover */
+
 .page-layout .navbar .nav-button:hover {
     background: rgb(116, 142, 182);
-
     color: #0756c9;
-
-    transform: translateX(-3px);
+    transform: translateY(-2px);
 }
 
+/* =========================================================
+   MOBILE RESPONSIVENESS
+========================================================= */
 
+@media (max-width: 768px) {
+    .page-layout .navbar {
+        top: 8px !important;
+        left: 8px !important;
+        right: 8px !important;
+
+        padding: 10px !important;
+        gap: 6px !important;
+    }
+
+    .page-layout .navbar .nav-button {
+        padding: 8px 10px;
+        font-size: 12px;
+    }
+
+    .main-content {
+        padding: 130px 12px 20px;
+    }
+}
 /* =========================================================
    TABLET
 ========================================================= */
@@ -1424,4 +1434,114 @@ body {
     font-weight: 700;
 
     letter-spacing: 3px;
+}
+
+/* =====================================================
+   RESEARCH PAGE - FIXED TOP NAVBAR
+   ===================================================== */
+
+
+/* ---------- NAVBAR ---------- */
+.page-layout .navbar,
+.navbar {
+    position: fixed !important;
+    top: 16px !important;
+    left: 205px !important;
+    right: 16px !important;
+    z-index: 10000;
+
+    width: auto !important;
+    min-height: 0 !important;
+    height: auto !important;
+    margin: 0 !important;
+    padding: 8px 14px !important;
+
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: space-evenly !important;
+    flex-wrap: nowrap !important;
+    gap: 10px !important;
+
+    background: linear-gradient(
+        90deg,
+        #c5dcf5,
+        #b4d2f1,
+        #c5dcf5
+    ) !important;
+
+    border: 1px solid #8ab7e8;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(65, 115, 175, 0.12);
+}
+
+/* Navbar buttons */
+.page-layout .navbar .nav-button,
+.navbar .nav-button {
+    flex: 1 1 auto !important;
+    min-width: 0;
+    width: auto;
+
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+
+    padding: 10px 13px !important;
+
+    border: 1.5px solid #6ba3df !important;
+    border-radius: 10px;
+
+    background: #ffffff !important;
+    color: #477db8 !important;
+
+    font-family: inherit;
+    font-size: 14px !important;
+    font-weight: 700;
+    line-height: 1.2;
+
+    text-align: center;
+    text-decoration: none;
+    white-space: nowrap;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.page-layout .navbar .nav-button:hover,
+.navbar .nav-button:hover {
+    background: #e0efff !important;
+    color: #245a93 !important;
+    border-color: #4289d0 !important;
+    transform: translateY(-1px);
+}
+/* Tablet and mobile */
+@media (max-width: 1100px) {
+    body .navbar {
+        left: 180px !important;
+        right: 8px !important;
+        flex-wrap: wrap !important;
+        gap: 6px !important;
+    }
+}
+
+@media (max-width: 700px) {
+    body .navbar {
+        top: 75px !important;
+        left: 8px !important;
+        right: 8px !important;
+        justify-content: center !important;
+        flex-wrap: wrap !important;
+    }
+
+    body .navbar .nav-button {
+        padding: 7px 9px !important;
+        font-size: 12px !important;
+    }
+
+    body .header {
+        padding-top: 150px !important;
+    }
 }

@@ -728,94 +728,122 @@ body {
     }
 }
 
-
 /* =========================================================
-   RIGHT FIXED NAVBAR
+   MAIN PAGE LAYOUT
 ========================================================= */
 
-.navbar {
+.page-layout {
+    width: 100%;
+    min-height: 100vh;
+}
+
+/* =========================================================
+   MAIN CONTENT
+========================================================= */
+
+.main-content {
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    padding: 100px 30px 20px;
+}
+
+/* =========================================================
+   TOP FIXED NAVBAR
+========================================================= */
+
+.page-layout .navbar {
     position: fixed !important;
 
-    top: 20px !important;
-    right: 20px !important;
+    top: 10px !important;
+    left: 180px !important;
+    right: 10px !important;
 
-    width: 12% !important;
-    height: calc(100vh - 40px) !important;
+    width: auto !important;
+    height: auto !important;
+    min-height: 0 !important;
+
+    margin: 0 !important;
+    padding: 12px 15px !important;
+
+    box-sizing: border-box;
 
     display: flex !important;
-
-    flex-direction: column !important;
+    flex-direction: row !important;
 
     justify-content: center !important;
-
     align-items: center !important;
+    flex-wrap: wrap !important;
 
-    gap: 12px !important;
-
-    padding: 30px 15px !important;
+    gap: 8px !important;
 
     background: linear-gradient(
-        180deg,
-        #d6e3f5,
-        #b9cce6
+        90deg,
+        #a6b8d0,
+        #8da2c1
     ) !important;
 
-    border-radius: 20px !important;
-
-    box-shadow:
-        0 8px 25px rgba(0, 0, 0, 0.12) !important;
-
-    z-index: 99999 !important;
+    border-radius: 15px;
+    z-index: 9999;
 }
-
 
 /* =========================================================
-   NAVBAR BUTTONS
+   NAV BUTTONS
 ========================================================= */
 
-.navbar .nav-button {
-    width: 90% !important;
+.page-layout .navbar .nav-button {
+    width: auto;
+    flex: 0 1 auto;
 
-    padding: 12px 8px !important;
+    padding: 10px 14px;
 
-    border-radius: 10px !important;
+    box-sizing: border-box;
+    border-radius: 10px;
 
-    border: 1px solid rgba(49, 91, 143, 0.3) !important;
+    border: 1px solid rgba(255, 255, 255, 0.45);
+    background: rgba(255, 255, 255, 0.08);
 
-    background: rgba(255, 255, 255, 0.4) !important;
+    color: white;
+    text-decoration: none;
+    text-align: center;
 
-    color: #315b8f !important;
+    font-size: 14px;
+    font-weight: 700;
 
-    text-decoration: none !important;
-
-    text-align: center !important;
-
-    font-size: 15px !important;
-
-    font-weight: bold !important;
-
-    transition: 0.25s ease !important;
-
-    box-sizing: border-box !important;
+    transition: all 0.25s ease;
 }
 
+/* Hover */
+
+.page-layout .navbar .nav-button:hover {
+    background: rgb(116, 142, 182);
+    color: #0756c9;
+    transform: translateY(-2px);
+}
 
 /* =========================================================
-   NAVBAR HOVER
+   MOBILE RESPONSIVENESS
 ========================================================= */
 
-.navbar .nav-button:hover {
-    background: white !important;
+@media (max-width: 768px) {
+    .page-layout .navbar {
+        top: 8px !important;
+        left: 8px !important;
+        right: 8px !important;
 
-    color: #0756c9 !important;
+        padding: 10px !important;
+        gap: 6px !important;
+    }
 
-    transform: translateX(-3px) !important;
+    .page-layout .navbar .nav-button {
+        padding: 8px 10px;
+        font-size: 12px;
+    }
 
-    box-shadow:
-        0 4px 10px rgba(0, 0, 0, 0.1) !important;
+    .main-content {
+        padding: 130px 12px 20px;
+    }
 }
-
-
 /* =========================================================
    TABLET NAVBAR
 ========================================================= */
@@ -1151,4 +1179,234 @@ body {
 .admin-btn:hover {
     background-color: #eaeef2;
     color: #0250ae;
+}
+
+/* =====================================================
+   FIXED TOP NAVBAR — OPEN POSITIONS PAGE
+   Same BIRDLab colours and smaller navbar
+===================================================== */
+
+body .navbar {
+    position: fixed !important;
+
+    top: 8px !important;
+    left: 290px !important;
+    right: 10px !important;
+
+    width: auto !important;
+    height: auto !important;
+    min-height: 0 !important;
+
+    margin: 0 !important;
+    padding: 7px 10px !important;
+
+    display: flex !important;
+    flex-direction: row !important;
+
+    align-items: center !important;
+    justify-content: space-between !important;
+    flex-wrap: nowrap !important;
+
+    gap: 7px !important;
+
+    background: linear-gradient(
+        90deg,
+        #c5dcf5,
+        #b4d2f1,
+        #c5dcf5
+    ) !important;
+
+    border: 1px solid #8ab7e8 !important;
+    border-radius: 15px !important;
+
+    box-shadow: 0 4px 15px rgba(65, 115, 175, 0.12);
+
+    z-index: 100000 !important;
+    box-sizing: border-box !important;
+}
+
+/* NAVBAR BUTTONS */
+
+body .navbar .nav-button {
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+    width: auto !important;
+
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    padding: 9px 8px !important;
+
+    background: #ffffff !important;
+    color: #477db8 !important;
+
+    border: 1.5px solid #6ba3df !important;
+    border-radius: 10px !important;
+
+    font-family: inherit !important;
+    font-size: 13px !important;
+    font-weight: 700 !important;
+    line-height: 1.2 !important;
+
+    text-decoration: none !important;
+    text-align: center !important;
+    white-space: nowrap !important;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.2s ease;
+}
+
+/* HOVER */
+
+body .navbar .nav-button:hover {
+    background: #e0efff !important;
+    color: #245a93 !important;
+    border-color: #4289d0 !important;
+
+    transform: translateY(-1px);
+}
+
+/* BIRDLAB LOGO — KEEP AT TOP LEFT */
+
+body .site-header {
+    position: fixed !important;
+
+    top: 0 !important;
+    left: 0 !important;
+
+    width: 280px !important;
+    height: auto !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    z-index: 100001 !important;
+}
+
+body .site-header .brand {
+    display: flex !important;
+    align-items: center !important;
+
+    gap: 8px !important;
+    padding: 8px 12px !important;
+
+    background: #17446c !important;
+    border-radius: 0 0 12px 0 !important;
+}
+
+body .site-header .iitj-logo,
+body .site-header .brand-logo {
+    width: 50px !important;
+    height: 50px !important;
+
+    object-fit: contain !important;
+}
+
+body .site-header .brand-text {
+    color: #f5f6f8 !important;
+
+    font-size: 32px !important;
+    font-weight: 700 !important;
+    letter-spacing: 3px !important;
+}
+
+/* CONTENT — KEEP CLEAR OF FIXED NAVBAR */
+
+body {
+    padding-top: 155px !important;
+}
+
+/* ADMIN BUTTONS — KEEP BELOW THE MAIN CARD */
+
+body .admin-links {
+    position: relative;
+    z-index: 1;
+
+    margin: 25px auto !important;
+}
+
+/* TABLET */
+
+@media (max-width: 1150px) {
+    body .navbar {
+        left: 8px !important;
+        right: 8px !important;
+
+        top: 75px !important;
+
+        flex-wrap: wrap !important;
+        justify-content: center !important;
+
+        gap: 6px !important;
+    }
+
+    body {
+        padding-top: 175px !important;
+    }
+
+    body .navbar .nav-button {
+        flex: 0 1 auto !important;
+        padding: 8px 10px !important;
+        font-size: 12px !important;
+    }
+}
+
+/* MOBILE */
+
+@media (max-width: 700px) {
+    body .site-header {
+        width: auto !important;
+    }
+
+    body .site-header .brand {
+        padding: 6px 9px !important;
+        gap: 6px !important;
+    }
+
+    body .site-header .brand-logo,
+    body .site-header .iitj-logo {
+        width: 40px !important;
+        height: 40px !important;
+    }
+
+    body .site-header .brand-text {
+        font-size: 23px !important;
+        letter-spacing: 2px !important;
+    }
+
+    body .navbar {
+        top: 60px !important;
+        left: 8px !important;
+        right: 8px !important;
+
+        padding: 8px !important;
+        gap: 6px !important;
+
+        flex-wrap: wrap !important;
+        justify-content: center !important;
+    }
+
+    body .navbar .nav-button {
+        flex: 0 1 auto !important;
+
+        padding: 7px 9px !important;
+        font-size: 11px !important;
+    }
+
+    body {
+        padding: 145px 12px 15px !important;
+    }
+
+    body .card {
+        padding: 22px !important;
+    }
+
+    body .footer {
+        padding: 40px 20px !important;
+        min-height: auto !important;
+    }
 }
