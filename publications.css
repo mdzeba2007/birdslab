@@ -64,57 +64,73 @@ html, body {
 /* =====================================================
    PAGE LAYOUT & RIGHT NAVBAR
 ===================================================== */
-.page-layout {
-  width: 100%;
-}
 
-.main-content {
-  width: 100%;
-  box-sizing: border-box;
-  padding-right: calc(12% + 20px);
-}
-
+/* Top navigation bar */
 .page-layout .navbar {
-  position: fixed !important;
-  top: 20px !important;
-  right: 10px !important;
-  left: auto !important;
-  width: calc(12% - 20px) !important;
-  height: calc(100vh - 40px) !important;
-  min-height: 0 !important;
-  margin: 0 !important;
-  padding: 30px 15px !important;
-  box-sizing: border-box;
-  display: flex !important;
-  flex-direction: column !important;
-  justify-content: center !important;
-  align-items: center !important;
-  gap: 12px !important;
-  background: linear-gradient(180deg, #9ab3d6, #b5c1d4) !important;
-  border-radius: 20px;
-  z-index: 9999;
+    position: fixed;
+    top: 7px;
+    left: 225px;
+    right: 10px;
+    width: auto;
+    min-height: 50px;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+
+    padding: 8px 12px;
+    background: #dceeff;
+    border: 1px solid #9ac7ed;
+    border-radius: 18px;
+    box-sizing: border-box;
+    z-index: 1000;
 }
 
-.page-layout .navbar .nav-button {
-  width: 90%;
-  padding: 13px 8px;
-  box-sizing: border-box;
-  border-radius: 10px;
-  border: 1px solid rgba(255, 255, 255, .45);
-  background: rgba(255, 255, 255, .08);
-  color: white;
-  text-decoration: none;
-  text-align: center;
-  font-size: 15px;
-  font-weight: 700;
-  transition: all .25s ease;
+/* Navigation buttons */
+.page-layout .navbar a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 10px 14px;
+    color: #17446c;
+    background: #ffffff;
+    border: 1px solid #8bb9df;
+    border-radius: 10px;
+
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: all 0.2s ease;
 }
 
-.page-layout .navbar .nav-button:hover {
-  background: white;
-  color: #0756c9;
-  transform: translateX(-3px);
+/* Hover effect */
+.page-layout .navbar a:hover {
+    background: #17446c;
+    color: #ffffff;
+    border-color: #17446c;
 }
+
+/* Mobile layout */
+@media (max-width: 768px) {
+    .page-layout .navbar {
+        left: 10px;
+        right: 10px;
+        top: 85px;
+        justify-content: center;
+        gap: 6px;
+    }
+
+    .page-layout .navbar a {
+        padding: 8px 10px;
+        font-size: 12px;
+    }
+}
+
 
 /* =====================================================
    PUBLICATIONS SECTION
