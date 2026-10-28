@@ -13,7 +13,7 @@
 <body>
 
     <!-- =====================================================
-         LOGO
+         LOGO / HEADER
     ====================================================== -->
     <header class="site-header">
         <a href="indexlokesh.html" class="brand">
@@ -26,21 +26,74 @@
          OPEN POSITIONS CARD
     ====================================================== -->
     <div class="card">
-
-        <!-- STATUS -->
-        <div class="status-badge" id="position-status">
-            AVAILABLE
-        </div>
-
-        <!-- TITLE -->
+        
+        <!-- TITLE & SUBTITLE -->
         <h2 class="card-title" id="position-card-title">
-            Research Opportunities
+            Research Opportunities & Open Positions
         </h2>
 
-        <!-- SUBTITLE -->
         <p class="card-subtitle" id="position-card-subtitle">
-            Submit your profile for open positions
+            Explore active recruitment announcements and submit your application.
         </p>
+
+        <!-- =================================================
+             POSTER / ANNOUNCEMENT SECTION (Multi-Poster Support)
+        ================================================== -->
+        <div class="poster-section" id="posterSection">
+            <div class="poster-header">
+                <h3><i class="fa-solid fa-bullhorn"></i> Recruitment Poster & Advertisement</h3>
+                <div class="poster-header-badges">
+                    <span class="poster-counter-badge" id="posterCounterBadge" style="display: none;">Poster 1 of 1</span>
+                    <span class="status-badge" id="posterStatusBadge">Active Opening</span>
+                </div>
+            </div>
+
+            <!-- Active Poster Display Container -->
+            <div id="activePosterContainer">
+                <div class="poster-slider-container">
+                    <!-- Previous button -->
+                    <button type="button" class="poster-slider-arrow prev" id="prevPosterBtn" aria-label="Previous Poster" style="display: none;">
+                        <i class="fa-solid fa-chevron-left"></i>
+                    </button>
+
+                    <div class="poster-wrapper">
+                        <img id="posterImage" src="open_positions_poster.jpeg" alt="Recruitment Advertisement Poster" class="poster-image">
+                        <div class="poster-overlay">
+                            <button type="button" class="poster-action-btn" id="viewPosterModalBtn">
+                                <i class="fa-solid fa-expand"></i> View / Open Full Screen
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Next button -->
+                    <button type="button" class="poster-slider-arrow next" id="nextPosterBtn" aria-label="Next Poster" style="display: none;">
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </button>
+                </div>
+
+                <!-- Dots pagination / thumbnails indicator -->
+                <div class="poster-dots" id="posterDotsContainer" style="display: none;"></div>
+
+                <div class="poster-controls">
+                    <!-- View Full Screen button -->
+                    <button type="button" class="poster-btn view-btn" id="openPosterSecondaryBtn">
+                        <i class="fa-solid fa-up-right-and-down-left-from-center"></i> View Full Screen
+                    </button>
+
+                    <!-- Download button -->
+                    <a id="downloadPosterBtn" class="poster-btn download-btn" href="open_positions_poster.jpg" download="IITJ_BIRDLab_Recruitment_Poster.jpg">
+                        <i class="fa-solid fa-download"></i> Download Poster
+                    </a>
+                </div>
+            </div>
+
+            <!-- Removed Poster State (Shown if removed by Admin) -->
+            <div id="noPosterContainer" style="display: none;" class="no-poster-box">
+                <i class="fa-regular fa-image" style="font-size: 36px; color: #94a3b8; margin-bottom: 10px;"></i>
+                <h4 style="font-size: 16px; color: #1f2328; margin-bottom: 6px;">No Active Advertisement Poster</h4>
+                <p style="font-size: 14px; color: #636c76;">There is currently no advertisement flyer uploaded. Please see the open research positions, qualifications, and application instructions below.</p>
+            </div>
+        </div>
 
         <!-- =================================================
              INFORMATION LIST
@@ -53,7 +106,7 @@
                 <div class="info-content">
                     <span class="info-label" id="available-label">AVAILABLE POSITIONS</span>
                     <span class="info-value" id="available-value">
-                        Undergraduate Internship, Master's/Ph.D. courses, post-doc and Research positions
+                        Undergraduate Internship, Master's/Ph.D. courses, Post-Doc, and Research positions
                     </span>
                 </div>
             </div>
@@ -101,6 +154,31 @@
     </div>
 
     <!-- =====================================================
+         POSTER LIGHTBOX MODAL (Full Screen Viewer with Multi-Poster Navigation)
+    ====================================================== -->
+    <div id="posterModal" class="poster-modal">
+        <span class="close-modal" id="closeModalBtn" title="Close">&times;</span>
+        
+        <button type="button" class="modal-nav-btn modal-prev" id="modalPrevBtn" aria-label="Previous Poster" style="display: none;">
+            <i class="fa-solid fa-chevron-left"></i>
+        </button>
+
+        <div class="modal-inner">
+            <img class="modal-content" id="modalPosterImage" alt="Full View Poster">
+            <div class="modal-caption">
+                <span class="modal-counter" id="modalPosterCounter" style="display: none;">Poster 1 of 1</span>
+                <a id="modalDownloadBtn" href="#" download class="poster-btn download-btn">
+                    <i class="fa-solid fa-download"></i> Download High Resolution
+                </a>
+            </div>
+        </div>
+
+        <button type="button" class="modal-nav-btn modal-next" id="modalNextBtn" aria-label="Next Poster" style="display: none;">
+            <i class="fa-solid fa-chevron-right"></i>
+        </button>
+    </div>
+
+    <!-- =====================================================
          RIGHT NAVBAR
     ====================================================== -->
     <nav class="navbar">
@@ -111,18 +189,20 @@
         <a id="nav-lectures" href="lectures.html" class="nav-button">Lectures</a>
         <a id="nav-collaboration" href="collabiration.html" class="nav-button">Collaboration</a>
         <a id="nav-facilities" href="facilities.html" class="nav-button">Facilities</a>
-        <a id="nav-positions" href="open-positions.html" class="nav-button">Open Positions</a>
+        <a id="nav-positions" href="open-positions.html" class="nav-button active">Open Positions</a>
         <a id="nav-events" href="events.html" class="nav-button">Events</a>
         <a id="nav-calendar" href="calendar.html" class="nav-button">Calender</a>
     </nav>
 
     <!-- Admin Access & Responses Link -->
-<div class="admin-links">
-    <a href="admin-openpositions.html" class="admin-btn">Admin Access</a>
-    <a href="responses-access.html" id="viewResponsesBtn" class="responses-btn" target="_blank" rel="noopener noreferrer">
-        <i class="fa-solid fa-table"></i> View Application Responses
-    </a>
-</div>
+    <div class="admin-links">
+        <a href="admin-openpositions.html" class="admin-btn">
+            Admin Access
+        </a>
+        <a href="responses-access.html" id="viewResponsesBtn" class="responses-btn" target="_blank" rel="noopener noreferrer">
+            <i class="fa-solid fa-table"></i> View Application Responses
+        </a>
+    </div>
 
     <!-- =====================================================
          FOOTER
@@ -137,17 +217,12 @@
                 <p id="footer-description">
                     Advancing bio-inspired robotics through innovative research, nature-inspired design, and collaborative partnerships.
                 </p>
-                 <p>© 2026 BIRDLab, IIT Jodhpur. All rights reserved. Designed by IIT Jodhpur.</p>
-               
+                <a href="#" class="git-link" id="footer-git">View in Git ▶</a>
                 <div class="social-links">
-                      <a href="https://www.linkedin.com/in/bhivraj-s-823528294" class="social" aria-label="LinkedIn">
-                        in
-                    </a>
-
-                    <a href="https://www.youtube.com/@bhivrajsuthar2234" class="social" aria-label="YouTube">
-                        ▶
-                    </a>
-
+                    <a href="#" class="social" id="social-x" aria-label="X">𝕏</a>
+                    <a href="#" class="social" id="social-linkedin" aria-label="LinkedIn">in</a>
+                    <a href="#" class="social" id="social-github" aria-label="GitHub">●</a>
+                    <a href="#" class="social" id="social-youtube" aria-label="YouTube">▶</a>
                 </div>
             </div>
 
@@ -155,18 +230,20 @@
                 <h2 id="footer-contact-title">Contact Info</h2>
                 <div class="contact">
                     <span>📍</span>
-                    <p id="footer-address">W10, Department of Electrical Engineering
-Indian Institute of Technology Jodhpur
-NH-62, Karwar Road
-Jodhpur – 342037, Rajasthan, India</p>
+                    <p id="footer-address">
+                        W10, Department of Electrical Engineering<br>
+                        Indian Institute of Technology Jodhpur<br>
+                        NH-62, Karwar Road<br>
+                        Jodhpur – 342037, Rajasthan, India
+                    </p>
                 </div>
                 <div class="contact">
                     <span>✉</span>
-                    <p id="footer-email">info@birdlab.edu</p>
+                    <p id="footer-email">bhivraj@iitj.ac.in</p>
                 </div>
                 <div class="contact">
                     <span>☎</span>
-                    <p id="footer-phone">+1 (555) 123-4567</p>
+                    <p id="footer-phone">+91 291 280 1350</p>
                 </div>
             </div>
         </div>

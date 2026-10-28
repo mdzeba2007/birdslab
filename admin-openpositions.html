@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>BIRDLab open-positions Admin</title>
+    <title>BIRDLab Open-Positions Admin Login</title>
 
     <style>
         * {
@@ -56,10 +56,12 @@
             color: #333;
         }
 
-        .admin-container p {
+        .admin-container p.desc {
             color: #666;
 
-            margin-bottom: 30px;
+            margin-bottom: 25px;
+            font-size: 14px;
+            line-height: 1.5;
         }
 
         .admin-container input {
@@ -100,10 +102,16 @@
             font-weight: bold;
 
             cursor: pointer;
+            transition: background 0.2s;
         }
 
         .login-btn:hover {
             background: #4f65c0;
+        }
+
+        .login-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
         }
 
         #message {
@@ -112,6 +120,7 @@
             min-height: 20px;
 
             font-size: 14px;
+            font-weight: 500;
         }
 
         .back-btn {
@@ -133,70 +142,64 @@
 
 </head>
 
-
 <body>
 
-
     <div class="admin-container">
-
 
         <img
             src="iitjlogo.png"
             alt="IIT Jodhpur"
         >
 
-
         <h1>
-             Admin
+            Open Positions Admin
         </h1>
 
-
-        <p>
-            Login to manage BIRDLab open-positions.
+        <p class="desc">
+            Administrator login required to manage recruitment announcements, posters, and open positions.
         </p>
 
+        <form id="adminLoginForm" onsubmit="return false;">
+            <input
+                type="email"
+                id="email"
+                placeholder="Admin Email"
+                required
+                autocomplete="username"
+            >
 
-        <input
-            type="email"
-            id="email"
-            placeholder="Admin Email"
-        >
+            <input
+                type="password"
+                id="password"
+                placeholder="Password"
+                required
+                autocomplete="current-password"
+            >
 
-
-        <input
-            type="password"
-            id="password"
-            placeholder="Password"
-        >
-
-
-        <button
-            class="login-btn"
-            id="loginBtn"
-        >
-            Login & Manage Equipment
-        </button>
-
+            <button
+                class="login-btn"
+                id="loginBtn"
+                type="submit"
+            >
+                Login & Access Dashboard
+            </button>
+        </form>
 
         <p id="message"></p>
 
-
         <a
             href="open-positions.html"
-            class="back to open-positions"
+            class="back-btn"
         >
-            ← Back to open-positions
+            ← Back to Open Positions
         </a>
 
-
     </div>
-
 
     <script
         type="module"
         src="admin-openpositions.js"
     ></script>
-
 
 </body>
 

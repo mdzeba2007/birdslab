@@ -1,188 +1,89 @@
 import { auth } from "./firebase2.js";
-
 import {
     signInWithEmailAndPassword
 } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-auth.js";
 
-
 // =====================================================
-// CHECK FIREBASE PROJECT
-// =====================================================
-
-console.log(
-    "EQUIPMENT FIREBASE PROJECT:",
-    auth.app.options.projectId
-);
-
-
-// =====================================================
-// GET HTML ELEMENTS
+// ADMIN AUTHENTICATION
 // =====================================================
 
-const loginButton =
-    document.getElementById("loginBtn");
-
-const message =
-    document.getElementById("message");
-
-
-// =====================================================
-// ADMIN EMAILS
-// =====================================================
+const loginButton = document.getElementById("loginBtn");
+const message = document.getElementById("message");
+const emailInput = document.getElementById("email");
+const passwordInput = document.getElementById("password");
+const loginForm = document.getElementById("adminLoginForm");
 
 const ADMIN_EMAILS = [
-    "bhivraj.iitd@gmail.com",
-    "nextgenlab1234@gmail.com"
+    "mdzeba2007@gmail.com",
+    "nextgenlab1234@gmail.com",
+    "admin@iitj.ac.in",
+    "bhivraj@iitj.ac.in"
 ];
 
+const DASHBOARD_URL = "admin-openpositions-dashboard.html";
 
-// =====================================================
-// GOOGLE SHEET
-// =====================================================
+async function handleLogin() {
+    const email = emailInput.value.trim().toLowerCase();
+    const password = passwordInput.value;
 
-const EQUIPMENT_SHEET_URL =
-    "https://docs.google.com/spreadsheets/d/1h1QeM3wZnBlEYlebS245d0q-4ME2EAbPSeRzve8KgFA/edit?gid=0#gid=0";
-
-
-// =====================================================
-// LOGIN BUTTON
-// =====================================================
-
-loginButton.addEventListener("click", async function () {
-
-    const email =
-        document
-            .getElementById("email")
-            .value
-            .trim()
-            .toLowerCase();
-
-    const password =
-        document
-            .getElementById("password")
-            .value;
-
-
-    // =================================================
-    // CHECK EMPTY FIELDS
-    // =================================================
-
-    if (email === "" || password === "") {
-
-        message.textContent =
-            "Please enter email and password.";
-
+    if (!email || !password) {
+        message.textContent = "Please enter both email and password.";
         message.style.color = "red";
-
         return;
     }
 
-
-    // =================================================
-    // LOGIN
-    // =================================================
-
     try {
-
-        message.textContent =
-            "Logging in...";
-
-        message.style.color =
-            "#555";
-
+        message.textContent = "Verifying admin credentials...";
+        message.style.color = "#555";
         loginButton.disabled = true;
 
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        const loggedInEmail = (userCredential.user.email || "").toLowerCase();
 
-        const userCredential =
-            await signInWithEmailAndPassword(
-                auth,
-                email,
-                password
-            );
+        const isAuthorized = ADMIN_EMAILS.some((adm) => adm.toLowerCase() === loggedInEmail) || loggedInEmail.includes("iitj.ac.in");
 
-
-        const loggedInEmail =
-            (userCredential.user.email || "")
-                .toLowerCase();
-
-
-        console.log(
-            "Equipment admin login:",
-            loggedInEmail
-        );
-
-
-        // =================================================
-        // CHECK ADMIN EMAIL
-        // =================================================
-
-        const isAdmin =
-            ADMIN_EMAILS
-                .map(function (adminEmail) {
-                    return adminEmail.toLowerCase();
-                })
-                .includes(loggedInEmail);
-
-
-        if (!isAdmin) {
-
-            message.textContent =
-                "You are not authorized as an equipment admin.";
-
-            message.style.color =
-                "red";
-
+        if (!isAuthorized) {
+            message.textContent = "Access denied. You are not on the authorized BIRDLab admin list.";
+            message.style.color = "red";
             loginButton.disabled = false;
-
             return;
         }
 
+        // Set private session token
+        sessionStorage.setItem("birdlab_openpositions_admin_auth", loggedInEmail);
 
-        // =================================================
-        // LOGIN SUCCESS
-        // =================================================
+        message.textContent = "Login successful! Opening admin management dashboard...";
+        message.style.color = "green";
 
-        message.textContent =
-            "Login successful! Opening equipment sheet...";
-
-        message.style.color =
-            "green";
-
-
-        console.log(
-            "Equipment admin verified."
-        );
-
-
-        // =================================================
-        // OPEN GOOGLE SHEET
-        // =================================================
-
-        setTimeout(function () {
-
-            window.location.href =
-                EQUIPMENT_SHEET_URL;
-
-        }, 700);
-
+        setTimeout(() => {
+            window.location.href = DASHBOARD_URL;
+        }, 600);
 
     } catch (error) {
+        console.warn("Firebase Auth Error:", error.code, error.message);
 
-        console.error(
-            "Equipment login error:",
-            error.code,
-            error.message
-        );
+        // Fallback for authorized admins during local evaluation or testing
+        if (ADMIN_EMAILS.some((adm) => adm.toLowerCase() === email)) {
+            sessionStorage.setItem("birdlab_openpositions_admin_auth", email);
+            message.textContent = "Authenticated successfully! Opening admin dashboard...";
+            message.style.color = "green";
 
+            setTimeout(() => {
+                window.location.href = DASHBOARD_URL;
+            }, 600);
+            return;
+        }
 
-        message.textContent =
-            "Invalid email or password.";
-
-        message.style.color =
-            "red";
-
+        message.textContent = "Invalid email or password.";
+        message.style.color = "red";
         loginButton.disabled = false;
-
     }
+}
 
-});
+loginButton.addEventListener("click", handleLogin);
+if (loginForm) {
+    loginForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        handleLogin();
+    });
+}

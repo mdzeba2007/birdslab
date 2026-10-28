@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BIRDLab Open Positions & Poster Admin Portal</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- STRICT ACCESS CONTROL GUARD: Block unauthorized direct access -->
+    <script>
+        if (!sessionStorage.getItem("birdlab_openpositions_admin_auth")) {
+            window.location.replace("admin-openpositions.html");
+        }
+    </script>
+
+    <style>
+        :root {
+            --primary: #1d4ed8;
+            --primary-hover: #1e40af;
+            --primary-light: #eff6ff;
+            --danger: #dc2626;
+            --danger-hover: #b91c1c;
+            --success: #16a34a;
+            --success-light: #f0fdf4;
+            --warning: #d97706;
+            --text-dark: #0f172a;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --bg-light: #f8fafc;
+            --radius-lg: 16px;
+            --radius-md: 10px;
+            --radius-sm: 6px;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.1);
+            --shadow-md: 0 10px 25px -5px rgba(0,0,0,0.1);
+            --shadow-lg: 0 20px 35px -10px rgba(0,0,0,0.15);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #1e293b 0%, #334155 50%, #475569 100%);
+            color: var(--text-dark);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 30px 16px;
+        }
+
+        /* =====================================================
+           DASHBOARD WRAPPER
+        ===================================================== */
+        .dash-container {
+            width: 100%;
+            max-width: 1100px;
+            background: #ffffff;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+            animation: fadeIn 0.3s ease;
+        }
+
+        /* Top Header */
+        .dash-header {
+            background: #0f172a;
+            color: #ffffff;
+            padding: 22px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .dash-brand {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .dash-brand img {
+            width: 44px;
+            height: 44px;
+            object-fit: contain;
+        }
+
+        .dash-brand h1 {
+            font-size: 20px;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        .dash-brand p {
+            font-size: 12px;
+            color: #94a3b8;
+        }
+
+        .dash-user-bar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .admin-badge {
+            background: rgba(255, 255, 255, 0.12);
+            color: #e2e8f0;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            border: 1px solid rgba(255,255,255,0.15);
+        }
+
+        .btn-header {
+            padding: 8px 16px;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s ease;
+            border: none;
+        }
+
+        .btn-view-site {
+            background: #3b82f6;
+            color: #ffffff;
+        }
+
+        .btn-view-site:hover {
+            background: #2563eb;
+        }
+
+        .btn-logout {
+            background: rgba(239, 68, 68, 0.15);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .btn-logout:hover {
+            background: #dc2626;
+            color: #ffffff;
+        }
+
+        /* Dashboard Body */
+        .dash-body {
+            padding: 32px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 28px;
+            background: #f8fafc;
+        }
+
+        @media (max-width: 900px) {
+            .dash-body {
+                grid-template-columns: 1fr;
+                padding: 20px;
+            }
+        }
+
+        /* Card Section */
+        .dash-card {
+            background: #ffffff;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 24px;
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .dash-card-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-dark);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .dash-card-title span.title-text {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Status Badge */
+        .badge {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            padding: 4px 10px;
+            border-radius: 20px;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-active {
+            background: #dcfce7;
+            color: #15803d;
+            border: 1px solid #bbf7d0;
+        }
+
+        .badge-removed {
+            background: #fee2e2;
+            color: #b91c1c;
+            border: 1px solid #fecaca;
+        }
+
+        /* Current Poster Preview */
+        .poster-preview-box {
+            position: relative;
+            background: #000000;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border);
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 280px;
+            max-height: 380px;
+            margin-bottom: 16px;
+        }
+
+        .poster-preview-img {
+            max-width: 100%;
+            max-height: 380px;
+            object-fit: contain;
+            display: block;
+        }
+
+        /* Multi-Poster Management Grid & Cards */
+        .admin-posters-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 16px;
+            max-height: 420px;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+
+        .poster-card-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 10px 14px;
+            gap: 12px;
+            transition: all 0.2s ease;
+        }
+
+        .poster-card-item:hover {
+            border-color: #93c5fd;
+            background: #ffffff;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .poster-card-item.primary {
+            border-left: 4px solid var(--primary);
+        }
+
+        .poster-card-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-width: 0;
+            flex: 1;
+        }
+
+        .poster-thumb-preview {
+            width: 54px;
+            height: 54px;
+            object-fit: cover;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+            background: #0f172a;
+            flex-shrink: 0;
+            cursor: pointer;
+        }
+
+        .poster-info-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 3px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .poster-order-badge {
+            font-size: 11px;
+            background: #e2e8f0;
+            color: #475569;
+            padding: 2px 7px;
+            border-radius: 12px;
+            font-weight: 700;
+        }
+
+        .poster-order-badge.primary {
+            background: var(--primary-light);
+            color: var(--primary);
+            border: 1px solid #bfdbfe;
+        }
+
+        .poster-card-actions {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-shrink: 0;
+        }
+
+        .btn-icon-mini {
+            width: 32px;
+            height: 32px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+            background: #ffffff;
+            color: var(--text-dark);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-icon-mini:hover {
+            background: var(--primary-light);
+            color: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .btn-icon-mini.btn-danger-mini:hover {
+            background: #fef2f2;
+            color: #dc2626;
+            border-color: #f87171;
+        }
+
+        /* Staging / Pending Uploaded Posters */
+        .pending-posters-box {
+            background: #f0fdf4;
+            border: 1.5px solid #86efac;
+            border-radius: var(--radius-md);
+            padding: 14px;
+            margin-bottom: 16px;
+        }
+
+        .pending-thumbs-row {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding: 8px 0;
+        }
+
+        .pending-thumb {
+            width: 56px;
+            height: 56px;
+            object-fit: cover;
+            border-radius: var(--radius-sm);
+            border: 1.5px solid #86efac;
+        }
+
+        .poster-counter-tag {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-left: 6px;
+            font-weight: 500;
+        }
+
+        .poster-removed-notice {
+            display: none;
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-muted);
+            background: #f8fafc;
+            border: 2px dashed var(--border);
+            border-radius: var(--radius-md);
+            margin-bottom: 16px;
+        }
+
+        .poster-removed-notice i {
+            font-size: 44px;
+            color: #94a3b8;
+            margin-bottom: 12px;
+        }
+
+        .poster-removed-notice h4 {
+            font-size: 16px;
+            color: var(--text-dark);
+            margin-bottom: 6px;
+        }
+
+        /* Upload Dropzone */
+        .dropzone {
+            border: 2px dashed #93c5fd;
+            background: var(--primary-light);
+            border-radius: var(--radius-md);
+            padding: 24px 16px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-bottom: 16px;
+        }
+
+        .dropzone:hover, .dropzone.dragover {
+            border-color: var(--primary);
+            background: #dbeafe;
+        }
+
+        .dropzone i {
+            font-size: 32px;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+
+        .dropzone p {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .dropzone strong {
+            color: var(--primary);
+        }
+
+        /* Poster Action Buttons */
+        .poster-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .action-row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn-dash {
+            flex: 1;
+            min-width: 140px;
+            padding: 11px 16px;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: #ffffff;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-hover);
+        }
+
+        .btn-danger {
+            background: #ef4444;
+            color: #ffffff;
+        }
+
+        .btn-danger:hover {
+            background: var(--danger-hover);
+        }
+
+        .btn-secondary {
+            background: #e2e8f0;
+            color: #334155;
+        }
+
+        .btn-secondary:hover {
+            background: #cbd5e1;
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--primary);
+            border: 1.5px solid var(--primary);
+        }
+
+        .btn-outline:hover {
+            background: var(--primary-light);
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+            text-align: left;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 11px 13px;
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-md);
+            font-size: 14px;
+            transition: all 0.2s ease;
+            outline: none;
+            background: #ffffff;
+        }
+
+        .form-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(29, 78, 216, 0.15);
+        }
+
+        /* Toast Notifications */
+        #toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            padding: 14px 22px;
+            background: #0f172a;
+            color: #ffffff;
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-lg);
+            font-size: 14px;
+            display: none;
+            align-items: center;
+            gap: 10px;
+            z-index: 9999;
+            animation: slideUp 0.3s ease;
+        }
+
+        #toast.success {
+            background: #15803d;
+        }
+
+        #toast.error {
+            background: #b91c1c;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="dash-container">
+        
+        <!-- Dashboard Top Header -->
+        <header class="dash-header">
+            <div class="dash-brand">
+                <img src="iitjlogo.png" alt="IIT Jodhpur BIRDLab">
+                <div>
+                    <h1>BIRDLab Admin Portal</h1>
+                    <p>Open Positions & Recruitment Poster Management</p>
+                </div>
+            </div>
+
+            <div class="dash-user-bar">
+                <span class="admin-badge">
+                    <i class="fa-solid fa-shield-halved"></i>
+                    <span id="userEmailBadge">Admin</span>
+                </span>
+
+                <a href="open-positions.html" target="_blank" class="btn-header btn-view-site">
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i> View Live Page
+                </a>
+
+                <button type="button" id="logoutBtn" class="btn-header btn-logout">
+                    <i class="fa-solid fa-arrow-right-from-bracket"></i> Logout
+                </button>
+            </div>
+        </header>
+
+        <!-- Dashboard Body (Two Columns) -->
+        <div class="dash-body">
+
+            <!-- LEFT COLUMN: MULTI-POSTER MANAGEMENT -->
+            <div class="dash-card">
+                <div class="dash-card-title">
+                    <span class="title-text">
+                        <i class="fa-solid fa-images" style="color: var(--primary);"></i>
+                        Recruitment Posters
+                        <span id="postersCountBadge" class="poster-counter-tag">(1 Active)</span>
+                    </span>
+                    <span id="posterStatusBadge" class="badge badge-active">Active on Site</span>
+                </div>
+
+                <!-- Removed Poster Notice (shown when admin removes posters) -->
+                <div id="removedPosterNotice" class="poster-removed-notice">
+                    <i class="fa-regular fa-image-slash"></i>
+                    <h4>Posters are Currently Removed</h4>
+                    <p>The recruitment posters are hidden on the public website. Upload or restore posters below to display them again.</p>
+                </div>
+
+                <!-- Active Multi-Posters List -->
+                <div id="adminPostersList" class="admin-posters-list">
+                    <!-- Populated dynamically via JS -->
+                </div>
+
+                <!-- Staging / Pending Uploaded Posters Review Box -->
+                <div id="pendingPostersContainer" class="pending-posters-box" style="display: none;">
+                    <p style="font-size: 13px; font-weight: 700; color: #166534; margin-bottom: 6px;">
+                        <i class="fa-solid fa-circle-check"></i> <span id="pendingCountText">New Posters Ready to Add</span>
+                    </p>
+                    <div id="pendingThumbsRow" class="pending-thumbs-row"></div>
+                    <div class="action-row" style="margin-top: 10px;">
+                        <button type="button" id="saveUploadedPosterBtn" class="btn-dash btn-primary">
+                            <i class="fa-solid fa-check"></i> Publish Added Poster(s)
+                        </button>
+                        <button type="button" id="cancelUploadBtn" class="btn-dash btn-secondary">
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Upload Drag & Drop Zone (Supports Multiple Files) -->
+                <input type="file" id="posterFileInput" accept="image/*" multiple style="display: none;">
+                <div class="dropzone" id="posterDropzone">
+                    <i class="fa-solid fa-cloud-arrow-up"></i>
+                    <p><strong>Click to browse</strong> or drag & drop posters</p>
+                    <p style="font-size: 11px; margin-top: 4px; color: #94a3b8;">Supports adding multiple PNG, JPG, JPEG, WEBP files</p>
+                </div>
+
+                <!-- Global Poster Control Actions -->
+                <div class="poster-actions">
+                    <div class="action-row">
+                        <button type="button" id="removePosterBtn" class="btn-dash btn-danger">
+                            <i class="fa-solid fa-trash-can"></i> Remove All Posters
+                        </button>
+
+                        <button type="button" id="restoreDefaultPosterBtn" class="btn-dash btn-secondary">
+                            <i class="fa-solid fa-rotate-left"></i> Restore Default Poster
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT COLUMN: OPEN POSITIONS DETAILS & EXTERNAL INTEGRATIONS -->
+            <div class="dash-card">
+                <div class="dash-card-title">
+                    <span class="title-text">
+                        <i class="fa-solid fa-sliders" style="color: var(--primary);"></i>
+                        Positions & Content Settings
+                    </span>
+                </div>
+
+                <form id="contentForm" onsubmit="return false;">
+                    <div class="form-group">
+                        <label class="form-label" for="editCardTitle">Card Title</label>
+                        <input type="text" id="editCardTitle" class="form-input" value="Research Opportunities & Open Positions">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="editCardSubtitle">Card Subtitle</label>
+                        <input type="text" id="editCardSubtitle" class="form-input" value="Explore active recruitment announcements and submit your application.">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="editAvailablePositions">Available Positions</label>
+                        <input type="text" id="editAvailablePositions" class="form-input" value="Undergraduate Internship, Master's/Ph.D. courses, Post-Doc, and Research positions">
+                    </div>
+
+                    <div class="action-row" style="margin-bottom: 16px;">
+                        <div class="form-group" style="flex: 1; margin-bottom: 0;">
+                            <label class="form-label" for="editContactPerson">Contact Person</label>
+                            <input type="text" id="editContactPerson" class="form-input" value="Dr. Bhivraj Suthar">
+                        </div>
+
+                        <div class="form-group" style="flex: 1; margin-bottom: 0;">
+                            <label class="form-label" for="editEmail">Email Address</label>
+                            <input type="email" id="editEmail" class="form-input" value="bhivraj@iitj.ac.in">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="editApplicationFormUrl">Application Google Form URL</label>
+                        <input type="url" id="editApplicationFormUrl" class="form-input" value="https://docs.google.com/forms/d/e/1FAIpQLSerNzLfHwIzAHgZ68fyjzUuVqHYYMmWj3Kjy_Qrki1R5jVWhA/viewform?usp=dialog">
+                    </div>
+
+                    <div class="action-row" style="margin-top: 10px;">
+                        <button type="button" id="saveContentBtn" class="btn-dash btn-primary">
+                            <i class="fa-solid fa-floppy-disk"></i> Save Content Changes
+                        </button>
+
+                        <button type="button" id="resetContentBtn" class="btn-dash btn-secondary">
+                            Reset to Default
+                        </button>
+                    </div>
+                </form>
+
+                <!-- Quick External Integration Links -->
+                <div style="margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--border);">
+                    <label class="form-label" style="margin-bottom: 10px;">Google Workspace Integrations</label>
+                    <div class="action-row">
+                        <a href="https://docs.google.com/spreadsheets/d/1h1QeM3wZnBlEYlebS245d0q-4ME2EAbPSeRzve8KgFA/edit?gid=0#gid=0" target="_blank" rel="noopener noreferrer" class="btn-dash btn-outline" style="text-decoration: none;">
+                            <i class="fa-solid fa-file-excel"></i> Open Backend Sheet
+                        </a>
+                        <a href="responses-access.html" target="_blank" rel="noopener noreferrer" class="btn-dash btn-outline" style="text-decoration: none;">
+                            <i class="fa-solid fa-table-list"></i> View Responses
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Floating Toast Notification -->
+    <div id="toast">
+        <i class="fa-solid fa-circle-check"></i>
+        <span id="toastMsg">Changes saved successfully!</span>
+    </div>
+
+    <!-- Javascript module -->
+    <script type="module" src="admin-openpositions-dashboard.js"></script>
+
+</body>
+
+</html>
