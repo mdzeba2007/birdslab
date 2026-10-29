@@ -249,6 +249,84 @@ body {
   border-radius: 10px;
   transition: width 0.1s linear;
 }
+
+/* =========================================
+   FIXED TOP NAVBAR
+========================================= */
+
+.navbar {
+    position: fixed !important;
+    top: 15px !important;
+    left: 300px !important;
+    right: 15px !important;
+
+    width: auto !important;
+    height: auto !important;
+    min-height: 0 !important;
+
+    margin: 0 !important;
+    padding: 10px 14px !important;
+
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    justify-content: center !important;
+    align-items: center !important;
+
+    gap: 10px !important;
+
+    background: linear-gradient(
+        90deg,
+        #dcecf8,
+        #c4ddf2
+    ) !important;
+
+    border: 1px solid #a9d0f3 !important;
+    border-radius: 18px !important;
+
+    box-shadow: 0 5px 16px rgba(40, 100, 150, 0.10);
+    z-index: 10000 !important;
+}
+
+/* =========================================
+   NAVBAR BUTTONS
+========================================= */
+
+.navbar .nav-button {
+    flex: 0 1 auto !important;
+    width: auto !important;
+
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    padding: 10px 18px !important;
+
+    background: #ffffff !important;
+    color: #3978bd !important;
+
+    border: 1px solid #8abcf2 !important;
+    border-radius: 14px !important;
+
+    text-decoration: none !important;
+    text-align: center;
+
+    font-size: 14px !important;
+    font-weight: 700 !important;
+    white-space: nowrap;
+
+    transition: background 0.2s ease,
+                color 0.2s ease,
+                transform 0.2s ease;
+}
+
+.navbar .nav-button:hover {
+    background: #dff2ff !important;
+    color: #174f8a !important;
+    border-color: #5599e8 !important;
+    transform: translateY(-1px);
+}
+
 /* =========================================================
    FOOTER CONTENT
 ========================================================= */
@@ -277,34 +355,29 @@ body {
    FOOTER LEFT
 ========================================================= */
 
+.footer-left {
+    padding-left: 35px;
+}
+
 .footer-left h2 {
-  margin: 0 0 25px;
-
-  font-size: 42px;
-
-  font-weight: 700;
-
-  color: white;
+    margin: 0 90px 30px;
+    font-size: 42px;
+    font-weight: 700;
+    color: white;
 }
 
 .footer-left h2 span {
-  color: #73c5e6;
+    color: #73c5e6;
 }
 
 .footer-left p {
-  width: 400px;
-
-  max-width: 100%;
-
-  margin: 0 0 25px;
-
-  font-size: 17px;
-
-  line-height: 1.7;
-
-  color: #d8e7ee;
+    width: 400px;
+    max-width: 100%;
+    margin: 0 70px 25px;
+    font-size: 17px;
+    line-height: 1.7;
+    color: #d8e7ee;
 }
-
 
 /* =========================================================
    GITHUB LINK
@@ -313,7 +386,7 @@ body {
 .git-link {
   display: inline-block;
 
-  margin-bottom: 30px;
+  margin: 0 50px 30px;
 
   color: #52d4fa;
 
