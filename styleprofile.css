@@ -1082,3 +1082,277 @@ header p {
         font-size: 30px;
     }
 }
+
+/* =========================================================
+   MEMBER CARDS — ALL CATEGORIES
+========================================================= */
+
+:is(
+    #postDoctoralMembers,
+    #phdMembers,
+    #projectStaffMembers,
+    #masterMembers,
+    #bachelorMembers,
+    #otherMembers
+) {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+    gap: 28px;
+}
+
+/* Card */
+:is(
+    #postDoctoralMembers,
+    #phdMembers,
+    #projectStaffMembers,
+    #masterMembers,
+    #bachelorMembers,
+    #otherMembers
+) .member-card {
+    width: 100%;
+    min-width: 0;
+    padding: 24px;
+    color: white;
+    background: linear-gradient(135deg, #4888e8, #425271);
+    border-radius: 18px;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.16);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+:is(
+    #postDoctoralMembers,
+    #phdMembers,
+    #projectStaffMembers,
+    #masterMembers,
+    #bachelorMembers,
+    #otherMembers
+) .member-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 18px 35px rgba(0, 0, 0, 0.2);
+}
+
+/* Card layout */
+:is(
+    #postDoctoralMembers,
+    #phdMembers,
+    #projectStaffMembers,
+    #masterMembers,
+    #bachelorMembers,
+    #otherMembers
+) .member-card-inner {
+    display: grid;
+    grid-template-columns: minmax(150px, 0.75fr) minmax(0, 1.25fr);
+    align-items: start;
+    gap: 24px;
+    width: 100%;
+}
+
+:is(
+    #postDoctoralMembers,
+    #phdMembers,
+    #projectStaffMembers,
+    #masterMembers,
+    #bachelorMembers,
+    #otherMembers
+) .member-photo-section,
+:is(
+    #postDoctoralMembers,
+    #phdMembers,
+    #projectStaffMembers,
+    #masterMembers,
+    #bachelorMembers,
+    #otherMembers
+) .member-info {
+    width: 100%;
+    min-width: 0;
+}
+
+/* Photo */
+:is(
+    #postDoctoralMembers,
+    #phdMembers,
+    #projectStaffMembers,
+    #masterMembers,
+    #bachelorMembers,
+    #otherMembers
+) .member-photo-container,
+:is(
+    #postDoctoralMembers,
+    #phdMembers,
+    #projectStaffMembers,
+    #masterMembers,
+    #bachelorMembers,
+    #otherMembers
+) .member-photo-placeholder {
+    width: 100%;
+    height: 300px;
+    overflow: hidden;
+    border-radius: 14px;
+    background: white;
+}
+
+:is(
+    #postDoctoralMembers,
+    #phdMembers,
+    #projectStaffMembers,
+    #masterMembers,
+    #bachelorMembers,
+    #otherMembers
+) .member-photo {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+:is(
+    #postDoctoralMembers,
+    #phdMembers,
+    #projectStaffMembers,
+    #masterMembers,
+    #bachelorMembers,
+    #otherMembers
+) .member-photo-placeholder {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 15px;
+    color: #64748b;
+}
+
+/* Member information */
+:is(
+    #postDoctoralMembers,
+    #phdMembers,
+    #projectStaffMembers,
+    #masterMembers,
+    #bachelorMembers,
+    #otherMembers
+) .member-name {
+    margin-bottom: 18px;
+    color: white;
+    font-size: 26px;
+    font-weight: 800;
+    line-height: 1.2;
+}
+
+:is(
+    #postDoctoralMembers,
+    #phdMembers,
+    #projectStaffMembers,
+    #masterMembers,
+    #bachelorMembers,
+    #otherMembers
+) .dynamic-detail {
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(255,255,255,0.3);
+}
+
+:is(
+    #postDoctoralMembers,
+    #phdMembers,
+    #projectStaffMembers,
+    #masterMembers,
+    #bachelorMembers,
+    #otherMembers
+) .dynamic-question {
+    margin-bottom: 5px;
+    color: #8ed8ff;
+    font-size: 15px;
+    font-weight: 700;
+}
+
+:is(
+    #postDoctoralMembers,
+    #phdMembers,
+    #projectStaffMembers,
+    #masterMembers,
+    #bachelorMembers,
+    #otherMembers
+) .dynamic-answer {
+    color: white;
+    font-size: 15px;
+    line-height: 1.55;
+    overflow-wrap: anywhere;
+}
+
+/* Links */
+:is(
+    #postDoctoralMembers,
+    #phdMembers,
+    #projectStaffMembers,
+    #masterMembers,
+    #bachelorMembers,
+    #otherMembers
+) .question-link {
+    display: inline-block;
+    padding: 8px 13px;
+    border: 1px solid rgba(255,255,255,0.5);
+    border-radius: 8px;
+    background: rgba(255,255,255,0.12);
+    color: white;
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+/* Empty category message */
+.no-members {
+    grid-column: 1 / -1;
+    width: 100%;
+    padding: 24px;
+    border: 1px solid #bfdbfe;
+    border-radius: 10px;
+    background: #eff6ff;
+    color: #1e40af;
+    text-align: center;
+}
+
+/* Responsive */
+@media (max-width: 1000px) {
+    :is(
+        #postDoctoralMembers,
+        #phdMembers,
+        #projectStaffMembers,
+        #masterMembers,
+        #bachelorMembers,
+        #otherMembers
+    ) {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 800px) {
+    :is(
+        #postDoctoralMembers,
+        #phdMembers,
+        #projectStaffMembers,
+        #masterMembers,
+        #bachelorMembers,
+        #otherMembers
+    ) .member-card-inner {
+        grid-template-columns: 1fr;
+    }
+
+    :is(
+        #postDoctoralMembers,
+        #phdMembers,
+        #projectStaffMembers,
+        #masterMembers,
+        #bachelorMembers,
+        #otherMembers
+    ) .member-photo-container,
+    :is(
+        #postDoctoralMembers,
+        #phdMembers,
+        #projectStaffMembers,
+        #masterMembers,
+        #bachelorMembers,
+        #otherMembers
+    ) .member-photo-placeholder {
+        height: 280px;
+    }
+}
