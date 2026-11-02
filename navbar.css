@@ -1,0 +1,185 @@
+
+/* =========================================================
+   BIRD LAB — COMMON NAVBAR FOR ALL PAGES
+========================================================= */
+
+/* Main Navbar */
+.navbar {
+    position: fixed !important;
+
+    top: 10px !important;
+    left: 260px !important;
+    right: 20px !important;
+
+    width: auto !important;
+    height: auto !important;
+    min-height: 0 !important;
+
+    margin: 0 !important;
+    padding: 7px 10px !important;
+
+    display: flex !important;
+    flex-direction: row !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+
+    flex-wrap: nowrap !important;
+    gap: 8px !important;
+
+    background: #d4e5f7 !important;
+
+    border: 1px solid #b4d0ed !important;
+    border-radius: 12px !important;
+
+    box-shadow: 0 4px 14px rgba(23, 68, 108, 0.12) !important;
+
+    z-index: 9999 !important;
+
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+}
+
+
+/* Navbar Buttons */
+.navbar .nav-button {
+    flex: 1 1 auto !important;
+
+    min-width: 0 !important;
+    width: auto !important;
+
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    padding: 8px 6px !important;
+
+    background: #ffffff !important;
+    color: #35689d !important;
+
+    border: 1.5px solid #6ba3df !important;
+    border-radius: 8px !important;
+
+    font-family: Arial, Helvetica, sans-serif !important;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+
+    text-decoration: none !important;
+    text-align: center !important;
+    white-space: nowrap !important;
+
+    cursor: pointer !important;
+
+    transition: all 0.2s ease !important;
+}
+
+
+/* Hover Effect */
+.navbar .nav-button:hover {
+    background: #e0efff !important;
+    color: #17446c !important;
+    border-color: #2e7ac9 !important;
+
+    transform: translateY(-1px) !important;
+
+    box-shadow: 0 2px 6px rgba(46, 122, 201, 0.2) !important;
+}
+
+
+/* Active Page Button — SAME DARK BLUE ON EVERY PAGE */
+.navbar .nav-button.active {
+    background: #17446c !important;
+    color: #ffffff !important;
+    border: 1.5px solid #17446c !important;
+
+    box-shadow: 0 2px 8px rgba(23, 68, 108, 0.3) !important;
+}
+
+
+/* Active Button Hover */
+.navbar .nav-button.active:hover {
+    background: #0f3252 !important;
+    border-color: #0f3252 !important;
+    color: #ffffff !important;
+}
+
+
+/* =========================================================
+   TABLETS AND SMALL LAPTOPS
+========================================================= */
+
+@media (max-width: 1200px) {
+
+    .navbar {
+        left: 190px !important;
+        right: 12px !important;
+
+        gap: 6px !important;
+        padding: 7px !important;
+
+        flex-wrap: wrap !important;
+    }
+
+    .navbar .nav-button {
+        flex: 0 1 auto !important;
+        padding: 8px 9px !important;
+        font-size: 12px !important;
+    }
+}
+
+
+/* =========================================================
+   TABLETS
+========================================================= */
+
+@media (max-width: 800px) {
+
+    .navbar {
+        top: 10px !important;
+        left: 150px !important;
+        right: 10px !important;
+
+        padding: 7px !important;
+        gap: 6px !important;
+
+        justify-content: center !important;
+        flex-wrap: wrap !important;
+    }
+
+    .navbar .nav-button {
+        padding: 7px 9px !important;
+        font-size: 12px !important;
+    }
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 600px) {
+
+    .navbar {
+        position: relative !important;
+
+        top: auto !important;
+        left: auto !important;
+        right: auto !important;
+
+        width: calc(100% - 16px) !important;
+
+        margin: 0 8px !important;
+        padding: 8px !important;
+
+        justify-content: center !important;
+        flex-wrap: wrap !important;
+
+        border-radius: 12px !important;
+    }
+
+    .navbar .nav-button {
+        flex: 0 1 auto !important;
+
+        padding: 7px 9px !important;
+        font-size: 12px !important;
+    }
+}
