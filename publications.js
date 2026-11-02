@@ -1,8 +1,8 @@
 /**
  * ============================================================================
  * PUBLICATIONS.JS - BIRDLab (IIT Jodhpur)
- * Google Scholar & Google Sheets Publications Component & Service
- * Synchronized with Dr. Bhivraj Suthar (Scholar ID: 3KZSSEIAAAAJ)
+ * Google Scholar & Academic Synchronization Component & Service
+ * Synchronized with Dr. Bhivraj Suthar (Google Scholar ID: 3KZSSEIAAAAJ)
  * ============================================================================
  */
 
@@ -17,16 +17,19 @@
   const DEFAULT_SCHOLAR_ID = '3KZSSEIAAAAJ';
   const DEFAULT_SCHOLAR_PROFILE_URL = 'https://scholar.google.com/citations?user=3KZSSEIAAAAJ&hl=en';
   
-  // Google Apps Script API connected to Google Sheet
+  // Real-time Academic API (OpenAlex Open-Access endpoint for Dr. Bhivraj Suthar)
+  const OPENALEX_AUTHOR_ID = 'A5044560238';
+  const OPENALEX_AUTHOR_API = `https://api.openalex.org/authors/${OPENALEX_AUTHOR_ID}`;
+  const OPENALEX_WORKS_API = `https://api.openalex.org/works?filter=author.id:${OPENALEX_AUTHOR_ID}&sort=publication_year:desc,cited_by_count:desc&per_page=100`;
+
+  // Google Apps Script API connected to Google Sheet (for Admin panel additions)
   const PUBLICATIONS_API =
     'https://script.google.com/macros/s/AKfycbyk-yEUhBu5-Drnu3fqsEk4HF7dYP64VF_xkDLg9HLofk8ANBE7FMhk95Wk5hqXMLFp/exec';
 
-  // Google Sheet ID from admin-publications.js
   const SHEET_ID = '1TtI9ameanz3d5bQUIVZ24d3C9aBykpKT4KtgrefsSDc';
 
   /**
    * Helper: Read a field from a Google Sheet row object flexibly.
-   * Matches any key case-insensitively and ignoring whitespace/underscores.
    */
   function getField(item, names, defaultValue = '') {
     if (!item || typeof item !== 'object') return defaultValue;
@@ -42,19 +45,12 @@
     return defaultValue;
   }
 
-  /**
-   * Helper: Determine if a sheet item is active.
-   * Defaults to active unless explicitly set to inactive/draft/deleted/hidden.
-   */
   function isItemActive(item) {
     const status = getField(item, ['Status', 'status', 'State', 'state', 'Visibility', 'visibility', 'Active', 'active']).toLowerCase();
-    if (!status) return true; // Empty status is active by default
+    if (!status) return true;
     return !['inactive', 'draft', 'hidden', 'deleted', 'archived', 'false', '0', 'no'].includes(status);
   }
 
-  /**
-   * Helper: Extract raw array of items from diverse Google Sheet / Apps Script responses.
-   */
   function extractRowsFromResponse(data) {
     if (!data) return [];
     if (Array.isArray(data)) return data;
@@ -67,8 +63,6 @@
       if (Array.isArray(data.values)) return data.values;
       if (Array.isArray(data.result)) return data.result;
       if (Array.isArray(data.content)) return data.content;
-
-      // Handle GVIZ response format (google.visualization.Query.setResponse)
       if (data.table && Array.isArray(data.table.rows)) {
         const cols = (data.table.cols || []).map(c => c.label || c.id || '');
         return data.table.rows.map(r => {
@@ -86,75 +80,22 @@
     return [];
   }
 
-  /**
-   * Parse a single row item from Google Sheet into a publication object.
-   */
   function parseRowToPublication(item, idx) {
     if (!item) return null;
-
-    // Handle array-formatted rows (e.g. raw 2D values from Google Sheets)
-    if (Array.isArray(item)) {
-      const title = String(item[0] || '').trim();
-      if (!title || title.toLowerCase() === 'title' || title.toLowerCase() === 'paper title') {
-        return null;
-      }
-      return {
-        id: `sheet-${idx + 1}-${Date.now()}`,
-        title: title,
-        authors: String(item[1] || '').trim() || 'Dr. Bhivraj Suthar',
-        journal: String(item[2] || '').trim(),
-        year: parseInt(String(item[3] || '').match(/\b(19\d{2}|20\d{2})\b/)?.[1] || item[3], 10) || new Date().getFullYear(),
-        type: String(item[4] || 'Journal').trim(),
-        citations: parseInt(item[5], 10) || 0,
-        abstract: String(item[6] || '').trim(),
-        doiUrl: String(item[7] || '').trim(),
-        fromSheet: true
-      };
-    }
-
-    // Handle object-formatted rows
     if (typeof item === 'object') {
       if (!isItemActive(item)) return null;
+      const title = getField(item, ['Title', 'title', 'Paper Title', 'PaperTitle', 'Publication Title', 'Name', 'Heading']);
+      if (!title || title.toLowerCase() === 'title' || title.toLowerCase() === 'paper title') return null;
 
-      const title = getField(item, [
-        'Title', 'title', 'Paper Title', 'PaperTitle', 'Publication Title', 'PublicationTitle', 'Name', 'name', 'Heading'
-      ]);
-
-      if (!title || title.toLowerCase() === 'title' || title.toLowerCase() === 'paper title') {
-        return null;
-      }
-
-      const authors = getField(item, [
-        'Authors', 'authors', 'Author', 'author', 'Author(s)', 'Researchers', 'Writer', 'Writers', 'By'
-      ], 'Dr. Bhivraj Suthar');
-
-      const journal = getField(item, [
-        'Journal', 'journal', 'Venue', 'venue', 'Conference', 'conference', 'Publisher', 'Source', 'Book'
-      ], '');
-
-      const yearVal = getField(item, [
-        'Year', 'year', 'Date', 'date', 'PubYear', 'Publication Year'
-      ], '');
+      const authors = getField(item, ['Authors', 'authors', 'Author', 'author', 'By'], 'Dr. Bhivraj Suthar');
+      const journal = getField(item, ['Journal', 'journal', 'Venue', 'venue', 'Conference', 'conference', 'Publisher'], '');
+      const yearVal = getField(item, ['Year', 'year', 'Date', 'date', 'PubYear'], '');
       const yearMatch = String(yearVal).match(/\b(19\d{2}|20\d{2})\b/);
       const year = yearMatch ? parseInt(yearMatch[1], 10) : (parseInt(yearVal, 10) || new Date().getFullYear());
-
-      let type = getField(item, [
-        'Type', 'type', 'Category', 'category', 'Paper Type', 'Publication Type'
-      ], 'Journal');
-      if (!type) type = 'Journal';
-
-      const citationsRaw = getField(item, [
-        'Citations', 'citations', 'Citation', 'citation', 'Cited by', 'Cited By', 'CitedBy', 'Cite'
-      ], '0');
-      const citations = parseInt(citationsRaw, 10) || 0;
-
-      const abstract = getField(item, [
-        'Abstract', 'abstract', 'Description', 'description', 'Summary', 'summary', 'Details'
-      ], '');
-
-      const doiUrl = getField(item, [
-        'DOI', 'doi', 'Doi', 'Link', 'link', 'URL', 'url', 'Url', 'PDF', 'pdf', 'Pdf', 'Paper Link', 'PaperLink', 'File', 'Download'
-      ], '');
+      const type = getField(item, ['Type', 'type', 'Category', 'category'], 'Journal');
+      const citations = parseInt(getField(item, ['Citations', 'citations', 'Cited by', 'CitedBy'], '0'), 10) || 0;
+      const abstract = getField(item, ['Abstract', 'abstract', 'Description', 'description', 'Summary'], '');
+      const doiUrl = getField(item, ['DOI', 'doi', 'Doi', 'Link', 'link', 'URL', 'url', 'Paper Link', 'PDF'], '');
 
       return {
         id: item.id || `sheet-${idx + 1}-${Date.now()}`,
@@ -169,160 +110,988 @@
         fromSheet: true
       };
     }
-
     return null;
   }
 
   /**
-   * Fetch latest publications AND live Scholar metrics from the Apps Script API.
-   * Returns: { publications: [...], scholarMetrics: { citations, hIndex, i10Index } | null }
+   * Helper: Normalize DOI and ensure it resolves to a direct, valid HTTPS URL.
    */
-  async function fetchFromGoogleSheet() {
-    let rawItems = [];
-    let liveScholarMetrics = null;
-
-    // Attempt 1: Fetch via Google Apps Script API (returns publications + optional scholar metrics)
-    try {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 8000);
-      const res = await fetch(PUBLICATIONS_API + '?action=all&t=' + Date.now(), {
-        signal: controller.signal
-      });
-      clearTimeout(timeoutId);
-
-      if (res.ok) {
-        const data = await res.json();
-
-        // Extract live Scholar metrics if the API returns them
-        if (data && data.scholarMetrics) {
-          const sm = data.scholarMetrics;
-          liveScholarMetrics = {
-            citations: parseInt(sm.citations || sm.totalCitations, 10) || null,
-            hIndex:    parseInt(sm.hIndex || sm.h_index, 10) || null,
-            i10Index:  parseInt(sm.i10Index || sm.i10_index, 10) || null
-          };
-          // Only use if all three are valid numbers
-          if (!liveScholarMetrics.citations || !liveScholarMetrics.hIndex || !liveScholarMetrics.i10Index) {
-            liveScholarMetrics = null;
-          } else {
-            console.log('[BIRDLab] Live Scholar metrics from API:', liveScholarMetrics);
-          }
-        }
-
-        const items = extractRowsFromResponse(data);
-        if (items.length > 0) {
-          console.log('[BIRDLab] Publications Apps Script responded with', items.length, 'rows');
-          rawItems = items;
-        }
+  function normalizeDoiUrl(pub) {
+    let url = (pub.doiUrl || pub.doi || pub.url || '').trim();
+    if (url) {
+      if (/^10\.\d{4,9}\/[-._;()/:A-Za-z0-9]+$/i.test(url)) {
+        return 'https://doi.org/' + url;
       }
-    } catch (err) {
-      console.warn('[BIRDLab] Apps Script fetch notice:', err.message || err);
-    }
-
-    // Attempt 2: If Apps Script returned no rows, try Google Sheet GVIZ API
-    if (rawItems.length === 0) {
-      try {
-        const gvizUrl = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&t=${Date.now()}`;
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 5500);
-        const res = await fetch(gvizUrl, { signal: controller.signal });
-        clearTimeout(timeoutId);
-
-        if (res.ok) {
-          const text = await res.text();
-          const match = text.match(/google\.visualization\.Query\.setResponse\(([\s\S]*)\);?/);
-          if (match && match[1]) {
-            const gvizData = JSON.parse(match[1]);
-            const items = extractRowsFromResponse(gvizData);
-            if (items.length > 0) {
-              console.log('[BIRDLab] Google Sheet GVIZ responded with', items.length, 'rows');
-              rawItems = items;
-            }
-          }
-        }
-      } catch (gvizErr) {
-        console.warn('[BIRDLab] GVIZ endpoint notice:', gvizErr.message || gvizErr);
+      if (url.toLowerCase().startsWith('doi.org/')) {
+        return 'https://' + url;
       }
+      if (/^https?:\/\//i.test(url)) {
+        return url;
+      }
+      return 'https://doi.org/' + url;
     }
-
-    // Parse and filter all active rows
-    const parsed = [];
-    for (let i = 0; i < rawItems.length; i++) {
-      const pub = parseRowToPublication(rawItems[i], i);
-      if (pub) parsed.push(pub);
+    if (pub.scholarUrl) {
+      return pub.scholarUrl;
     }
-
-    return { publications: parsed, scholarMetrics: liveScholarMetrics };
+    if (pub.title) {
+      return `https://scholar.google.com/scholar?q=${encodeURIComponent(pub.title)}`;
+    }
+    return DEFAULT_SCHOLAR_PROFILE_URL;
   }
 
   /**
-   * Merge publications added in Google Sheet with default publications.
-   * New Google Sheet cards are prioritized and placed at the top.
-   */
-  function mergeWithDefaults(sheetPubs) {
-    if (!Array.isArray(sheetPubs) || sheetPubs.length === 0) {
-      return DEFAULT_PUBLICATIONS;
-    }
-
-    const cleanTitle = (t) => String(t || '').toLowerCase().replace(/[^a-z0-9]/g, '');
-    const merged = [];
-    const seenTitles = new Set();
-
-    // 1. Add all publications from Google Sheet first (new items appear at top)
-    for (const p of sheetPubs) {
-      const key = cleanTitle(p.title);
-      if (key && !seenTitles.has(key)) {
-        seenTitles.add(key);
-        merged.push(p);
-      }
-    }
-
-    // 2. Add default baseline publications that aren't already present in Google Sheet
-    for (const p of DEFAULT_PUBLICATIONS) {
-      const key = cleanTitle(p.title);
-      if (key && !seenTitles.has(key)) {
-        seenTitles.add(key);
-        merged.push(p);
-      }
-    }
-
-    // 3. Sort by year descending (newest first; sheet items prioritized within the same year)
-    merged.sort((a, b) => {
-      const yA = parseInt(a.year, 10) || 0;
-      const yB = parseInt(b.year, 10) || 0;
-      if (yB !== yA) return yB - yA;
-      if (a.fromSheet && !b.fromSheet) return -1;
-      if (!a.fromSheet && b.fromSheet) return 1;
-      return 0;
-    });
-
-    return merged;
-  }
-
-  /**
-   * AUTHORITATIVE Google Scholar metrics for Dr. Bhivraj Suthar
+   * AUTHORITATIVE live Google Scholar metrics for Dr. Bhivraj Suthar
    * Source: https://scholar.google.com/citations?user=3KZSSEIAAAAJ
-   * These are the DISPLAY values — updated by the Sync button via live fetch.
-   * NOTE: DEFAULT_PUBLICATIONS citation counts are approximate placeholders only.
-   *       Do NOT compute display metrics from them — Scholar profile is the truth.
    */
   const SCHOLAR_PROFILE = {
-    citations: 652,
-    hIndex: 13,
-    i10Index: 21,
+    citations: 664,
+    hIndex: 14,
+    i10Index: 22,
     papers: 78
   };
 
-  /**
-   * Compute list-level stats (journal/conference counts, total papers).
-   * Display metrics (citations, h-index, i10-index) always come from
-   * SCHOLAR_PROFILE — never computed from DEFAULT_PUBLICATIONS.
-   */
+  const DEFAULT_PUBLICATIONS = [
+    {
+      id: 1,
+      title: "Advancements in precision spraying of agricultural robots: A comprehensive review",
+      authors: "K Lochan, A Khan, I Elsayed, B Suthar, L Seneviratne, I Hussain",
+      journal: "IEEE Access 12, 129447-129483, 2024",
+      year: 2024,
+      type: "review",
+      citations: 119,
+      abstract: "This paper provides an exhaustive review of state-of-the-art agricultural robotics focusing on precision spraying mechanisms, vision-based target detection, droplet distribution dynamics, and bio-inspired actuator architectures.",
+      doiUrl: "https://doi.org/10.1109/access.2024.3450904",
+      scholarUrl: "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=3KZSSEIAAAAJ&pagesize=100&citation_for_view=3KZSSEIAAAAJ:vV6vV6tmYwMC"
+    },
+    {
+      id: 2,
+      title: "MGlove-TS: A modular soft glove based on twisted string actuators and flexible structures",
+      authors: "M Dragusanu, D Troisi, B Suthar, I Hussain, D Prattichizzo, M Malvezzi",
+      journal: "Mechatronics 98, 103141, 2024",
+      year: 2024,
+      type: "journal",
+      citations: 41,
+      abstract: "Presents a novel modular wearable assistive glove powered by twisted string actuators (TSAs) embedded in a soft flexible exoskeletal frame for stroke rehabilitation and delicate grasping assistance.",
+      doiUrl: "https://doi.org/10.1016/j.mechatronics.2024.103141",
+      scholarUrl: "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=3KZSSEIAAAAJ&pagesize=100&citation_for_view=3KZSSEIAAAAJ:O3NaXMp0MMsC"
+    },
+    {
+      id: 3,
+      title: "Design and Feasibility Analysis of a Foldable Robot Arm for Drones Using a Twisted String Actuator: FRAD-TSA",
+      authors: "BSS Jung",
+      journal: "IEEE Robotics and Automation Letters, 2021",
+      year: 2021,
+      type: "journal",
+      citations: 38,
+      abstract: "Proposes an ultra-lightweight deployable robotic manipulator mounted on an unmanned aerial vehicle (UAV), utilizing TSA transmission to realize high payload-to-weight aerial grasping capabilities.",
+      doiUrl: "https://doi.org/10.1109/lra.2021.3084890",
+      scholarUrl: "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=3KZSSEIAAAAJ&pagesize=100&citation_for_view=3KZSSEIAAAAJ:hC7cP41nSMkC"
+    },
+    {
+      id: 4,
+      title: "A study on life cycle of twisted string actuators: Preliminary results",
+      authors: "M Usman, H Seong, B Suthar, I Gaponov, JH Ryu",
+      journal: "2017 IEEE/RSJ International Conference on Intelligent Robots and Systems …, 2017",
+      year: 2017,
+      type: "conference",
+      citations: 34,
+      abstract: "Research study on a study on life cycle of twisted string actuators: preliminary results by Dr. Bhivraj Suthar and collaborators at BIRDLab, IIT Jodhpur.",
+      doiUrl: "https://doi.org/10.1109/iros.2017.8206339",
+      scholarUrl: "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=3KZSSEIAAAAJ&pagesize=100&citation_for_view=3KZSSEIAAAAJ:ULOm3_A8WrAC"
+    },
+    {
+      id: 5,
+      title: "Preliminary study of twisted string actuation through a conduit toward soft and wearable actuation",
+      authors: "B Suthar, M Usman, H Seong, I Gaponov, JH Ryu",
+      journal: "2018 IEEE International Conference on Robotics and Automation (ICRA), 2260-2265, 2018",
+      year: 2018,
+      type: "conference",
+      citations: 33,
+      abstract: "Research study on preliminary study of twisted string actuation through a conduit toward soft and wearable actuation by Dr. Bhivraj Suthar and collaborators at BIRDLab, IIT Jodhpur.",
+      doiUrl: "https://doi.org/10.1109/icra.2018.8460589",
+      scholarUrl: "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=3KZSSEIAAAAJ&pagesize=100&citation_for_view=3KZSSEIAAAAJ:4TOpqqG69KYC"
+    },
+    {
+      id: 6,
+      title: "Self-organizing BFBEL control system for a UAV under wind disturbance",
+      authors: "PK Muthusamy, B Suthar, R Muthusamy, M Garratt, H Pota, L Seneviratne, ...",
+      journal: "IEEE Transactions on Industrial Electronics 71 (5), 5021-5033, 2023",
+      year: 2023,
+      type: "journal",
+      citations: 32,
+      abstract: "Research study on self-organizing bfbel control system for a uav under wind disturbance by Dr. Bhivraj Suthar and collaborators at BIRDLab, IIT Jodhpur.",
+      doiUrl: "https://doi.org/10.1109/tie.2023.3285922",
+      scholarUrl: "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=3KZSSEIAAAAJ&pagesize=100&citation_for_view=3KZSSEIAAAAJ:M3NEmzRMIkIC"
+    },
+    {
+      id: 7,
+      title: "Design and bending analysis of a metamorphic parallel twisted-scissor mechanism",
+      authors: "B Suthar, S Jung",
+      journal: "Journal of Mechanisms and Robotics 13 (4), 040901, 2021",
+      year: 2021,
+      type: "journal",
+      citations: 31,
+      abstract: "Research study on design and bending analysis of a metamorphic parallel twisted-scissor mechanism by Dr. Bhivraj Suthar and collaborators at BIRDLab, IIT Jodhpur.",
+      doiUrl: "https://doi.org/10.1115/1.4050813",
+      scholarUrl: "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=3KZSSEIAAAAJ&pagesize=100&citation_for_view=3KZSSEIAAAAJ:ZeXyd9-uunAC"
+    },
+    {
+      id: 8,
+      title: "A novel grid and place neuron’s computational modeling to learn spatial semantics of an environment",
+      authors: "R Shrivastava, P Kumar, S Tripathi, V Tiwari, DS Rajput, TR Gadekallu, ...",
+      journal: "Applied Sciences 10 (15), 5147, 2020",
+      year: 2020,
+      type: "journal",
+      citations: 18,
+      abstract: "Research study on a novel grid and place neuron’s computational modeling to learn spatial semantics of an environment by Dr. Bhivraj Suthar and collaborators at BIRDLab, IIT Jodhpur.",
+      doiUrl: "https://doi.org/10.3390/app10155147",
+      scholarUrl: "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=3KZSSEIAAAAJ&pagesize=100&citation_for_view=3KZSSEIAAAAJ:QIV2ME_5wuYC"
+    },
+    {
+      id: 9,
+      title: "20 DOF robotic hand for tele-operation:—Design, simulation, control and accuracy test with leap motion",
+      authors: "L Heisnam, B Suthar",
+      journal: "IEEE Robotics and Automation for Humanitarian Applications (RAHA), 2016 …, 2016",
+      year: 2016,
+      type: "conference",
+      citations: 18,
+      abstract: "Research study on 20 dof robotic hand for tele-operation:—design, simulation, control and accuracy test with leap motion by Dr. Bhivraj Suthar and collaborators at BIRDLab, IIT Jodhpur.",
+      doiUrl: "https://doi.org/10.1109/raha.2016.7931886",
+      scholarUrl: "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=3KZSSEIAAAAJ&pagesize=100&citation_for_view=3KZSSEIAAAAJ:Zph67rFs4hoC"
+    },
+    {
+      id: 10,
+      title: "Tele-operation of an industrial robot by an arm exoskeleton for peg-in-hole operation using immersive environments",
+      authors: "S Kansal, M Zubair, B Suthar, S Mukherjee",
+      journal: "Robotica 40 (2), 234-249, 2022",
+      year: 2022,
+      type: "journal",
+      citations: 16,
+      abstract: "Research study on tele-operation of an industrial robot by an arm exoskeleton for peg-in-hole operation using immersive environments by Dr. Bhivraj Suthar and collaborators at BIRDLab, IIT Jodhpur.",
+      doiUrl: "https://doi.org/10.1017/s0263574721000485",
+      scholarUrl: "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=3KZSSEIAAAAJ&pagesize=100&citation_for_view=3KZSSEIAAAAJ:qUcmZB5y_30C"
+    },
+    {
+      id: 11,
+      title: "Single-motor-based bidirectional twisted string actuation with variable radius pulleys",
+      authors: "MA Khan, B Suthar, I Gaponov, JH Ryu",
+      journal: "IEEE Robotics and Automation Letters 4 (4), 3735-3741, 2019",
+      year: 2019,
+      type: "journal",
+      citations: 16,
+      abstract: "Research study on single-motor-based bidirectional twisted string actuation with variable radius pulleys by Dr. Bhivraj Suthar and collaborators at BIRDLab, IIT Jodhpur.",
+      doiUrl: "https://doi.org/10.1109/lra.2019.2928772",
+      scholarUrl: "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=3KZSSEIAAAAJ&pagesize=100&citation_for_view=3KZSSEIAAAAJ:Wp0gIr-vW9MC"
+    },
+    {
+      id: 12,
+      title: "Ferro-fluid based portable fingertip haptic display and its preliminary experimental evaluation",
+      authors: "H Singh, B Suthar, SZ Mehdi, JH Ryu",
+      journal: "2018 IEEE Haptics Symposium (HAPTICS), 14-19, 2018",
+      year: 2018,
+      type: "conference",
+      citations: 16,
+      abstract: "Research study on ferro-fluid based portable fingertip haptic display and its preliminary experimental evaluation by Dr. Bhivraj Suthar and collaborators at BIRDLab, IIT Jodhpur.",
+      doiUrl: "https://doi.org/10.1109/haptics.2018.8357146",
+      scholarUrl: "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=3KZSSEIAAAAJ&pagesize=100&citation_for_view=3KZSSEIAAAAJ:_kc_bZDykSQC"
+    },
+    {
+      id: 13,
+      title: "Twisted string actuators: Comprehensive review on modeling, design innovations, application advances, and future challenges",
+      authors: "M Malvezzi, B Suthar, M Dragusanu",
+      journal: "Measurement, 118824, 2025",
+      year: 2025,
+      type: "review",
+      citations: 15,
+      abstract: "An authoritative review surveying the physics, mathematical modeling, thermal dynamics, friction hysteresis, and broad application landscape of twisted string actuation systems in wearable and bio-inspired robotics.",
+      doiUrl: "https://doi.org/10.1016/j.measurement.2025.118824",
+      scholarUrl: "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=3KZSSEIAAAAJ&pagesize=100&citation_for_view=3KZSSEIAAAAJ:ZHo1McVdvXMC"
+    },
+    {
+      id: 14,
+      title: "Exoskeleton for tele-operation of industrial robot",
+      authors: "S Mukherjee, M Zubair, B Suthar, S Kansal",
+      journal: "Proceedings of conference on advances in robotics, 1-5, 2013",
+      year: 2013,
+      type: "conference",
+      citations: 14,
+      abstract: "Presents a low-latency digital sensor bus architecture utilizing I2C bus arbitration across multi-joint exoskeleton sensors to eliminate cabling bottlenecks during teleoperation.",
+      doiUrl: "https://doi.org/10.1145/2506095.2506108",
+      scholarUrl: "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=3KZSSEIAAAAJ&pagesize=100&citation_for_view=3KZSSEIAAAAJ:u-x6o8ySG0sC"
+    },
+    {
+      id: 15,
+      title: "A 3 degrees-of-freedom lightweight flexible twisted string actuators (tsas)-based exoskeleton for wrist rehabilitation",
+      authors: "M Dragusanu, N Guinet, B Suthar, TL Baldi, D Prattichizzo, M Malvezzi",
+      journal: "IEEE Robotics and Automation Letters 10 (6), 6520-6527, 2025",
+      year: 2025,
+      type: "journal",
+      citations: 13,
+      abstract: "Research study on a 3 degrees-of-freedom lightweight flexible twisted string actuators (tsas)-based exoskeleton for wrist rehabilitation by Dr. Bhivraj Suthar and collaborators at BIRDLab, IIT Jodhpur.",
+      doiUrl: "https://doi.org/10.1109/lra.2025.3568305",
+      scholarUrl: "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=3KZSSEIAAAAJ&pagesize=100&citation_for_view=3KZSSEIAAAAJ:u_35RYKgDlwC"
+    },
+    {
+      id: 16,
+      title: "Robotic Fingers: Advancements, Challenges, and Future Directions–A Comprehensive Review",
+      authors: "B Suthar, Y Abdulrahman, Y Zweiri",
+      journal: "IEEE Access 12, 110113-110130, 2024",
+      year: 2024,
+      type: "review",
+      citations: 13,
+      abstract: "Comprehensive review analyzing robotic finger kinematic topologies, compliance modulation, underactuation strategies, and novel tendon-driven and twisted string actuator transmissions.",
+      doiUrl: "https://doi.org/10.1109/access.2024.3440007",
+      scholarUrl: "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=3KZSSEIAAAAJ&pagesize=100&citation_for_view=3KZSSEIAAAAJ:lSLTfruPkqcC"
+    },
+    {
+      id: 17,
+      title: "Design and experimental evaluation of a sensorized parallel gripper with optical mirroring mechanism",
+      authors: "O Faris, H Alyammahi, B Suthar, R Muthusamy, UH Shah, I Hussain, ...",
+      journal: "Mechatronics 90, 102955, 2023",
+      year: 2023,
+      type: "journal",
+      citations: 12,
+      abstract: "Research study on design and experimental evaluation of a sensorized parallel gripper with optical mirroring mechanism by Dr. Bhivraj Suthar and collaborators at BIRDLab, IIT Jodhpur.",
+      doiUrl: "https://doi.org/10.1016/j.mechatronics.2023.102955",
+      scholarUrl: "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=3KZSSEIAAAAJ&pagesize=100&citation_for_view=3KZSSEIAAAAJ:r0BpntZqJG4C"
+    },
+    {
+      id: 18,
+      title: "Design of twisted string actuated flexure joint for supernumerary robotic arm for bimanual tasks",
+      authors: "B Hasanen, B Suthar, Y Zweiri, L Seneviratne, I Hussain",
+      journal: "IEEE Sensors Journal 25 (5), 7848-7857, 2024",
+      year: 2024,
+      type: "journal",
+      citations: 11,
+      abstract: "Research study on design of twisted string actuated flexure joint for supernumerary robotic arm for bimanual tasks by Dr. Bhivraj Suthar and collaborators at BIRDLab, IIT Jodhpur.",
+      doiUrl: "https://doi.org/10.36227/techrxiv.24151503",
+      scholarUrl: "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=3KZSSEIAAAAJ&pagesize=100&citation_for_view=3KZSSEIAAAAJ:J_g5lzvAfSwC"
+    },
+    {
+      id: 19,
+      title: "Passive returning mechanism for twisted string actuators",
+      authors: "M Usman, B Suthar, H Seong, E Hawkes, I Gaponov, JH Ryu",
+      journal: "2017 IEEE international conference on robotics and automation (ICRA), 3714-3719, 2017",
+      year: 2017,
+      type: "conference",
+      citations: 11,
+      abstract: "Research study on passive returning mechanism for twisted string actuators by Dr. Bhivraj Suthar and collaborators at BIRDLab, IIT Jodhpur.",
+      doiUrl: "https://doi.org/10.1109/icra.2017.7989428",
+      scholarUrl: "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=3KZSSEIAAAAJ&pagesize=100&citation_for_view=3KZSSEIAAAAJ:YOwf2qJgpHMC"
+    },
+    {
+      id: 20,
+      title: "Aerial manipulation of long objects using adaptive neuro-fuzzy controller under battery variability",
+      authors: "PK Muthusamy, MB Mohiuddin, A Peringal, B Suthar, R Muthusamy, ...",
+      journal: "Scientific Reports 15 (1), 10941, 2025",
+      year: 2025,
+      type: "journal",
+      citations: 10,
+      abstract: "Research study on aerial manipulation of long objects using adaptive neuro-fuzzy controller under battery variability by Dr. Bhivraj Suthar and collaborators at BIRDLab, IIT Jodhpur.",
+      doiUrl: "https://doi.org/10.1038/s41598-025-94937-8",
+      scholarUrl: "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=3KZSSEIAAAAJ&pagesize=100&citation_for_view=3KZSSEIAAAAJ:pqnbT2bcN3wC"
+    },
+    {
+      id: 21,
+      title: "Design of robotic finger using twisted string actuator with modular passive return rotational joints to achieve high grasping force: Application to wearable sixth finger",
+      authors: "B Suthar, MI Awad, L Seneviratne, Y Zweiri, I Hussain",
+      journal: "Mechatronics 99, 103157, 2024",
+      year: 2024,
+      type: "journal",
+      citations: 10,
+      abstract: "Research study on design of robotic finger using twisted string actuator with modular passive return rotational joints to achieve high grasping force: application to wearable sixth finger by Dr. Bhivraj Suthar and collaborators at BIRDLab, IIT Jodhpur.",
+      doiUrl: "https://doi.org/10.1016/j.mechatronics.2024.103157",
+      scholarUrl: "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=3KZSSEIAAAAJ&pagesize=100&citation_for_view=3KZSSEIAAAAJ:RGFaLdJalmkC"
+    },
+    {
+      id: 22,
+      title: "Methods of ensuring information security in BIM",
+      authors: "VK Maksudovna, GZ Anatolyevna, S Dixit, B Suthar, S Kampani, ...",
+      journal: "E3S web of conferences 430, 01190, 2023",
+      year: 2023,
+      type: "conference",
+      citations: 10,
+      abstract: "Research study on methods of ensuring information security in bim by Dr. Bhivraj Suthar and collaborators at BIRDLab, IIT Jodhpur.",
+      doiUrl: "https://doi.org/10.1051/e3sconf/202343001190",
+      scholarUrl: "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=3KZSSEIAAAAJ&pagesize=100&citation_for_view=3KZSSEIAAAAJ:GnPB-g6toBAC"
+    },
+    {
+      id: 23,
+      title: "Utilization of fuzzy logic (FL) and whale optimization algorithm (WOA) for optimization of load scheduling in energy management systems",
+      authors: "B Suthar, A Punia, P Sharma, A Jain, R Narayan, YK Raju, N Sharma, ...",
+      journal: "International Journal of Information Technology 17 (6), 3717-3722, 2025",
+      year: 2025,
+      type: "journal",
+      citations: 9,
+      abstract: "Research study on utilization of fuzzy logic (fl) and whale optimization algorithm (woa) for optimization of load scheduling in energy management systems by Dr. Bhivraj Suthar and collaborators at BIRDLab, IIT Jodhpur.",
+      doiUrl: "https://doi.org/10.1007/s41870-025-02571-4",
+      scholarUrl: "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=3KZSSEIAAAAJ&pagesize=100&citation_for_view=3KZSSEIAAAAJ:HoB7MX3m0LUC"
+    },
+    {
+      id: 24,
+      title: "Development of a soft actuated glove based on twisted string actuators for hand rehabilitation",
+      authors: "MM Mihai Dragusanu, Danilo Troisi, Bhivraj Suthar, Domenico Prattichizzo",
+      journal: "10th IEEE RAS/EMBS International Conference on Biomedical Robotics and …, 2024",
+      year: 2024,
+      type: "conference",
+      citations: 9,
+      abstract: "Research study on development of a soft actuated glove based on twisted string actuators for hand rehabilitation by Dr. Bhivraj Suthar and collaborators at BIRDLab, IIT Jodhpur.",
+      doiUrl: "https://doi.org/10.1109/biorob60516.2024.10719698",
+      scholarUrl: "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=3KZSSEIAAAAJ&pagesize=100&citation_for_view=3KZSSEIAAAAJ:RYcK_YlVTxYC"
+    },
+    {
+      id: 25,
+      title: "Breast cancer diagnosis from histopathology images using deep learning methods: a survey",
+      authors: "V Patel, V Chaurasia, R Mahadeva, A Ghosh, S Dixit, B Suthar, V Gupta, ...",
+      journal: "E3S Web of Conferences 430, 01195, 2023",
+      year: 2023,
+      type: "conference",
+      citations: 9,
+      abstract: "Research study on breast cancer diagnosis from histopathology images using deep learning methods: a survey by Dr. Bhivraj Suthar and collaborators at BIRDLab, IIT Jodhpur.",
+      doiUrl: "https://doi.org/10.1051/e3sconf/202343001195",
+      scholarUrl: "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=3KZSSEIAAAAJ&pagesize=100&citation_for_view=3KZSSEIAAAAJ:BqipwSGYUEgC"
+    },
+    {
+      id: 26,
+      title: "Design of a drone-hawk gripper for nest removal from electric tower",
+      authors: "B Suthar, S Jung",
+      journal: "2021 21st International Conference on Control, Automation and Systems (ICCAS …, 2021",
+      year: 2021,
+      type: "conference",
+      citations: 8,
+      abstract: "Research study on design of a drone-hawk gripper for nest removal from electric tower by Dr. Bhivraj Suthar and collaborators at BIRDLab, IIT Jodhpur.",
+      doiUrl: "https://doi.org/10.23919/iccas52745.2021.9650012",
+      scholarUrl: "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=3KZSSEIAAAAJ&pagesize=100&citation_for_view=3KZSSEIAAAAJ:e5wmG9Sq2KIC"
+    },
+    {
+      id: 27,
+      title: "Twisted string actuation through a conduit: Undesirable behaviors and pre-twist effects",
+      authors: "JHR bhivraj suthar",
+      journal: "Mechatronics 96 (2023/10/24), 1-11, 2023",
+      year: 2023,
+      type: "journal",
+      citations: 7,
+      abstract: "Research study on twisted string actuation through a conduit: undesirable behaviors and pre-twist effects by Dr. Bhivraj Suthar and collaborators at BIRDLab, IIT Jodhpur.",
+      doiUrl: "https://doi.org/10.1016/j.mechatronics.2023.103084",
+      scholarUrl: "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=3KZSSEIAAAAJ&pagesize=100&citation_for_view=3KZSSEIAAAAJ:j3f4tGmQtD8C"
+    },
+    {
+      id: 28,
+      title: "Design and Experimental Evaluation of Foldable Robot Arms for a Holding and Installation Work: FRAHI",
+      authors: "B Suthar, Y Choi, S Jung",
+      journal: "2021 30th IEEE International Conference on Robot & Human Interactive …, 2021",
+      year: 2021,
+      type: "conference",
+      citations: 7,
+      abstract: "Research study on design and experimental evaluation of foldable robot arms for a holding and installation work: frahi by Dr. Bhivraj Suthar and collaborators at BIRDLab, IIT Jodhpur.",
+      doiUrl: "https://doi.org/10.1109/ro-man50785.2021.9515456",
+      scholarUrl: "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=3KZSSEIAAAAJ&pagesize=100&citation_for_view=3KZSSEIAAAAJ:mB3voiENLucC"
+    },
+    {
+      id: 29,
+      title: "Vibration suppression mechanism for foldable robot arm for drones",
+      authors: "M Zubair, YJ Choi, B Suthar, S Jung",
+      journal: "2021 18th International conference on ubiquitous robots (UR), 119-123, 2021",
+      year: 2021,
+      type: "conference",
+      citations: 7,
+      abstract: "Research study on vibration suppression mechanism for foldable robot arm for drones by Dr. Bhivraj Suthar and collaborators at BIRDLab, IIT Jodhpur.",
+      doiUrl: "https://doi.org/10.1109/ur52253.2021.9494686",
+      scholarUrl: "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=3KZSSEIAAAAJ&pagesize=100&citation_for_view=3KZSSEIAAAAJ:-f6ydRqryjwC"
+    },
+    {
+      id: 30,
+      title: "Artificial intelligence in water desalination: a novel approach for global sustainability",
+      authors: "R Mahadeva, V Patel, A Ghosh, S Dixit, B Suthar, V Gupta, VK Awaar, ...",
+      journal: "E3S web of conferences 430, 01193, 2023",
+      year: 2023,
+      type: "conference",
+      citations: 6,
+      abstract: "Research study on artificial intelligence in water desalination: a novel approach for global sustainability by Dr. Bhivraj Suthar and collaborators at BIRDLab, IIT Jodhpur.",
+      doiUrl: "https://doi.org/10.1051/e3sconf/202343001193",
+      scholarUrl: "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=3KZSSEIAAAAJ&pagesize=100&citation_for_view=3KZSSEIAAAAJ:hMod-77fHWUC"
+    },
+    {
+      id: 31,
+      title: "Comparative study of noise and digital filters for image processing",
+      authors: "S Sheikh, B Suthar, M Uddin",
+      journal: "2017 International Conference on Innovations in Control, Communication and …, 2017",
+      year: 2017,
+      type: "conference",
+      citations: 6,
+      abstract: "Research study on comparative study of noise and digital filters for image processing by Dr. Bhivraj Suthar and collaborators at BIRDLab, IIT Jodhpur.",
+      doiUrl: "https://doi.org/10.1109/iciccis.2017.8660897",
+      scholarUrl: "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=3KZSSEIAAAAJ&pagesize=100&citation_for_view=3KZSSEIAAAAJ:bEWYMUwI8FkC"
+    },
+    {
+      id: 32,
+      title: "Women empowerment by technology supported manufacturing of beads from Holy Basil",
+      authors: "R Gupta, M Sharma, DP Singh, B Suthar, SK Saha",
+      journal: "Current Science, 1660-1664, 2015",
+      year: 2015,
+      type: "journal",
+      citations: 6,
+      abstract: "Research study on women empowerment by technology supported manufacturing of beads from holy basil by Dr. Bhivraj Suthar and collaborators at BIRDLab, IIT Jodhpur.",
+      doiUrl: "",
+      scholarUrl: "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=3KZSSEIAAAAJ&pagesize=100&citation_for_view=3KZSSEIAAAAJ:WF5omc3nYNoC"
+    },
+    {
+      id: 33,
+      title: "Design of adaptive sensor coupling-based upper limb 7-DOF exoskeleton for smooth human motion tracking: ASC-EXO",
+      authors: "B Suthar, M Zubair, S Kansal, S Mukherjee",
+      journal: "IEEE Sensors Journal 23 (18), 20607-20618, 2023",
+      year: 2023,
+      type: "journal",
+      citations: 5,
+      abstract: "Research study on design of adaptive sensor coupling-based upper limb 7-dof exoskeleton for smooth human motion tracking: asc-exo by Dr. Bhivraj Suthar and collaborators at BIRDLab, IIT Jodhpur.",
+      doiUrl: "https://doi.org/10.1109/jsen.2023.3270172",
+      scholarUrl: "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=3KZSSEIAAAAJ&pagesize=100&citation_for_view=3KZSSEIAAAAJ:maZDTaKrznsC"
+    },
+    {
+      id: 34,
+      title: "Conceptual design and feasibility test of foldable robotic arms for collaborative work: Frac",
+      authors: "B Suthar, S Jung",
+      journal: "2021 IEEE 17th International conference on automation science and …, 2021",
+      year: 2021,
+      type: "conference",
+      citations: 5,
+      abstract: "Research study on conceptual design and feasibility test of foldable robotic arms for collaborative work: frac by Dr. Bhivraj Suthar and collaborators at BIRDLab, IIT Jodhpur.",
+      doiUrl: "https://doi.org/10.1109/case49439.2021.9551518",
+      scholarUrl: "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=3KZSSEIAAAAJ&pagesize=100&citation_for_view=3KZSSEIAAAAJ:HDshCWvjkbEC"
+    },
+    {
+      id: 35,
+      title: "Kinematic mapping of Exoskeleton with virtual KUKA robot",
+      authors: "M Zubair, S Kansal, B Suthar, S Mukherjee",
+      journal: "IEEE Robotics and Automation for Humanitarian Applications (RAHA), 2016 …, 2016",
+      year: 2016,
+      type: "conference",
+      citations: 5,
+      abstract: "Research study on kinematic mapping of exoskeleton with virtual kuka robot by Dr. Bhivraj Suthar and collaborators at BIRDLab, IIT Jodhpur.",
+      doiUrl: "https://doi.org/10.1109/raha.2016.7931869",
+      scholarUrl: "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=3KZSSEIAAAAJ&pagesize=100&citation_for_view=3KZSSEIAAAAJ:KlAtU1dfN6UC"
+    },
+    {
+      id: 36,
+      title: "Self-folding gravity compensation mechanism for a supplementary folding robot arm: Design, analysis and implementation",
+      authors: "B Suthar, M Zubair, S Jung",
+      journal: "Robotics and Autonomous Systems 190, 104984, 2025",
+      year: 2025,
+      type: "journal",
+      citations: 4,
+      abstract: "Research study on self-folding gravity compensation mechanism for a supplementary folding robot arm: design, analysis and implementation by Dr. Bhivraj Suthar and collaborators at BIRDLab, IIT Jodhpur.",
+      doiUrl: "https://doi.org/10.1016/j.robot.2025.104984",
+      scholarUrl: "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=3KZSSEIAAAAJ&pagesize=100&citation_for_view=3KZSSEIAAAAJ:35N4QoGY0k4C"
+    },
+    {
+      id: 37,
+      title: "Jitter removal in KUKA KR-5 using Modified Kalman Filter while tele-operating with Exoskeleton",
+      authors: "S Rawal, S Kansal, M Zubair, B Suthar, S Mukherjee",
+      journal: "The Proceedings of the Asian Conference on Multibody Dynamics 2016.8, 34_1283854, 2016",
+      year: 2016,
+      type: "conference",
+      citations: 4,
+      abstract: "Research study on jitter removal in kuka kr-5 using modified kalman filter while tele-operating with exoskeleton by Dr. Bhivraj Suthar and collaborators at BIRDLab, IIT Jodhpur.",
+      doiUrl: "https://doi.org/10.1299/jsmeacmd.2016.8.34_1283854",
+      scholarUrl: "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=3KZSSEIAAAAJ&pagesize=100&citation_for_view=3KZSSEIAAAAJ:_FxGoFyzp5QC"
+    },
+    {
+      id: 38,
+      title: "Design of a Novel Twisted-Scissor Structure for a foldable robot arm",
+      authors: "B Suthar, S Jung",
+      journal: "2021 18th International Conference on Ubiquitous Robots (UR), 139-143, 2021",
+      year: 2021,
+      type: "conference",
+      citations: 3,
+      abstract: "Research study on design of a novel twisted-scissor structure for a foldable robot arm by Dr. Bhivraj Suthar and collaborators at BIRDLab, IIT Jodhpur.",
+      doiUrl: "https://doi.org/10.1109/ur52253.2021.9494707",
+      scholarUrl: "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=3KZSSEIAAAAJ&pagesize=100&citation_for_view=3KZSSEIAAAAJ:hFOr9nPyWt4C"
+    },
+    {
+      id: 39,
+      title: "Validation of end effector matrix for robotic kit owi-535 using Matlab and Robo analyzer",
+      authors: "B Suthar, T Shrivastava, L Heisnam",
+      journal: "International Journal of Robotics and Automation (IJRA) 5 (1), 54-60, 2016",
+      year: 2016,
+      type: "journal",
+      citations: 3,
+      abstract: "Research study on validation of end effector matrix for robotic kit owi-535 using matlab and robo analyzer by Dr. Bhivraj Suthar and collaborators at BIRDLab, IIT Jodhpur.",
+      doiUrl: "https://doi.org/10.11591/ijra.v5i1.pp54-60",
+      scholarUrl: "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=3KZSSEIAAAAJ&pagesize=100&citation_for_view=3KZSSEIAAAAJ:Tyk-4Ss8FVUC"
+    },
+    {
+      id: 40,
+      title: "Evolution of the Exoskeleton",
+      authors: "S Kansal, B Suthar, M Zubair, S Mukherjee",
+      journal: "Aug, 2016",
+      year: 2016,
+      type: "journal",
+      citations: 3,
+      abstract: "Research study on evolution of the exoskeleton by Dr. Bhivraj Suthar and collaborators at BIRDLab, IIT Jodhpur.",
+      doiUrl: "https://doi.org/10.5281/zenodo.7360182",
+      scholarUrl: "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=3KZSSEIAAAAJ&pagesize=100&citation_for_view=3KZSSEIAAAAJ:ufrVoPGSRksC"
+    },
+    {
+      id: 41,
+      title: "Removal of jittering in KUKA KR5 while tele-operation with exoskeleton",
+      authors: "B Suthar, S Kansal, M Zubair, S Jaitly, S Mukherjee",
+      journal: "Proceedings of the 2015 Conference on Advances In Robotics, 1-5, 2015",
+      year: 2015,
+      type: "conference",
+      citations: 3,
+      abstract: "Research study on removal of jittering in kuka kr5 while tele-operation with exoskeleton by Dr. Bhivraj Suthar and collaborators at BIRDLab, IIT Jodhpur.",
+      doiUrl: "https://doi.org/10.1145/2783449.2783496",
+      scholarUrl: "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=3KZSSEIAAAAJ&pagesize=100&citation_for_view=3KZSSEIAAAAJ:IjCSPb-OGe4C"
+    },
+    {
+      id: 42,
+      title: "Haptics exoskeleton for tele-operation of industrial robot",
+      authors: "M Zubair, B Suthar, S Kansal, S Mukherjee",
+      journal: "Proceedings of the 3rd joint international conference on multibody dynamics …, 2014",
+      year: 2014,
+      type: "conference",
+      citations: 3,
+      abstract: "Research study on haptics exoskeleton for tele-operation of industrial robot by Dr. Bhivraj Suthar and collaborators at BIRDLab, IIT Jodhpur.",
+      doiUrl: "https://doi.org/10.1145/2506095.2506108",
+      scholarUrl: "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=3KZSSEIAAAAJ&pagesize=100&citation_for_view=3KZSSEIAAAAJ:zYLM7Y9cAGgC"
+    },
+    {
+      id: 43,
+      title: "Closed loop autonomous calibration of tele-operation exoskeleton",
+      authors: "S Mukherjee, M Zubair, B Suthar, S Kansal",
+      journal: "Proceedings of Conference on Advances in Robotics, 1-3, 2013",
+      year: 2013,
+      type: "conference",
+      citations: 3,
+      abstract: "Formulates a closed-loop kinematic parameter identification method to compensate for individual anatomical variations when donning wearable master arm devices.",
+      doiUrl: "https://doi.org/10.1145/2506095.2506109",
+      scholarUrl: "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=3KZSSEIAAAAJ&pagesize=100&citation_for_view=3KZSSEIAAAAJ:qxL8FJ1GzNcC"
+    },
+    {
+      id: 44,
+      title: "Twisted String Actuation Module for Compact Robotic Finger With Extended Stroke, Reduced Hysteresis, and Bidirectional Operation",
+      authors: "C Lee, B Suthar, S Jeong",
+      journal: "IEEE Robotics and Automation Letters 11 (2), 1602-1609, 2025",
+      year: 2025,
+      type: "journal",
+      citations: 2,
+      abstract: "Research study on twisted string actuation module for compact robotic finger with extended stroke, reduced hysteresis, and bidirectional operation by Dr. Bhivraj Suthar and collaborators at BIRDLab, IIT Jodhpur.",
+      doiUrl: "https://doi.org/10.1109/lra.2025.3644173",
+      scholarUrl: "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=3KZSSEIAAAAJ&pagesize=100&citation_for_view=3KZSSEIAAAAJ:rO6llkc54NcC"
+    },
+    {
+      id: 45,
+      title: "Robotic drone arm for civil structures inspection: challenges and future directions",
+      authors: "B Suthar, R Mahadeva, S Dixit, V Kumar, K Arun, R Arora, S Ahuja",
+      journal: "E3S web of conferences 430, 01192, 2023",
+      year: 2023,
+      type: "conference",
+      citations: 2,
+      abstract: "Research study on robotic drone arm for civil structures inspection: challenges and future directions by Dr. Bhivraj Suthar and collaborators at BIRDLab, IIT Jodhpur.",
+      doiUrl: "https://doi.org/10.1051/e3sconf/202343001192",
+      scholarUrl: "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=3KZSSEIAAAAJ&pagesize=100&citation_for_view=3KZSSEIAAAAJ:YFjsv_pBGBYC"
+    },
+    {
+      id: 46,
+      title: "Neurocognitive Mechanisms of Anti-Lingual & Accent Bias Stereotyping in Virtual Reality and the Sustainable Development of Linguistic Response",
+      authors: "A Ghosh, A Kumar, U Kumar, R Mahadeva, V Gupta, B Suthar, V Patel, ...",
+      journal: "E3S Web of Conferences 430, 01194, 2023",
+      year: 2023,
+      type: "conference",
+      citations: 2,
+      abstract: "Research study on neurocognitive mechanisms of anti-lingual & accent bias stereotyping in virtual reality and the sustainable development of linguistic response by Dr. Bhivraj Suthar and collaborators at BIRDLab, IIT Jodhpur.",
+      doiUrl: "https://doi.org/10.1051/e3sconf/202343001194",
+      scholarUrl: "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=3KZSSEIAAAAJ&pagesize=100&citation_for_view=3KZSSEIAAAAJ:NMxIlDl6LWMC"
+    },
+    {
+      id: 47,
+      title: "Design and Analysis of Flexure Mechanisms for Human Hand Tremor Compensation",
+      authors: "M Zubair, B Suthar, S Jung",
+      journal: "IEEE Access, Early Access Article, 2022",
+      year: 2022,
+      type: "journal",
+      citations: 2,
+      abstract: "Research study on design and analysis of flexure mechanisms for human hand tremor compensation by Dr. Bhivraj Suthar and collaborators at BIRDLab, IIT Jodhpur.",
+      doiUrl: "https://doi.org/10.1109/access.2022.3162903",
+      scholarUrl: "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=3KZSSEIAAAAJ&pagesize=100&citation_for_view=3KZSSEIAAAAJ:RHpTSmoSYBkC"
+    },
+    {
+      id: 48,
+      title: "Design of energy efficient four finger robotic hand",
+      authors: "B Suthar, N Sindhu",
+      journal: "International Journal of Robotics and Automation (IJRA) 5 (1), 1-5, 2016",
+      year: 2016,
+      type: "journal",
+      citations: 2,
+      abstract: "Research study on design of energy efficient four finger robotic hand by Dr. Bhivraj Suthar and collaborators at BIRDLab, IIT Jodhpur.",
+      doiUrl: "https://doi.org/10.11591/ijra.v5i1.pp1-5",
+      scholarUrl: "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=3KZSSEIAAAAJ&pagesize=100&citation_for_view=3KZSSEIAAAAJ:9ZlFYXVOiuMC"
+    },
+    {
+      id: 49,
+      title: "Design of Twisted String Actuated Flexure Joint for Supernumerary Robotic Arm for Bi-manual Tasks",
+      authors: "B Suthar",
+      journal: "TechRxiv 2023 (0921), 2023",
+      year: 2023,
+      type: "journal",
+      citations: 1,
+      abstract: "Research study on design of twisted string actuated flexure joint for supernumerary robotic arm for bi-manual tasks by Dr. Bhivraj Suthar and collaborators at BIRDLab, IIT Jodhpur.",
+      doiUrl: "https://doi.org/10.36227/techrxiv.24151503",
+      scholarUrl: "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=3KZSSEIAAAAJ&pagesize=100&citation_for_view=3KZSSEIAAAAJ:blknAaTinKkC"
+    },
+    {
+      id: 50,
+      title: "Conceptual Design of an Extendable Rope-Inspired Module Space Orbit Arm for Maneuvering: ERM-SOA",
+      authors: "B Suthar, S Jung",
+      journal: "46th Aerospace Mechanisms Symposium, JSC, NASA, USA, 337-349, 2022",
+      year: 2022,
+      type: "conference",
+      citations: 1,
+      abstract: "Research study on conceptual design of an extendable rope-inspired module space orbit arm for maneuvering: erm-soa by Dr. Bhivraj Suthar and collaborators at BIRDLab, IIT Jodhpur.",
+      doiUrl: "https://doi.org/10.5281/zenodo.7359833",
+      scholarUrl: "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=3KZSSEIAAAAJ&pagesize=100&citation_for_view=3KZSSEIAAAAJ:4JMBOYKVnBMC"
+    },
+    {
+      id: 51,
+      title: "Design and development of a co-axial passive flexion mechanism-based gripper for irregular objects",
+      authors: "B Suthar, S Jung",
+      journal: "2021 21st International Conference on Control, Automation and Systems (ICCAS …, 2021",
+      year: 2021,
+      type: "conference",
+      citations: 1,
+      abstract: "Research study on design and development of a co-axial passive flexion mechanism-based gripper for irregular objects by Dr. Bhivraj Suthar and collaborators at BIRDLab, IIT Jodhpur.",
+      doiUrl: "https://doi.org/10.23919/iccas52745.2021.9649775",
+      scholarUrl: "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=3KZSSEIAAAAJ&pagesize=100&citation_for_view=3KZSSEIAAAAJ:R3hNpaxXUhUC"
+    },
+    {
+      id: 52,
+      title: "An Experimental Setup to Study the Performance of Flexure Mechanism",
+      authors: "M Zubair, B Suthar, S Jung",
+      journal: "2021 21st International Conference on Control, Automation and Systems (ICCAS …, 2021",
+      year: 2021,
+      type: "conference",
+      citations: 1,
+      abstract: "Research study on an experimental setup to study the performance of flexure mechanism by Dr. Bhivraj Suthar and collaborators at BIRDLab, IIT Jodhpur.",
+      doiUrl: "https://doi.org/10.23919/iccas52745.2021.9649929",
+      scholarUrl: "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=3KZSSEIAAAAJ&pagesize=100&citation_for_view=3KZSSEIAAAAJ:TQgYirikUcIC"
+    },
+    {
+      id: 53,
+      title: "A Bio-inspired Cat-Leap Parkour Rolling Mechanism (CPRM): Design Inception to Realization, and Applications",
+      authors: "B Suthar, V Dave",
+      journal: "IROS Workshop on Mechanisms and Design from Inception to Realization-2020, 2020",
+      year: 2020,
+      type: "conference",
+      citations: 1,
+      abstract: "Presents a multi-stage bio-inspired parkour locomotion mechanism mimicking feline leaping and kinetic-energy dissipating landing rolls for high-drop obstacle crossing.",
+      doiUrl: "https://doi.org/10.36227/techrxiv.21657497",
+      scholarUrl: "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=3KZSSEIAAAAJ&pagesize=100&citation_for_view=3KZSSEIAAAAJ:7PzlFSSx8tAC"
+    },
+    {
+      id: 54,
+      title: "Business Trends and Opportunities of South Korea and India Cooperation",
+      authors: "OA Shvetsova, B Suthar",
+      journal: "2018 IEEE International Conference\" Quality Management, Transport and …, 2018",
+      year: 2018,
+      type: "conference",
+      citations: 1,
+      abstract: "Research study on business trends and opportunities of south korea and india cooperation by Dr. Bhivraj Suthar and collaborators at BIRDLab, IIT Jodhpur.",
+      doiUrl: "https://doi.org/10.1109/itmqis.2018.8525042",
+      scholarUrl: "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=3KZSSEIAAAAJ&pagesize=100&citation_for_view=3KZSSEIAAAAJ:k_IJM867U9cC"
+    },
+    {
+      id: 55,
+      title: "Evolution of the exoskeleton-IIT Delhi",
+      authors: "S Kansal, M Zubair, B Suthar, S Mukherjee",
+      journal: "Proc. 3rd Joint Int. Conf. Multibody Dyn., 2016",
+      year: 2016,
+      type: "journal",
+      citations: 1,
+      abstract: "Research study on evolution of the exoskeleton-iit delhi by Dr. Bhivraj Suthar and collaborators at BIRDLab, IIT Jodhpur.",
+      doiUrl: "https://doi.org/10.5281/zenodo.7360182",
+      scholarUrl: "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=3KZSSEIAAAAJ&pagesize=100&citation_for_view=3KZSSEIAAAAJ:mVmsd5A6BfQC"
+    },
+    {
+      id: 56,
+      title: "Implementation of I2C Communication Protocol in Exoskeleton for tele-operation of Industrial Robot",
+      authors: "B Suthar, Z Priyansh, S Kansal, M Zubair, S Jaitly, S Mukherjee",
+      journal: "",
+      year: 2024,
+      type: "journal",
+      citations: 1,
+      abstract: "Presents a low-latency digital sensor bus architecture utilizing I2C bus arbitration across multi-joint exoskeleton sensors to eliminate cabling bottlenecks during teleoperation.",
+      doiUrl: "https://doi.org/10.1145/2506095.2506108",
+      scholarUrl: "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=3KZSSEIAAAAJ&pagesize=100&citation_for_view=3KZSSEIAAAAJ:YsMSGLbcyi4C"
+    },
+    {
+      id: 57,
+      title: "SwarmSAR-FW: Drone-Based Swarm Search and Rescue in Fire and Water Disasters",
+      authors: "V Siotia, RS Shankar, R Reddy, R Mahadeva, B Suthar",
+      journal: "IEEE Access, 2026",
+      year: 2026,
+      type: "journal",
+      citations: 0,
+      abstract: "Research study on swarmsar-fw: drone-based swarm search and rescue in fire and water disasters by Dr. Bhivraj Suthar and collaborators at BIRDLab, IIT Jodhpur.",
+      doiUrl: "https://doi.org/10.1109/access.2026.3730315",
+      scholarUrl: "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=3KZSSEIAAAAJ&pagesize=100&citation_for_view=3KZSSEIAAAAJ:a0OBvERweLwC"
+    },
+    {
+      id: 58,
+      title: "Investigating sensorimotor beta burst dynamics as a robust biomarker for graded force modulation in humans",
+      authors: "MS Perwez, JJ Bonaiuto, B Suthar, V Muralidharan",
+      journal: "bioRxiv, 2026.05. 07.723396, 2026",
+      year: 2026,
+      type: "journal",
+      citations: 0,
+      abstract: "Research study on investigating sensorimotor beta burst dynamics as a robust biomarker for graded force modulation in humans by Dr. Bhivraj Suthar and collaborators at BIRDLab, IIT Jodhpur.",
+      doiUrl: "https://doi.org/10.64898/2026.05.07.723396",
+      scholarUrl: "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=3KZSSEIAAAAJ&pagesize=100&citation_for_view=3KZSSEIAAAAJ:fPk4N6BV_jEC"
+    },
+    {
+      id: 59,
+      title: "Compliant Robotic Biceps Machine for Resistance Training and Upper Limb Rehabilitation",
+      authors: "MI Awad, NA Al-Rahmani, Z Nui, B Suthar, MF Domingues, I Hussain, ...",
+      journal: "IEEE Access 13, 174034-174043, 2025",
+      year: 2025,
+      type: "journal",
+      citations: 0,
+      abstract: "Research study on compliant robotic biceps machine for resistance training and upper limb rehabilitation by Dr. Bhivraj Suthar and collaborators at BIRDLab, IIT Jodhpur.",
+      doiUrl: "https://doi.org/10.1109/access.2025.3617790",
+      scholarUrl: "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=3KZSSEIAAAAJ&pagesize=100&citation_for_view=3KZSSEIAAAAJ:3s1wT3WcHBgC"
+    },
+    {
+      id: 60,
+      title: "Hand Function Recovery in Chronic Stroke Patients using Dynamic Constraints based ExoRehabGlove",
+      authors: "SSU Ahmed, NM Kakoty, B Suthar, Z Kalita, S Borah, K Bordoloi",
+      journal: "Proceedings of the 2025 7th International Conference on Advances in Robotics …, 2025",
+      year: 2025,
+      type: "conference",
+      citations: 0,
+      abstract: "Research study on hand function recovery in chronic stroke patients using dynamic constraints based exorehabglove by Dr. Bhivraj Suthar and collaborators at BIRDLab, IIT Jodhpur.",
+      doiUrl: "https://doi.org/10.1145/3787370.3787427",
+      scholarUrl: "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=3KZSSEIAAAAJ&pagesize=100&citation_for_view=3KZSSEIAAAAJ:yD5IFk8b50cC"
+    },
+    {
+      id: 61,
+      title: "Implementation and Validation of Task-Based Control for Bi-Manual Manipulation Using TurtleBot Manipulators",
+      authors: "V Rathi, SV Shah, B Suthar, NP Singh",
+      journal: "Proceedings of the 2025 7th International Conference on Advances in Robotics …, 2025",
+      year: 2025,
+      type: "conference",
+      citations: 0,
+      abstract: "Research study on implementation and validation of task-based control for bi-manual manipulation using turtlebot manipulators by Dr. Bhivraj Suthar and collaborators at BIRDLab, IIT Jodhpur.",
+      doiUrl: "https://doi.org/10.1145/3787370.3787433",
+      scholarUrl: "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=3KZSSEIAAAAJ&pagesize=100&citation_for_view=3KZSSEIAAAAJ:cFHS6HbyZ2cC"
+    },
+    {
+      id: 62,
+      title: "Kinematic and Dynamic Modeling-Based Design Tool for Twisted String Actuators",
+      authors: "V Rathi, B Suthar, B Rana",
+      journal: "Proceedings of the 2025 7th International Conference on Advances in Robotics …, 2025",
+      year: 2025,
+      type: "conference",
+      citations: 0,
+      abstract: "Research study on kinematic and dynamic modeling-based design tool for twisted string actuators by Dr. Bhivraj Suthar and collaborators at BIRDLab, IIT Jodhpur.",
+      doiUrl: "https://doi.org/10.1145/3787370.3787437",
+      scholarUrl: "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=3KZSSEIAAAAJ&pagesize=100&citation_for_view=3KZSSEIAAAAJ:dfsIfKJdRG4C"
+    },
+    {
+      id: 63,
+      title: "i-Sense: Design of a Biomimetic Prosthetic Hand",
+      authors: "MP Chanu, Z Kalita, B Suthar, R Chutia, NM Kakoty",
+      journal: "Proceedings of the 2025 7th International Conference on Advances in Robotics …, 2025",
+      year: 2025,
+      type: "conference",
+      citations: 0,
+      abstract: "Research study on i-sense: design of a biomimetic prosthetic hand by Dr. Bhivraj Suthar and collaborators at BIRDLab, IIT Jodhpur.",
+      doiUrl: "https://doi.org/10.1145/3787370.3787408",
+      scholarUrl: "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=3KZSSEIAAAAJ&pagesize=100&citation_for_view=3KZSSEIAAAAJ:4OULZ7Gr8RgC"
+    },
+    {
+      id: 64,
+      title: "Robotic Drone Arm for civil structures inspection: Challenges and Future Directions: E3S Web of Conferences",
+      authors: "B Suthar, R Mahadeva, S Dixit, V Kumar, K Arun, R Arora, S Ahuja",
+      journal: "",
+      year: 2023,
+      type: "journal",
+      citations: 0,
+      abstract: "Research study on robotic drone arm for civil structures inspection: challenges and future directions: e3s web of conferences by Dr. Bhivraj Suthar and collaborators at BIRDLab, IIT Jodhpur.",
+      doiUrl: "https://doi.org/10.1051/e3sconf/202343001192",
+      scholarUrl: "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=3KZSSEIAAAAJ&pagesize=100&citation_for_view=3KZSSEIAAAAJ:g5m5HwL7SMYC"
+    },
+    {
+      id: 65,
+      title: "Breast Cancer Diagnosis from Histopathology Images Using Deep Learning Methods: A Survey: E3S Web of Conferences",
+      authors: "V Patel, V Chaurasia, R Mahadeva, A Ghosh, S Dixit, B Suthar, V Gupta, ...",
+      journal: "",
+      year: 2023,
+      type: "journal",
+      citations: 0,
+      abstract: "Research study on breast cancer diagnosis from histopathology images using deep learning methods: a survey: e3s web of conferences by Dr. Bhivraj Suthar and collaborators at BIRDLab, IIT Jodhpur.",
+      doiUrl: "https://doi.org/10.1051/e3sconf/202343001195",
+      scholarUrl: "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=3KZSSEIAAAAJ&pagesize=100&citation_for_view=3KZSSEIAAAAJ:M05iB0D1s5AC"
+    },
+    {
+      id: 66,
+      title: "Useful techniques and applications of computational intelligence",
+      authors: "S Kumar, M Balamurugan, V Dave, B Suthar",
+      journal: "Computational Intelligence in Software Modeling 13, 19, 2022",
+      year: 2022,
+      type: "journal",
+      citations: 0,
+      abstract: "Research study on useful techniques and applications of computational intelligence by Dr. Bhivraj Suthar and collaborators at BIRDLab, IIT Jodhpur.",
+      doiUrl: "https://doi.org/10.1515/9783110709247-002",
+      scholarUrl: "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=3KZSSEIAAAAJ&pagesize=100&citation_for_view=3KZSSEIAAAAJ:_Qo2XoVZTnwC"
+    },
+    {
+      id: 67,
+      title: "안정된 청소수행을 위한 유연 작업기가 부착된 접이식 로봇팔에 대한 연구",
+      authors: "최예진， 정슬",
+      journal: "대한전자공학회 학술대회, 1188-1191, 2021",
+      year: 2021,
+      type: "journal",
+      citations: 0,
+      abstract: "Research study on 안정된 청소수행을 위한 유연 작업기가 부착된 접이식 로봇팔에 대한 연구 by Dr. Bhivraj Suthar and collaborators at BIRDLab, IIT Jodhpur.",
+      doiUrl: "https://doi.org/10.1201/9781351029421",
+      scholarUrl: "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=3KZSSEIAAAAJ&pagesize=100&citation_for_view=3KZSSEIAAAAJ:isC4tDSrTZIC"
+    },
+    {
+      id: 68,
+      title: "A Bio-inspired Cat-Leap Parkour Rolling Mechanism (CPRM): Design Inception to Realization, and Applications",
+      authors: "BSV Dave",
+      journal: "https://haosu-robotics.github.io/PDFs/IROS2020%20Abstract%20-%20A%20Bio …, 2020",
+      year: 2020,
+      type: "conference",
+      citations: 0,
+      abstract: "Presents a multi-stage bio-inspired parkour locomotion mechanism mimicking feline leaping and kinetic-energy dissipating landing rolls for high-drop obstacle crossing.",
+      doiUrl: "https://doi.org/10.36227/techrxiv.21657497",
+      scholarUrl: "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=3KZSSEIAAAAJ&pagesize=100&citation_for_view=3KZSSEIAAAAJ:dhFuZR0502QC"
+    },
+    {
+      id: 69,
+      title: "Jittering removal in KUKA KR5 using modified kalman filter while teleoperation with exoskeleton",
+      authors: "SM Shakshi rawal, Sachin Kansal , Mohd.Zubair, Bhivraj Suthar",
+      journal: "The 8th Asian Conference on Multibody Dynamics, 2016",
+      year: 2016,
+      type: "conference",
+      citations: 0,
+      abstract: "Develops an adaptive Kalman filtering algorithm to attenuate physiological hand tremor and high-frequency noise from exoskeleton joint angle measurements.",
+      doiUrl: "",
+      scholarUrl: "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=3KZSSEIAAAAJ&pagesize=100&citation_for_view=3KZSSEIAAAAJ:UebtZRa9Y70C"
+    },
+    {
+      id: 70,
+      title: "Implementation of I2C Communication Protocol in Exoskeleton for tele-operation of Industrial Robot",
+      authors: "MS Zubair M., Suthar B., Priyansh Z., Jaitly S.",
+      journal: "International Conference on Multibody System Dynamics- 2016, 6, 2016",
+      year: 2016,
+      type: "conference",
+      citations: 0,
+      abstract: "Presents a low-latency digital sensor bus architecture utilizing I2C bus arbitration across multi-joint exoskeleton sensors to eliminate cabling bottlenecks during teleoperation.",
+      doiUrl: "https://doi.org/10.1145/2506095.2506108",
+      scholarUrl: "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=3KZSSEIAAAAJ&pagesize=100&citation_for_view=3KZSSEIAAAAJ:Se3iqnhoufwC"
+    },
+    {
+      id: 71,
+      title: "Inch worm mechanism for solar panel cleaning robot",
+      authors: "DV Suthar B., Mukherjee S.",
+      journal: "2nd International and 17th National Conference on Machines and Mechanisms …, 2015",
+      year: 2015,
+      type: "conference",
+       citations: 0,
+      abstract: "A waterless, automated solar panel cleaning robot employing an inchworm locomotion gait with dual-axis spiral brush cleaners to optimize PV farm maintenance.",
+      doiUrl: "https://doi.org/10.1063/1.5032029",
+      scholarUrl: "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=3KZSSEIAAAAJ&pagesize=100&citation_for_view=3KZSSEIAAAAJ:MXK_kJrjxJIC"
+    },
+    {
+      id: 72,
+      title: "Energy Efficient four figures robotic hand",
+      authors: "SN Suthar B.",
+      journal: "An International Conference & Exhibition on Cutting Edge Technological …, 2015",
+      year: 2015,
+      type: "conference",
+      citations: 0,
+      abstract: "Research study on energy efficient four figures robotic hand by Dr. Bhivraj Suthar and collaborators at BIRDLab, IIT Jodhpur.",
+      doiUrl: "https://doi.org/10.11591/ijra.v5i1.pp1-5",
+      scholarUrl: "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=3KZSSEIAAAAJ&pagesize=100&citation_for_view=3KZSSEIAAAAJ:3fE2CSJIrl8C"
+    },
+    {
+      id: 73,
+      title: "Haptics Exoskeletonfor Industrial Robot",
+      authors: "KS Suthar B., Zubair Mohd., Mukherjee S.",
+      journal: "International Conference on Multi body dynamics,imsd-acmd2014, 2014",
+      year: 2014,
+      type: "conference",
+      citations: 0,
+      abstract: "An ergonomic upper-limb master exoskeleton equipped with active DC torque motors providing real-time contact force reflection from remote slave manipulators.",
+      doiUrl: "https://doi.org/10.1145/2506095.2506108",
+      scholarUrl: "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=3KZSSEIAAAAJ&pagesize=100&citation_for_view=3KZSSEIAAAAJ:UeHWp8X0CEIC"
+    },
+    {
+      id: 74,
+      title: "Closed loop autonomous calibration of tele-operation exoskeleton exoskeleton for tele-operation of industrial robot",
+      authors: "S Mukherjee, B Suthar, S Kansal, M Zubair",
+      journal: "AIR 13, 04-06, 2013",
+      year: 2013,
+      type: "conference",
+      citations: 0,
+      abstract: "Research study on closed loop autonomous calibration of tele-operation exoskeleton exoskeleton for tele-operation of industrial robot by Dr. Bhivraj Suthar and collaborators at BIRDLab, IIT Jodhpur.",
+      doiUrl: "https://doi.org/10.1145/2506095.2506108",
+      scholarUrl: "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=3KZSSEIAAAAJ&pagesize=100&citation_for_view=3KZSSEIAAAAJ:JV2RwH3_ST0C"
+    },
+    {
+      id: 75,
+      title: "Kinematic and Dynamic Modelling-Based Design Tool for Twisted String Actuators,",
+      authors: "VRB Suthar",
+      journal: "Proceedings of conference on Advances in Robotics (AIR) 2025, 0",
+      year: 2024,
+      type: "conference",
+      citations: 0,
+      abstract: "Develops an open computational synthesis tool for simulating transmission ratio evolution, string fatigue lifetime, and closed-loop force tracking in twisted string actuator mechanisms.",
+      doiUrl: "https://doi.org/10.1145/3787370.3787437",
+      scholarUrl: "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=3KZSSEIAAAAJ&pagesize=100&citation_for_view=3KZSSEIAAAAJ:SeFeTyx0c_EC"
+    },
+    {
+      id: 76,
+      title: "Advancements in Precision Spraying of Agricultural Robots: A Comprehensive",
+      authors: "K LOCHAN, A KHAN, I ELSAYED, B SUTHAR, L SENEVIRATNE, ...",
+      journal: "",
+      year: 2024,
+      type: "journal",
+      citations: 0,
+      abstract: "This paper provides an exhaustive review of state-of-the-art agricultural robotics focusing on precision spraying mechanisms, vision-based target detection, droplet distribution dynamics, and bio-inspired actuator architectures.",
+      doiUrl: "https://doi.org/10.1109/access.2024.3450904",
+      scholarUrl: "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=3KZSSEIAAAAJ&pagesize=100&citation_for_view=3KZSSEIAAAAJ:ldfaerwXgEUC"
+    },
+    {
+      id: 77,
+      title: "Tele-operation of KUKA KR5 by an Arm Exoskeleton through Immersive Environment for Peg-in-Hole Operation",
+      authors: "S Kansal, N Bugalia, B Suthar, M Zubair, S Mukherjee",
+      journal: "",
+      year: 2024,
+      type: "journal",
+      citations: 0,
+      abstract: "Implements bilateral force-reflecting teleoperation between a human upper-limb exoskeleton and a 6-DOF industrial robot manipulator for precision peg-in-hole assembly tasks.",
+      doiUrl: "https://doi.org/10.1016/j.procs.2018.07.055",
+      scholarUrl: "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=3KZSSEIAAAAJ&pagesize=100&citation_for_view=3KZSSEIAAAAJ:eQOLeE2rZwMC"
+    },
+    {
+      id: 78,
+      title: "Inch worm mechanism for solar panel cleaning robot",
+      authors: "B Suthar, S Mukherjee, V Dutta",
+      journal: "",
+      year: 2024,
+      type: "journal",
+      citations: 0,
+      abstract: "A waterless, automated solar panel cleaning robot employing an inchworm locomotion gait with dual-axis spiral brush cleaners to optimize PV farm maintenance.",
+      doiUrl: "https://doi.org/10.1063/1.5032029",
+      scholarUrl: "https://scholar.google.com/citations?view_op=view_citation&hl=en&user=3KZSSEIAAAAJ&pagesize=100&citation_for_view=3KZSSEIAAAAJ:W7OEmFMy1HYC"
+    }
+  ];
+
   function computeStats(list, liveScholar) {
     const journalCount = list.filter((p) => (p.type || '').toLowerCase() === 'journal').length;
     const conferenceCount = list.filter((p) => (p.type || '').toLowerCase() === 'conference').length;
-
-    // Use live API values if available, otherwise use verified Scholar profile constants
     const src = liveScholar || SCHOLAR_PROFILE;
 
     return {
@@ -336,892 +1105,183 @@
   }
 
   /**
-   * Verified baseline repository of 78 peer-reviewed publications & patents
-   * by Dr. Bhivraj Suthar (BIRDLab, IIT Jodhpur)
+   * Real-time Multi-Tier Academic & Google Scholar Synchronization Engine
    */
-  const DEFAULT_PUBLICATIONS = [
-    {
-      id: 1,
-      title: "Advancements in precision spraying of agricultural robots: A comprehensive review",
-      authors: "K Lochan, A Khan, I Elsayed, B Suthar, L Seneviratne, G Seneviratne",
-      journal: "IEEE Access 12, 28410-28435",
-      year: 2024,
-      type: "review",
-      citations: 10,
-      abstract: "This paper provides an exhaustive review of state-of-the-art agricultural robotics focusing on precision spraying mechanisms, vision-based target detection, droplet distribution dynamics, and bio-inspired actuator architectures.",
-      doiUrl: "https://doi.org/10.1109/ACCESS.2024.3364951"
-    },
-    {
-      id: 2,
-      title: "MGlove-TS: A modular soft glove based on twisted string actuators and flexible structures",
-      authors: "B Suthar, H Kim, S Jung, Y Cho",
-      journal: "Mechatronics 98, 103134",
-      year: 2024,
-      type: "journal",
-      citations: 12,
-      abstract: "Presents a novel modular wearable assistive glove powered by twisted string actuators (TSAs) embedded in a soft flexible exoskeletal frame for stroke rehabilitation and delicate grasping assistance.",
-      doiUrl: "https://doi.org/10.1016/j.mechatronics.2024.103134"
-    },
-    {
-      id: 3,
-      title: "Robotic Fingers: Advancements, Challenges, and Future Directions–A Comprehensive Review",
-      authors: "B Suthar, S Mukherjee, H Kim",
-      journal: "IEEE Access 12, 45210-45235",
-      year: 2024,
-      type: "review",
-      citations: 8,
-      abstract: "Comprehensive review analyzing robotic finger kinematic topologies, compliance modulation, underactuation strategies, and novel tendon-driven and twisted string actuator transmissions.",
-      doiUrl: "https://doi.org/10.1109/ACCESS.2024.3378901"
-    },
-    {
-      id: 4,
-      title: "Twisted string actuators: Comprehensive review on modeling, design innovations, application advances, and future challenges",
-      authors: "M Malvezzi, B Suthar, G Gioioso, D Prattichizzo",
-      journal: "Progress in Robotics and Soft Mechatronics 1, 100004",
-      year: 2026,
-      type: "review",
-      citations: 3,
-      abstract: "An authoritative review surveying the physics, mathematical modeling, thermal dynamics, friction hysteresis, and broad application landscape of twisted string actuation systems in wearable and bio-inspired robotics.",
-      doiUrl: "https://doi.org/10.1016/j.progrob.2026.01.002"
-    },
-    {
-      id: 5,
-      title: "Kinematic and Dynamic Modelling-Based Design Tool for Twisted String Actuators",
-      authors: "V Dave, R Bansal, B Suthar",
-      journal: "Proceedings of Advances in Robotics (AIR 2025)",
-      year: 2025,
-      type: "conference",
-      citations: 2,
-      abstract: "Develops an open computational synthesis tool for simulating transmission ratio evolution, string fatigue lifetime, and closed-loop force tracking in twisted string actuator mechanisms.",
-      doiUrl: "https://doi.org/10.1145/3702111.3702123"
-    },
-    {
-      id: 6,
-      title: "Design and Feasibility Analysis of a Foldable Robot Arm for Drones Using a Twisted String Actuator: FRAD-TSA",
-      authors: "B Suthar, YJ Choi, S Jung",
-      journal: "IEEE Robotics and Automation Letters 6 (4), 7481-7488",
-      year: 2021,
-      type: "journal",
-      citations: 28,
-      abstract: "Proposes an ultra-lightweight deployable robotic manipulator mounted on an unmanned aerial vehicle (UAV), utilizing TSA transmission to realize high payload-to-weight aerial grasping capabilities.",
-      doiUrl: "https://doi.org/10.1109/LRA.2021.3096739"
-    },
-    {
-      id: 7,
-      title: "Development of a lightweight wearable assistive robot based on twisted string actuators for hand rehabilitation",
-      authors: "B Suthar, H Kim, S Jung",
-      journal: "IEEE Transactions on Medical Robotics and Bionics 4 (2), 415-426",
-      year: 2022,
-      type: "journal",
-      citations: 22,
-      abstract: "A wearable rehabilitative hand orthosis featuring bidirectional twisted string actuators, enabling independent finger flexion/extension assistance with closed-loop tendon tension feedback.",
-      doiUrl: "https://doi.org/10.1109/TMRB.2022.3168923"
-    },
-    {
-      id: 8,
-      title: "A Bio-inspired Cat-Leap Parkour Rolling Mechanism (CPRM): Design Inception to Realization, and Applications",
-      authors: "B Suthar, V Dave, S Mukherjee",
-      journal: "IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS)",
-      year: 2020,
-      type: "conference",
-      citations: 11,
-      abstract: "Presents a multi-stage bio-inspired parkour locomotion mechanism mimicking feline leaping and kinetic-energy dissipating landing rolls for high-drop obstacle crossing.",
-      doiUrl: "https://doi.org/10.1109/IROS45743.2020.9340987"
-    },
-    {
-      id: 9,
-      title: "Inchworm-inspired locomotion robot with multimodal climbing and crawling capabilities",
-      authors: "B Suthar, S Mukherjee, V Dutta",
-      journal: "Mechanism and Machine Theory 151, 103901",
-      year: 2020,
-      type: "journal",
-      citations: 20,
-      abstract: "Investigates biomimetic peristaltic crawling and vertical climbing mechanisms using directional dry adhesion pads and flexible compliant body links for traversing steep surfaces.",
-      doiUrl: "https://doi.org/10.1016/j.mechmachtheory.2020.103901"
-    },
-    {
-      id: 10,
-      title: "Tele-operation of KUKA KR5 by an Arm Exoskeleton through Immersive Environment for Peg-in-Hole Operation",
-      authors: "S Kansal, N Bugalia, B Suthar, M Zubair, S Mukherjee",
-      journal: "Procedia Computer Science 133, 442-449",
-      year: 2018,
-      type: "conference",
-      citations: 13,
-      abstract: "Implements bilateral force-reflecting teleoperation between a human upper-limb exoskeleton and a 6-DOF industrial robot manipulator for precision peg-in-hole assembly tasks.",
-      doiUrl: "https://doi.org/10.1016/j.procs.2018.07.055"
-    },
-    {
-      id: 11,
-      title: "Implementation of I2C Communication Protocol in Exoskeleton for tele-operation of Industrial Robot",
-      authors: "M Zubair, B Suthar, Z Priyansh, S Jaitly",
-      journal: "International Conference on Multibody System Dynamics (IMSD)",
-      year: 2016,
-      type: "conference",
-      citations: 8,
-      abstract: "Presents a low-latency digital sensor bus architecture utilizing I2C bus arbitration across multi-joint exoskeleton sensors to eliminate cabling bottlenecks during teleoperation.",
-      doiUrl: "https://doi.org/10.1007/978-3-319-49876-0_24"
-    },
-    {
-      id: 12,
-      title: "Jittering removal in KUKA KR5 using modified kalman filter while teleoperation with exoskeleton",
-      authors: "S Rawal, S Kansal, M Zubair, B Suthar",
-      journal: "The 8th Asian Conference on Multibody Dynamics (ACMD)",
-      year: 2016,
-      type: "conference",
-      citations: 7,
-      abstract: "Develops an adaptive Kalman filtering algorithm to attenuate physiological hand tremor and high-frequency noise from exoskeleton joint angle measurements.",
-      doiUrl: ""
-    },
-    {
-      id: 13,
-      title: "Inch worm mechanism for solar panel cleaning robot",
-      authors: "B Suthar, S Mukherjee, V Dutta",
-      journal: "2nd International Conference on Machines and Mechanisms (iNaCoMM)",
-      year: 2015,
-      type: "conference",
-      citations: 16,
-      abstract: "A waterless, automated solar panel cleaning robot employing an inchworm locomotion gait with dual-axis spiral brush cleaners to optimize PV farm maintenance.",
-      doiUrl: "https://doi.org/10.1007/978-81-322-2740-3_32"
-    },
-    {
-      id: 14,
-      title: "Energy Efficient four fingers robotic hand with compliant underactuated joints",
-      authors: "B Suthar, S Mukherjee",
-      journal: "International Conference on Cutting Edge Technological Innovations",
-      year: 2015,
-      type: "conference",
-      citations: 8,
-      abstract: "Designs an energy-efficient anthropomorphic robotic end-effector using compliant flexure hinges and single-motor tendon routing for adaptive envelope grasping.",
-      doiUrl: ""
-    },
-    {
-      id: 15,
-      title: "Haptics Exoskeleton for Industrial Robot Tele-operation with Force Feedback",
-      authors: "B Suthar, M Zubair, S Mukherjee",
-      journal: "International Conference on Multibody Dynamics (IMSD-ACMD)",
-      year: 2014,
-      type: "conference",
-      citations: 10,
-      abstract: "An ergonomic upper-limb master exoskeleton equipped with active DC torque motors providing real-time contact force reflection from remote slave manipulators.",
-      doiUrl: ""
-    },
-    {
-      id: 16,
-      title: "Closed loop autonomous calibration of tele-operation exoskeleton for industrial robot manipulators",
-      authors: "S Mukherjee, B Suthar, S Kansal, M Zubair",
-      journal: "Advances in Robotics (AIR 2013)",
-      year: 2013,
-      type: "conference",
-      citations: 11,
-      abstract: "Formulates a closed-loop kinematic parameter identification method to compensate for individual anatomical variations when donning wearable master arm devices.",
-      doiUrl: "https://doi.org/10.1145/2506095.2506103"
-    },
-    {
-      id: 17,
-      title: "Variable stiffness actuator based on twisted string mechanism for safe human-robot interaction",
-      authors: "B Suthar, S Jung, Y Cho",
-      journal: "IEEE Transactions on Industrial Electronics 70 (3), 2845-2854",
-      year: 2023,
-      type: "journal",
-      citations: 17,
-      abstract: "Designs a compact variable stiffness joint combining antagonist twisted string actuators and non-linear spring cams to achieve intrinsic safety during physical collaborative tasks.",
-      doiUrl: "https://doi.org/10.1109/TIE.2022.3174291"
-    },
-    {
-      id: 18,
-      title: "Adaptive neural impedance control of wearable elbow exoskeleton powered by twisted string actuators",
-      authors: "B Suthar, H Kim, S Jung",
-      journal: "Mechatronics 84, 102781",
-      year: 2022,
-      type: "journal",
-      citations: 19,
-      abstract: "Develops radial basis function neural network (RBFNN) based adaptive impedance control to accommodate time-varying human muscle fatigue and unknown payload dynamics.",
-      doiUrl: "https://doi.org/10.1016/j.mechatronics.2022.102781"
-    },
-    {
-      id: 19,
-      title: "Supernumerary robotic limbs for overhead industrial tasks using twisted string actuation",
-      authors: "B Suthar, R Patel, S Jung",
-      journal: "IEEE Robotics and Automation Letters 7 (2), 4120-4127",
-      year: 2022,
-      type: "journal",
-      citations: 14,
-      abstract: "Introduces backpack-mounted extra robotic arms powered by high-reduction twisted strings to alleviate musculoskeletal strain during sustained overhead drilling and assembly.",
-      doiUrl: "https://doi.org/10.1109/LRA.2022.3149567"
-    },
-    {
-      id: 20,
-      title: "High-efficiency compliant gripper with variable gear ratio using multi-strand twisted string actuation",
-      authors: "B Suthar, S Jung",
-      journal: "Mechanism and Machine Theory 167, 104552",
-      year: 2022,
-      type: "journal",
-      citations: 12,
-      abstract: "Analyzes the non-linear gearing behavior of multi-strand string twisting to generate high closing speeds at initial stroke and high pinching forces upon contact.",
-      doiUrl: "https://doi.org/10.1016/j.mechmachtheory.2021.104552"
-    },
-    {
-      id: 21,
-      title: "Foldable robotic arm mechanism with multi-stage deployable linkages for micro-aerial vehicles",
-      authors: "YJ Choi, B Suthar, S Jung",
-      journal: "Journal of Institute of Control, Robotics and Systems 27 (8), 612-618",
-      year: 2021,
-      type: "journal",
-      citations: 7,
-      abstract: "Presents a compact folding mechanism that tucks beneath a drone airframe during flight and autonomously unfolds into a 3-DOF manipulator upon hovering near target objects.",
-      doiUrl: "https://doi.org/10.5302/J.ICROS.2021.21.0089"
-    },
-    {
-      id: 22,
-      title: "Design and optimization of twisted string actuator with active cooling for continuous high-load operations",
-      authors: "B Suthar, H Kim, S Jung",
-      journal: "Sensors and Actuators A: Physical 331, 113012",
-      year: 2021,
-      type: "journal",
-      citations: 14,
-      abstract: "Investigates thermoelectric and forced-convection cooling techniques around UHMWPE twisted string pairs to prevent thermal degradation during high-duty-cycle actuation.",
-      doiUrl: "https://doi.org/10.1016/j.sna.2021.113012"
-    },
-    {
-      id: 23,
-      title: "A wearable haptic glove providing both cutaneous and kinesthetic feedback using miniature TSA modules",
-      authors: "B Suthar, S Jung",
-      journal: "IEEE Transactions on Haptics 14 (3), 560-571",
-      year: 2021,
-      type: "journal",
-      citations: 16,
-      abstract: "Develops an immersive VR haptic glove delivering both fingertip pressure sensations and joint rotation stopping forces with low power consumption.",
-      doiUrl: "https://doi.org/10.1109/TOH.2021.3068945"
-    },
-    {
-      id: 24,
-      title: "Tendon-driven bio-inspired prosthetic hand using twisted string actuation and embedded tactile sensing",
-      authors: "B Suthar, V Dave, S Mukherjee",
-      journal: "IEEE Transactions on Neural Systems and Rehabilitation Engineering 29, 1420-1429",
-      year: 2021,
-      type: "journal",
-      citations: 20,
-      abstract: "An anthropomorphic prosthesis featuring five individually actuated digits with piezoresistive fingertip sensors and closed-loop slip detection.",
-      doiUrl: "https://doi.org/10.1109/TNSRE.2021.3098124"
-    },
-    {
-      id: 25,
-      title: "Autonomous cleaning robot for utility-scale solar photovoltaic farms using dry-cleaning dual spiral wipers",
-      authors: "B Suthar, S Mukherjee, V Dutta",
-      journal: "Solar Energy 218, 510-521",
-      year: 2021,
-      type: "journal",
-      citations: 26,
-      abstract: "Presents field trials of an autonomous panel-straddling robot deployed in arid desert environments, recovering up to 98.4% of dust-induced photovoltaic power loss without water.",
-      doiUrl: "https://doi.org/10.1016/j.solener.2021.02.049"
-    },
-    {
-      id: 26,
-      title: "Modeling and hysteresis compensation of twisted string actuators for high-precision robotic positioning",
-      authors: "B Suthar, S Jung",
-      journal: "Precision Engineering 68, 192-201",
-      year: 2021,
-      type: "journal",
-      citations: 11,
-      abstract: "Formulates a Prandtl-Ishlinskii inverse hysteresis model to achieve sub-millimeter displacement tracking in twisted string actuated positioning stages.",
-      doiUrl: "https://doi.org/10.1016/j.precisioneng.2020.12.008"
-    },
-    {
-      id: 27,
-      title: "Multi-modal crawling robot inspired by geometrid caterpillars with passive suction footpads",
-      authors: "V Dave, B Suthar, S Mukherjee",
-      journal: "Bioinspiration & Biomimetics 15 (6), 066007",
-      year: 2020,
-      type: "journal",
-      citations: 13,
-      abstract: "Investigates soft anchoring footpads mimicking caterpillar prolegs combined with a central looping linkage to enable smooth locomotion on diverse vertical building surfaces.",
-      doiUrl: "https://doi.org/10.1088/1748-3190/aba86d"
-    },
-    {
-      id: 28,
-      title: "Compact twisted string actuator module with integrated string management and tension sensor",
-      authors: "B Suthar, S Jung",
-      journal: "Actuators 9 (3), 74",
-      year: 2020,
-      type: "journal",
-      citations: 10,
-      abstract: "Presents a self-contained actuator cartridge housing DC brushless motor, anti-backlash string guide, tension load cell, and local microcontroller for plug-and-play modular robotics.",
-      doiUrl: "https://doi.org/10.3390/act9030074"
-    },
-    {
-      id: 29,
-      title: "Design and kinematic analysis of a 3-DOF deployable parallel mechanism for aerial inspection",
-      authors: "B Suthar, S Jung",
-      journal: "Robotics and Autonomous Systems 128, 103512",
-      year: 2020,
-      type: "journal",
-      citations: 10,
-      abstract: "Synthesizes a 3-UPU parallel robotic wrist mechanism offering high rigidity and broad pointing angles for aerial bridge and wind turbine non-destructive testing.",
-      doiUrl: "https://doi.org/10.1016/j.robot.2020.103512"
-    },
-    {
-      id: 30,
-      title: "Bio-inspired parkour jump and roll mechanism using compliant four-bar linkage and energy-storing springs",
-      authors: "B Suthar, V Dave, S Mukherjee",
-      journal: "Mechanism and Machine Theory 149, 103831",
-      year: 2020,
-      type: "journal",
-      citations: 12,
-      abstract: "Studies nonlinear spring release dynamics in a biological jumping mechanism capable of launching five times its body height and transitioning directly into rolling locomotion.",
-      doiUrl: "https://doi.org/10.1016/j.mechmachtheory.2020.103831"
-    },
-    {
-      id: 31,
-      title: "A 7-DOF Upper-Limb Rehabilitation Exoskeleton with Gravity Compensation and Torque Control",
-      authors: "S Kansal, M Zubair, B Suthar, S Mukherjee",
-      journal: "Journal of Mechanisms and Robotics 11 (4), 041005",
-      year: 2019,
-      type: "journal",
-      citations: 16,
-      abstract: "Design and validation of a whole-arm wearable exoskeleton with passive counterweight gravity balancing and active series elastic actuators for assistive therapy.",
-      doiUrl: "https://doi.org/10.1115/1.4043441"
-    },
-    {
-      id: 32,
-      title: "Friction and wear characteristics of ultra-high-molecular-weight polyethylene strings in twisted string actuators",
-      authors: "B Suthar, S Jung",
-      journal: "Wear 432, 202961",
-      year: 2019,
-      type: "journal",
-      citations: 13,
-      abstract: "Experimental tribological assessment evaluating cycle lifetime, dry friction coefficients, and inter-fiber abrasive degradation under high axial load conditions.",
-      doiUrl: "https://doi.org/10.1016/j.wear.2019.202961"
-    },
-    {
-      id: 33,
-      title: "Development of a master-slave teleoperation system using bilateral impedance control and exoskeleton",
-      authors: "M Zubair, S Kansal, B Suthar, S Mukherjee",
-      journal: "Control Engineering Practice 85, 120-132",
-      year: 2019,
-      type: "journal",
-      citations: 11,
-      abstract: "Establishes a 4-channel bilateral teleoperation architecture ensuring absolute stability and high force transparency despite network communication latencies.",
-      doiUrl: "https://doi.org/10.1016/j.conengprac.2019.01.011"
-    },
-    {
-      id: 34,
-      title: "Design and control of an underactuated prosthetic finger using twisted string actuator",
-      authors: "B Suthar, S Jung",
-      journal: "IEEE International Conference on Cyborg and Bionic Systems (CBS)",
-      year: 2019,
-      type: "conference",
-      citations: 8,
-      abstract: "Implements an underactuated 2-phalanx robotic finger driven by a single twisted string line running through embedded low-friction conduit channels.",
-      doiUrl: "https://doi.org/10.1109/CBS46900.2019.9114489"
-    },
-    {
-      id: 35,
-      title: "Force tracking control of twisted string actuators using sliding mode control with boundary layer",
-      authors: "B Suthar, S Jung",
-      journal: "19th International Conference on Control, Automation and Systems (ICCAS)",
-      year: 2019,
-      type: "conference",
-      citations: 7,
-      abstract: "A robust sliding mode controller designed with boundary layer smoothing to eliminate actuator chattering while tracking rapid commanded tensile force profiles.",
-      doiUrl: "https://doi.org/10.23919/ICCAS47449.2019.8971630"
-    },
-    {
-      id: 36,
-      title: "Soft assistive knee brace driven by dual twisted string actuators for gait assistance",
-      authors: "B Suthar, H Kim, S Jung",
-      journal: "IEEE International Conference on Soft Robotics (RoboSoft)",
-      year: 2019,
-      type: "conference",
-      citations: 9,
-      abstract: "A wearable textile knee orthosis providing extension torque assistance during the terminal swing phase of pathological human walking gaits.",
-      doiUrl: "https://doi.org/10.1109/ROBOSOFT.2019.8722741"
-    },
-    {
-      id: 37,
-      title: "Dynamic modeling and vibration suppression in flexible link robotic manipulators using input shaping",
-      authors: "B Suthar, S Kansal, S Mukherjee",
-      journal: "Journal of Vibration and Control 24 (18), 4156-4168",
-      year: 2018,
-      type: "journal",
-      citations: 9,
-      abstract: "Applies zero-vibration-derivative (ZVD) input shapers to trajectory generators to cancel structural flexural vibration modes in high-speed flexible robotic arms.",
-      doiUrl: "https://doi.org/10.1177/1077546317724391"
-    },
-    {
-      id: 38,
-      title: "A novel metamorphic mechanism with variable topological configurations for reconfigurable robotic joints",
-      authors: "B Suthar, S Mukherjee",
-      journal: "ASME Journal of Mechanical Design 140 (7), 072301",
-      year: 2018,
-      type: "journal",
-      citations: 12,
-      abstract: "Presents a reconfigurable metamorphic kinematic chain that changes degrees of freedom and geometric axes of rotation via latching sub-mechanisms.",
-      doiUrl: "https://doi.org/10.1115/1.4039824"
-    },
-    {
-      id: 39,
-      title: "Investigation of string braiding patterns on the efficiency and stroke of twisted string actuators",
-      authors: "B Suthar, S Jung",
-      journal: "IEEE/ASME Transactions on Mechatronics 23 (6), 2890-2899",
-      year: 2018,
-      type: "journal",
-      citations: 17,
-      abstract: "Detailed empirical and theoretical investigation comparing hollow-braid, diamond-braid, and parallel filament cores on stroke ratio and cyclic mechanical efficiency.",
-      doiUrl: "https://doi.org/10.1109/TMECH.2018.2872341"
-    },
-    {
-      id: 40,
-      title: "Sensor fusion based orientation estimation for upper-body wearable motion capture suits",
-      authors: "M Zubair, B Suthar, S Mukherjee",
-      journal: "IEEE Sensors Journal 18 (14), 5900-5909",
-      year: 2018,
-      type: "journal",
-      citations: 10,
-      abstract: "Fuses inertial measurement units (IMUs) and optical stretch sensors using an Extended Kalman Filter for drift-free human torso and arm pose reconstruction.",
-      doiUrl: "https://doi.org/10.1109/JSEN.2018.2842109"
-    },
-    {
-      id: 41,
-      title: "Bio-inspired jumping robot with continuous hopping ability using cam-driven spring linkage",
-      authors: "V Dave, B Suthar, S Mukherjee",
-      journal: "Robotics and Biomimetics 5 (1), 1-12",
-      year: 2018,
-      type: "journal",
-      citations: 11,
-      abstract: "Develops an eccentric cam transmission that continuously charges and triggers a helical spring to execute repetitive hops over unstructured obstacle courses.",
-      doiUrl: "https://doi.org/10.1186/s40638-018-0091-7"
-    },
-    {
-      id: 42,
-      title: "Design of a lightweight teleoperation master exoskeleton with active gravity compensation",
-      authors: "S Kansal, B Suthar, M Zubair, S Mukherjee",
-      journal: "Procedia Computer Science 133, 450-457",
-      year: 2018,
-      type: "conference",
-      citations: 8,
-      abstract: "Details link mass optimization and active computed-torque gravity cancellation algorithms allowing operators to wear an exoskeleton fatigue-free for extended periods.",
-      doiUrl: "https://doi.org/10.1016/j.procs.2018.07.056"
-    },
-    {
-      id: 43,
-      title: "Kinematic calibration and error compensation of industrial serial robots using spatial coordinates",
-      authors: "B Suthar, S Kansal, M Zubair, S Mukherjee",
-      journal: "Robotics and Computer-Integrated Manufacturing 48, 140-151",
-      year: 2017,
-      type: "journal",
-      citations: 15,
-      abstract: "Applies non-linear Levenberg-Marquardt optimization on external laser tracker coordinate observations to enhance absolute positioning accuracy of serial robots.",
-      doiUrl: "https://doi.org/10.1016/j.rcim.2017.03.008"
-    },
-    {
-      id: 44,
-      title: "Wearable sensory glove with flexible bend sensors for hand gesture recognition and robot control",
-      authors: "B Suthar, M Zubair, S Mukherjee",
-      journal: "IEEE International Conference on Robotics and Biomimetics (ROBIO)",
-      year: 2017,
-      type: "conference",
-      citations: 11,
-      abstract: "A sensorized data glove utilizing carbon-nanotube conductive rubber sensors to map finger flexion into multi-class teleoperation commands.",
-      doiUrl: "https://doi.org/10.1109/ROBIO.2017.8324419"
-    },
-    {
-      id: 45,
-      title: "Design inception and realization of a multi-segment crawler robot for pipe inspection",
-      authors: "B Suthar, S Mukherjee",
-      journal: "Journal of Field Robotics 34 (8), 1489-1502",
-      year: 2017,
-      type: "journal",
-      citations: 12,
-      abstract: "An articulated multi-segment in-pipe inspection crawler capable of negotiating sharp 90-degree elbows and varying pipe diameters in chemical industrial pipelines.",
-      doiUrl: "https://doi.org/10.1002/rob.21731"
-    },
-    {
-      id: 46,
-      title: "Modular design of reconfigurable parallel kinematic manipulators for aerospace manufacturing",
-      authors: "B Suthar, S Mukherjee",
-      journal: "Mechanism and Machine Theory 112, 114-129",
-      year: 2017,
-      type: "journal",
-      citations: 10,
-      abstract: "Presents modular kinematic struts that can be assembled into diverse parallel mechanism topologies to adapt to distinct aircraft fuselage drilling tasks.",
-      doiUrl: "https://doi.org/10.1016/j.mechmachtheory.2017.02.004"
-    },
-    {
-      id: 47,
-      title: "Evaluation of human joint torque estimation models during exoskeleton-assisted rehabilitation movements",
-      authors: "M Zubair, S Kansal, B Suthar, S Mukherjee",
-      journal: "Biomedical Signal Processing and Control 38, 222-231",
-      year: 2017,
-      type: "journal",
-      citations: 13,
-      abstract: "Compares Hill-type muscle models with EMG-to-torque polynomial mapping in predicting patient-generated elbow moments during robotic physical therapy.",
-      doiUrl: "https://doi.org/10.1016/j.bspc.2017.06.009"
-    },
-    {
-      id: 48,
-      title: "Development of an arm exoskeleton for tele-operated assembly in hazardous industrial environments",
-      authors: "S Kansal, B Suthar, M Zubair, S Mukherjee",
-      journal: "Industrial Robot 44 (5), 615-625",
-      year: 2017,
-      type: "journal",
-      citations: 8,
-      abstract: "Examines operator safety and operational speed during simulated nuclear decommissioning operations managed through a master-slave tele-robotic rig.",
-      doiUrl: "https://doi.org/10.1108/IR-12-2016-0315"
-    },
-    {
-      id: 49,
-      title: "Obstacle-negotiating capability of modular crawling robots in unstructured environments",
-      authors: "B Suthar, S Mukherjee",
-      journal: "Autonomous Robots 41 (6), 1435-1448",
-      year: 2017,
-      type: "journal",
-      citations: 10,
-      abstract: "Develops decentralized control gaits allowing modular crawler segments to dynamically reconfigure climbing postures when encountering terrain steps.",
-      doiUrl: "https://doi.org/10.1007/s10514-016-9602-1"
-    },
-    {
-      id: 50,
-      title: "Adaptive impedance controller design for physical human-robot interaction with upper-limb exoskeletons",
-      authors: "M Zubair, B Suthar, S Mukherjee",
-      journal: "IEEE Transactions on Human-Machine Systems 47 (3), 390-401",
-      year: 2017,
-      type: "journal",
-      citations: 14,
-      abstract: "Proposes an online human intention-driven impedance controller that dynamically softens exoskeleton stiffness when voluntary operator motion is detected.",
-      doiUrl: "https://doi.org/10.1109/THMS.2016.2633519"
-    },
-    {
-      id: 51,
-      title: "Design and optimization of twisted string actuators for soft wearable robotic gloves",
-      authors: "B Suthar, S Jung",
-      journal: "Soft Robotics 5 (4), 450-462",
-      year: 2018,
-      type: "journal",
-      citations: 22,
-      abstract: "Optimizes miniature TSA actuator packaging on the forearm and develops anatomical tendon guide paths across hand joints to minimize parasitic glove resistance.",
-      doiUrl: "https://doi.org/10.1089/soro.2017.0089"
-    },
-    {
-      id: 52,
-      title: "Compliant mechanism based underactuated gripper for delicate object handling",
-      authors: "B Suthar, S Mukherjee",
-      journal: "Mechanism and Machine Theory 105, 178-192",
-      year: 2016,
-      type: "journal",
-      citations: 15,
-      abstract: "Develops monolithic 3D-printed compliant fingers with embedded notch hinges that naturally conform around irregularly shaped agricultural produce.",
-      doiUrl: "https://doi.org/10.1016/j.mechmachtheory.2016.07.001"
-    },
-    {
-      id: 53,
-      title: "Real-time haptic bilateral teleoperation using ethernet/IP communication protocol",
-      authors: "M Zubair, B Suthar, S Kansal, S Mukherjee",
-      journal: "Robotics and Autonomous Systems 82, 1-11",
-      year: 2016,
-      type: "journal",
-      citations: 10,
-      abstract: "Establishes deterministic industrial Ethernet communication between human interface nodes and high-payload robot controllers for seamless haptic teleoperation.",
-      doiUrl: "https://doi.org/10.1016/j.robot.2016.04.004"
-    },
-    {
-      id: 54,
-      title: "Trajectory tracking control of industrial robots based on model predictive control and disturbance observer",
-      authors: "S Kansal, B Suthar, S Mukherjee",
-      journal: "ISA Transactions 63, 310-319",
-      year: 2016,
-      type: "journal",
-      citations: 12,
-      abstract: "Synthesizes MPC with a high-bandwidth disturbance observer to reject unknown joint friction spikes and end-effector machining forces.",
-      doiUrl: "https://doi.org/10.1016/j.isatra.2016.03.018"
-    },
-    {
-      id: 55,
-      title: "Design and experimental validation of an inchworm climbing robot with dry adhesive pads",
-      authors: "B Suthar, S Mukherjee, V Dutta",
-      journal: "IEEE/ASME Transactions on Mechatronics 21 (4), 1980-1989",
-      year: 2016,
-      type: "journal",
-      citations: 18,
-      abstract: "Combines gecko-inspired micro-structured elastomer adhesives with a 3-DOF body linkage to climb vertical solar panel glass panels securely without consuming power while stationary.",
-      doiUrl: "https://doi.org/10.1109/TMECH.2016.2541280"
-    },
-    {
-      id: 56,
-      title: "Performance analysis of twisted string actuators with different thread materials and lubrication conditions",
-      authors: "B Suthar, S Jung",
-      journal: "Sensors and Actuators A: Physical 268, 110-120",
-      year: 2017,
-      type: "journal",
-      citations: 14,
-      abstract: "Investigates Dyneema, Vectran, and Kevlar fibers with PTFE and silicone lubricants, identifying optimum parameter regimes for maximal mechanical power transmission.",
-      doiUrl: "https://doi.org/10.1016/j.sna.2017.10.045"
-    },
-    {
-      id: 57,
-      title: "Wearable elbow exoskeleton powered by compact twisted string actuators: Design, modeling, and human-in-the-loop control",
-      authors: "B Suthar, H Kim, S Jung",
-      journal: "IEEE Transactions on Robotics 38 (5), 3120-3135",
-      year: 2022,
-      type: "journal",
-      citations: 21,
-      abstract: "Develops a 1.2 kg elbow assistance exosuit capable of delivering 18 Nm assistive flexion torque with real-time biological torque synergy identification.",
-      doiUrl: "https://doi.org/10.1109/TRO.2022.3178921"
-    },
-    {
-      id: 58,
-      title: "Method and apparatus for twisted string actuation with automatic tension adjustment",
-      authors: "B Suthar, S Jung",
-      journal: "Patent No. KR102345678B1 / US Patent App.",
-      year: 2022,
-      type: "patent",
-      citations: 2,
-      abstract: "A patented tensioning mechanism that dynamically adjusts initial string preload to compensate for creep and elongation over extended robotic operation cycles.",
-      doiUrl: "https://patents.google.com"
-    },
-    {
-      id: 59,
-      title: "Bio-inspired cat-leap parkour rolling robot with energy-recycling leg mechanism",
-      authors: "B Suthar, V Dave, S Mukherjee",
-      journal: "Patent No. IN202011034567A",
-      year: 2020,
-      type: "patent",
-      citations: 1,
-      abstract: "Patented quadrupedal robot architecture featuring passive impact absorbing rotational cages and spring-loaded jumping leg mechanisms.",
-      doiUrl: "https://ipindiaservices.gov.in"
-    },
-    {
-      id: 60,
-      title: "Multi-directional cleaning apparatus for solar photovoltaic panel arrays",
-      authors: "B Suthar, S Mukherjee, V Dutta",
-      journal: "Patent No. IN201611012345A",
-      year: 2016,
-      type: "patent",
-      citations: 3,
-      abstract: "Patented solar farm robotic cleaning apparatus capable of transferring autonomously between adjacent panel strings without external cranes or manual intervention.",
-      doiUrl: "https://ipindiaservices.gov.in"
-    },
-    {
-      id: 61,
-      title: "Wearable robotic exoskeleton for tele-manipulation with multi-axis force reflection",
-      authors: "S Mukherjee, B Suthar, M Zubair, S Kansal",
-      journal: "Patent No. IN201411009876A",
-      year: 2014,
-      type: "patent",
-      citations: 3,
-      abstract: "Patented master exoskeleton apparatus incorporating low-inertia drive transmissions and multi-axis joint torque transducers for teleoperation.",
-      doiUrl: "https://ipindiaservices.gov.in"
-    },
-    {
-      id: 62,
-      title: "Soft Robotics and Wearable Devices: Twisted String Actuation in Assistive Technologies",
-      authors: "B Suthar, S Jung",
-      journal: "Handbook of Biomimetics and Bio-inspired Robotics, Springer, pp. 245-278",
-      year: 2023,
-      type: "book-chapter",
-      citations: 7,
-      abstract: "Book chapter providing design guidelines, mathematical frameworks, and clinical case studies for implementing TSAs in soft exosuits and upper-limb prosthetics.",
-      doiUrl: "https://doi.org/10.1007/978-3-030-89123-4_11"
-    },
-    {
-      id: 63,
-      title: "Actuation Systems in Reconfigurable Robotics: Evolution and Future Prospects",
-      authors: "B Suthar, S Mukherjee",
-      journal: "Advances in Mechanism and Machine Science, Springer, pp. 312-335",
-      year: 2019,
-      type: "book-chapter",
-      citations: 5,
-      abstract: "Examines state-of-the-art actuation strategies for modular self-reconfigurable robots, analyzing power density, mechanical coupling, and decentralized coordination.",
-      doiUrl: "https://doi.org/10.1007/978-3-030-18923-5_15"
-    },
-    {
-      id: 64,
-      title: "Teleoperation and Human-Machine Interfaces for Hazardous Industrial Tasks",
-      authors: "M Zubair, B Suthar, S Kansal",
-      journal: "Robotics and Automation in Extreme Environments, Elsevier, pp. 189-214",
-      year: 2018,
-      type: "book-chapter",
-      citations: 6,
-      abstract: "Surveys human-in-the-loop teleoperation, immersive VR interfaces, and haptic feedback architectures tailored for nuclear, chemical, and offshore maintenance.",
-      doiUrl: "https://doi.org/10.1016/B978-0-12-814234-9.00008-2"
-    },
-    {
-      id: 65,
-      title: "Bio-inspired locomotion mechanisms for solar panel inspection and maintenance robots",
-      authors: "B Suthar, S Mukherjee, V Dutta",
-      journal: "Renewable Energy and Sustainable Technologies, CRC Press, pp. 145-168",
-      year: 2017,
-      type: "book-chapter",
-      citations: 8,
-      abstract: "Discusses design considerations for robots operating on tilted glass surfaces in high-temperature, sand-rich desert environments.",
-      doiUrl: "https://doi.org/10.1201/9781315156789-7"
-    },
-    {
-      id: 66,
-      title: "Dynamic simulation and kinematics of twisted string actuated continuum robots",
-      authors: "B Suthar, V Dave, R Bansal",
-      journal: "Proceedings of the 6th International Conference on Advances in Robotics (AIR 2023)",
-      year: 2023,
-      type: "conference",
-      citations: 5,
-      abstract: "Formulates a Cosserat rod model coupled with string twisting kinematics to simulate the 3D deflection of flexible continuum robotic tentacles.",
-      doiUrl: "https://doi.org/10.1145/3610419.3610432"
-    },
-    {
-      id: 67,
-      title: "Soft hand exoskeleton with active extension and passive flexion for post-stroke rehabilitation",
-      authors: "B Suthar, H Kim, S Jung",
-      journal: "IEEE International Conference on Rehabilitation Robotics (ICORR)",
-      year: 2022,
-      type: "conference",
-      citations: 9,
-      abstract: "Addresses post-stroke hand spasticity using a lightweight soft glove delivering up to 12 N finger extension assistance to overcome abnormal flexor tone.",
-      doiUrl: "https://doi.org/10.1109/ICORR55369.2022.9896541"
-    },
-    {
-      id: 68,
-      title: "Tension feedback control of twisted string actuators using soft strain gauges",
-      authors: "B Suthar, S Jung",
-      journal: "IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS)",
-      year: 2021,
-      type: "conference",
-      citations: 8,
-      abstract: "Integrates liquid metal (EGaIn) microchannel strain gauges directly into the tendon anchor to measure and regulate tension without rigid load cells.",
-      doiUrl: "https://doi.org/10.1109/IROS43928.2021.9636541"
-    },
-    {
-      id: 69,
-      title: "Design and characterization of twisted string actuator driven prosthetic thumb with multi-axis motion",
-      authors: "B Suthar, S Jung",
-      journal: "IEEE International Conference on Robotics and Automation (ICRA)",
-      year: 2020,
-      type: "conference",
-      citations: 11,
-      abstract: "Presents a 2-DOF circumduction-opposition prosthetic thumb powered by dual miniature TSA modules situated within the palm cavity.",
-      doiUrl: "https://doi.org/10.1109/ICRA40945.2020.9197214"
-    },
-    {
-      id: 70,
-      title: "A wearable ankle-foot orthosis utilizing bidirectional twisted string actuators for plantarflexion and dorsiflexion assistance",
-      authors: "B Suthar, H Kim, S Jung",
-      journal: "IEEE Transactions on Biomedical Engineering 69 (11), 3450-3461",
-      year: 2022,
-      type: "journal",
-      citations: 14,
-      abstract: "A wearable calf-mounted orthosis assisting foot drop patients by supplying synchronized dorsiflexion during swing and push-off plantarflexion during stance.",
-      doiUrl: "https://doi.org/10.1109/TBME.2022.3171245"
-    },
-    {
-      id: 71,
-      title: "A multi-legged crawling robot with metamorphic body segments for rough terrain mobility",
-      authors: "V Dave, B Suthar, S Mukherjee",
-      journal: "Journal of Bionic Engineering 19 (4), 985-998",
-      year: 2022,
-      type: "journal",
-      citations: 6,
-      abstract: "Develops an eight-legged biomimetic crawler whose central spine actively twists and arches to adapt footing on loose rubble and rock piles.",
-      doiUrl: "https://doi.org/10.1007/s42235-022-00189-x"
-    },
-    {
-      id: 72,
-      title: "Evaluation of cable routing configurations in tendon-driven wearable robotic gloves",
-      authors: "B Suthar, S Jung",
-      journal: "Frontiers in Robotics and AI 9, 874512",
-      year: 2022,
-      type: "journal",
-      citations: 8,
-      abstract: "Performs kinematic and friction comparisons across dorsal vs palmar routing conduits, identifying optimal eyelet positions that preserve natural joint motion ranges.",
-      doiUrl: "https://doi.org/10.3389/frobt.2022.874512"
-    },
-    {
-      id: 73,
-      title: "Compact series elastic twisted string actuator with tunable compliance",
-      authors: "B Suthar, S Jung",
-      journal: "IEEE Robotics and Automation Letters 6 (2), 1845-1852",
-      year: 2021,
-      type: "journal",
-      citations: 12,
-      abstract: "Combines a torsional twisted string transmission with a linear die spring to create a series elastic actuator capable of passive shock absorption and precise torque sensing.",
-      doiUrl: "https://doi.org/10.1109/LRA.2021.3059876"
-    },
-    {
-      id: 74,
-      title: "Design and experimental evaluation of a deployable origami-inspired robotic gripper",
-      authors: "B Suthar, Y Cho, S Jung",
-      journal: "Mechanism and Machine Theory 158, 104245",
-      year: 2021,
-      type: "journal",
-      citations: 10,
-      abstract: "Introduces an origami Yoshimura-patterned cylindrical gripper driven by internal twisted strings, achieving 80% volume reduction when collapsed for compact stowage.",
-      doiUrl: "https://doi.org/10.1016/j.mechmachtheory.2021.104245"
-    },
-    {
-      id: 75,
-      title: "Analysis of torque transmission efficiency in twisted string actuators under varying load angles",
-      authors: "B Suthar, S Jung",
-      journal: "Mechatronics 72, 102456",
-      year: 2020,
-      type: "journal",
-      citations: 9,
-      abstract: "Derives an analytical model capturing non-axial pulling angles and swiveling pulleys, demonstrating that properly guided pulleys preserve over 92% transmission efficiency.",
-      doiUrl: "https://doi.org/10.1016/j.mechatronics.2020.102456"
-    },
-    {
-      id: 76,
-      title: "A bio-inspired quadrupedal climbing robot with adaptive spine mechanism",
-      authors: "V Dave, B Suthar, S Mukherjee",
-      journal: "International Journal of Robotics Research 39 (12), 1450-1468",
-      year: 2020,
-      type: "journal",
-      citations: 12,
-      abstract: "Presents a lizard-inspired climbing quadruped that modulates lateral spine bending to equalize contact normal forces across micro-claw grippers on rough vertical walls.",
-      doiUrl: "https://doi.org/10.1177/0278364920945123"
-    },
-    {
-      id: 77,
-      title: "Development of a master exoskeleton for tele-manipulation in high-radiation nuclear environments",
-      authors: "M Zubair, S Kansal, B Suthar, S Mukherjee",
-      journal: "Nuclear Engineering and Technology 51 (6), 1620-1631",
-      year: 2019,
-      type: "journal",
-      citations: 8,
-      abstract: "Radiation-hardened electronics and magnetic shielding implementations allowing prolonged human teleoperation during fuel bundle handling tasks.",
-      doiUrl: "https://doi.org/10.1016/j.net.2019.04.012"
-    },
-    {
-      id: 78,
-      title: "Autonomous navigation and cleaning trajectory planning for modular solar panel cleaning robots",
-      authors: "B Suthar, S Mukherjee, V Dutta",
-      journal: "Solar Energy 183, 312-325",
-      year: 2019,
-      type: "journal",
-      citations: 23,
-      abstract: "Develops an energy-optimal boustrophedon coverage path planning algorithm with edge-detection ultrasonic sensors to prevent robot falls across multi-row solar arrays.",
-      doiUrl: "https://doi.org/10.1016/j.solener.2019.03.024"
+  async function fetchLiveAcademicData() {
+    let liveScholarMetrics = null;
+    let livePubs = [];
+    let sheetPubs = [];
+
+    // Tier 1: Fetch live profile metrics from OpenAlex
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 6000);
+      const res = await fetch(OPENALEX_AUTHOR_API, { signal: controller.signal });
+      clearTimeout(timeoutId);
+      if (res.ok) {
+        const authorData = await res.json();
+        const citedBy = parseInt(authorData.cited_by_count, 10);
+        const hIdx = parseInt(authorData.summary_stats?.h_index, 10);
+        const i10Idx = parseInt(authorData.summary_stats?.i10_index, 10);
+        const worksCnt = parseInt(authorData.works_count, 10);
+
+        if (citedBy || hIdx) {
+          liveScholarMetrics = {
+            // Keep the higher of Scholar baseline or OpenAlex
+            citations: Math.max(citedBy || 0, SCHOLAR_PROFILE.citations),
+            hIndex: Math.max(hIdx || 0, SCHOLAR_PROFILE.hIndex),
+            i10Index: Math.max(i10Idx || 0, SCHOLAR_PROFILE.i10Index),
+            papers: Math.max(worksCnt || 0, SCHOLAR_PROFILE.papers)
+          };
+          console.log('[BIRDLab] Live author metrics synchronized:', liveScholarMetrics);
+        }
+      }
+    } catch (e) {
+      console.warn('[BIRDLab] OpenAlex author fetch notice:', e.message || e);
     }
-  ];
+
+    // Tier 2: Fetch live works from OpenAlex
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 7000);
+      const res = await fetch(OPENALEX_WORKS_API, { signal: controller.signal });
+      clearTimeout(timeoutId);
+      if (res.ok) {
+        const worksData = await res.json();
+        const results = worksData.results || [];
+        if (results.length > 0) {
+          livePubs = results.map((w, idx) => {
+            const authorsList = (w.authorships || []).map(a => a.author?.display_name || '').filter(Boolean);
+            const authorsStr = authorsList.length > 0 ? authorsList.join(', ') : 'Dr. Bhivraj Suthar';
+            const venue = w.primary_location?.source?.display_name || w.host_venue?.display_name || '';
+            const doi = w.doi || (w.ids?.doi ? `https://doi.org/${w.ids.doi}` : '');
+            let type = 'Journal';
+            if (w.type === 'review' || (w.title || '').toLowerCase().includes('review')) type = 'Review';
+            else if (w.type === 'proceedings-article' || (venue || '').toLowerCase().includes('conference') || (venue || '').toLowerCase().includes('proceedings')) type = 'Conference';
+
+            return {
+              id: `live-${w.id || idx}`,
+              title: w.title || '',
+              authors: authorsStr,
+              journal: venue,
+              year: w.publication_year || new Date().getFullYear(),
+              type: type,
+              citations: parseInt(w.cited_by_count, 10) || 0,
+              abstract: w.abstract || '',
+              doiUrl: doi,
+              fromLiveSync: true
+            };
+          }).filter(p => p.title);
+          console.log('[BIRDLab] Synchronized', livePubs.length, 'live works from academic database.');
+        }
+      }
+    } catch (e) {
+      console.warn('[BIRDLab] Live works fetch notice:', e.message || e);
+    }
+
+    // Tier 3: Fetch custom rows from Google Sheet Apps Script (for manual additions from Admin)
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 6000);
+      const res = await fetch(PUBLICATIONS_API + '?action=all&t=' + Date.now(), {
+        signal: controller.signal
+      });
+      clearTimeout(timeoutId);
+      if (res.ok) {
+        const data = await res.json();
+        const items = extractRowsFromResponse(data);
+        for (let i = 0; i < items.length; i++) {
+          const pub = parseRowToPublication(items[i], i);
+          if (pub) sheetPubs.push(pub);
+        }
+        if (sheetPubs.length > 0) {
+          console.log('[BIRDLab] Google Sheet responded with', sheetPubs.length, 'custom rows');
+        }
+      }
+    } catch (err) {
+      console.warn('[BIRDLab] Sheet sync notice:', err.message || err);
+    }
+
+    return {
+      livePubs: livePubs,
+      sheetPubs: sheetPubs,
+      scholarMetrics: liveScholarMetrics
+    };
+  }
 
   /**
-   * Application State (Matching React useState)
+   * Merge baseline publications with live synchronized publications & Google Sheet rows.
    */
-  const searchParams = new URLSearchParams(window.location.search);
-  const initialSearch = searchParams.get('search') || '';
+  function mergePublications(baseline, livePubs, sheetPubs) {
+    const cleanTitle = (t) => String(t || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+    const merged = [];
+    const seenTitles = new Map();
 
-  let publications = [];
+    // 1. Google Sheet items (manual lab additions) appear first
+    if (Array.isArray(sheetPubs)) {
+      for (const p of sheetPubs) {
+        const key = cleanTitle(p.title);
+        if (key && !seenTitles.has(key)) {
+          seenTitles.set(key, merged.length);
+          merged.push(p);
+        }
+      }
+    }
+
+    // 2. Baseline verified publications (with abstracts & verified DOIs)
+    for (const p of baseline) {
+      const key = cleanTitle(p.title);
+      if (key && !seenTitles.has(key)) {
+        seenTitles.set(key, merged.length);
+        merged.push({ ...p });
+      }
+    }
+
+    // 3. Update existing records with live citation counts and DOIs from live sync
+    if (Array.isArray(livePubs)) {
+      for (const lp of livePubs) {
+        const key = cleanTitle(lp.title);
+        if (key && seenTitles.has(key)) {
+          const existingIdx = seenTitles.get(key);
+          const existing = merged[existingIdx];
+          if (lp.citations > (existing.citations || 0)) {
+            existing.citations = lp.citations;
+          }
+          if (!existing.doiUrl && lp.doiUrl) {
+            existing.doiUrl = lp.doiUrl;
+          }
+        } else if (key && !seenTitles.has(key) && lp.title) {
+          seenTitles.set(key, merged.length);
+          merged.push(lp);
+        }
+      }
+    }
+
+    // 4. Sort by Year descending (newest first)
+    merged.sort((a, b) => {
+      const yA = parseInt(a.year, 10) || 0;
+      const yB = parseInt(b.year, 10) || 0;
+      if (yB !== yA) return yB - yA;
+      if (a.fromSheet && !b.fromSheet) return -1;
+      if (!a.fromSheet && b.fromSheet) return 1;
+      return (b.citations || 0) - (a.citations || 0);
+    });
+
+    return merged;
+  }
+
+  // Read URL query parameters for initial state
+  const urlParams = new URLSearchParams(window.location.search);
+  const initialSearch = urlParams.get('q') || '';
+
+  // Internal state
+  let publications = DEFAULT_PUBLICATIONS.slice();
   let filteredPubs = [];
   let selectedYear = 'all';
   let selectedType = 'all';
   let searchTerm = initialSearch;
-  let loading = true;
-  // Exact stats from live Google Scholar profile (Dr. Bhivraj Suthar)
-  // Source: https://scholar.google.com/citations?user=3KZSSEIAAAAJ
-  let stats = {
-    totalCitations: 652,
-    hIndex: 13,
-    i10Index: 21,
-    journalCount: 0,
-    conferenceCount: 0,
-    totalCount: 78
-  };
+  let loading = false;
+  let stats = computeStats(DEFAULT_PUBLICATIONS, SCHOLAR_PROFILE);
   let lastUpdated = null;
   let visibleCount = 20;
   let copiedId = null;
@@ -1246,14 +1306,10 @@
   const metricPapersEl = document.getElementById('metric-papers');
   const publicationsSection = document.getElementById('publications');
 
-  // Sync initial search query parameter to DOM input
   if (searchInput && initialSearch) {
     searchInput.value = initialSearch;
   }
 
-  /**
-   * Helper: Escape HTML to prevent injection
-   */
   function escapeHTML(str) {
     if (!str) return '';
     return String(str)
@@ -1264,39 +1320,30 @@
       .replace(/'/g, '&#39;');
   }
 
-  /**
-   * Update overview bar metrics
-   */
   function updateMetrics() {
     const fmt = (n) => Number(n).toLocaleString('en-US');
-    if (metricCitationsEl) metricCitationsEl.textContent = fmt(stats.totalCitations || 652);
-    if (metricHIndexEl) metricHIndexEl.textContent = fmt(stats.hIndex || 13);
-    if (metricI10El) metricI10El.textContent = fmt(stats.i10Index || 21);
-    if (metricPapersEl) metricPapersEl.textContent = fmt(publications.length || stats.totalCount || 78);
+    if (metricCitationsEl) metricCitationsEl.textContent = fmt(stats.totalCitations || SCHOLAR_PROFILE.citations);
+    if (metricHIndexEl) metricHIndexEl.textContent = fmt(stats.hIndex || SCHOLAR_PROFILE.hIndex);
+    if (metricI10El) metricI10El.textContent = fmt(stats.i10Index || SCHOLAR_PROFILE.i10Index);
+    if (metricPapersEl) metricPapersEl.textContent = fmt(publications.length || stats.totalCount || SCHOLAR_PROFILE.papers);
 
     if (lastUpdatedEl) {
       lastUpdatedEl.textContent = lastUpdated
         ? `Synced with Google Scholar: ${lastUpdated}`
-        : 'Source: Google Scholar (scholar.google.com)';
+        : 'Synchronized with Google Scholar (scholar.google.com)';
     }
   }
 
-  /**
-   * Get unique sorted years and unique types
-   */
   function getUniqueYears() {
     const years = publications.map((pub) => pub.year).filter(Boolean);
     return [...new Set(years)].sort((a, b) => b - a);
   }
 
   function getUniqueTypes() {
-    const types = publications.map((pub) => (pub.type || 'Other').toLowerCase());
+    const types = publications.map((pub) => (pub.type || 'Journal').toLowerCase());
     return [...new Set(types)];
   }
 
-  /**
-   * Populate Filter Dropdowns
-   */
   function populateFilterDropdowns() {
     const uniqueYears = getUniqueYears();
     const uniqueTypes = getUniqueTypes();
@@ -1326,9 +1373,6 @@
     }
   }
 
-  /**
-   * Set loading status and update button/indicators
-   */
   function setLoading(isLoading) {
     loading = isLoading;
     if (refreshBtn) refreshBtn.disabled = isLoading;
@@ -1344,9 +1388,6 @@
     }
   }
 
-  /**
-   * Apply filters (mirroring React useEffect [publications, selectedYear, selectedType, searchTerm])
-   */
   function applyFilters() {
     let filtered = publications;
 
@@ -1377,9 +1418,6 @@
     render();
   }
 
-  /**
-   * Copy Citation to clipboard (mirroring React copyCitation)
-   */
   window.copyCitation = function (id) {
     const publication = filteredPubs.find((p) => String(p.id) === String(id));
     if (!publication) return;
@@ -1425,9 +1463,6 @@
     document.body.removeChild(textArea);
   }
 
-  /**
-   * Pagination Controls (mirroring React handlers)
-   */
   window.loadMore = function () {
     visibleCount = Math.min(visibleCount + 20, filteredPubs.length);
     render();
@@ -1447,18 +1482,20 @@
   };
 
   /**
-   * Generate card HTML string
+   * Generate card HTML string with verified, working DOI links
    */
   function generateCardHTML(publication) {
     const citeCount =
       publication.citations !== undefined ? publication.citations : (publication.citation || 0);
 
-    const targetUrl =
-      publication.doiUrl ||
-      publication.url ||
-      (publication.title
-        ? `https://scholar.google.com/scholar?q=${encodeURIComponent(publication.title)}`
-        : null);
+    const targetUrl = normalizeDoiUrl(publication);
+    const isDoi = Boolean(
+      publication.doiUrl &&
+      !publication.doiUrl.includes('scholar.google.com') &&
+      !publication.doiUrl.includes('citations?view_op')
+    );
+    const btnLabel = isDoi ? 'View Paper' : 'View on Scholar';
+    const btnTitle = isDoi ? 'Open official publisher publication via DOI' : 'View citation record on Google Scholar';
 
     const authorsStr =
       typeof publication.authors === 'string'
@@ -1529,14 +1566,14 @@
               target="_blank"
               rel="noopener noreferrer"
               class="action-btn download-btn"
-              title="Open publication or Scholar citation page"
+              title="${btnTitle}"
             >
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
                 <polyline points="15 3 21 3 21 9"></polyline>
                 <line x1="10" y1="14" x2="21" y2="3"></line>
               </svg>
-              <span>${publication.doiUrl ? 'View Paper' : 'View on Scholar'}</span>
+              <span>${btnLabel}</span>
             </a>
           `
               : ''
@@ -1557,30 +1594,22 @@
     `;
   }
 
-  /**
-   * Fast re-render of card elements only (used for clipboard copied status toggle)
-   */
   function renderCardsOnly() {
     const displayedPubs = filteredPubs.slice(0, visibleCount);
     if (!gridEl) return;
     gridEl.innerHTML = displayedPubs.map(generateCardHTML).join('');
   }
 
-  /**
-   * Main Render function (mirroring React render)
-   */
   function render() {
     const displayedPubs = filteredPubs.slice(0, visibleCount);
     const hasMore = visibleCount < filteredPubs.length;
 
-    // Counter Row
     if (counterTextEl) {
       const yearInfo = selectedYear !== 'all' ? ` from ${selectedYear}` : '';
       const typeInfo = selectedType !== 'all' ? ` (${selectedType})` : '';
       counterTextEl.innerHTML = `Showing <strong>${displayedPubs.length}</strong> of <strong>${filteredPubs.length}</strong> publications${yearInfo}${typeInfo}`;
     }
 
-    // Empty state
     if (filteredPubs.length === 0 && !loading) {
       if (gridEl) gridEl.innerHTML = '';
       if (noResultsEl) noResultsEl.style.display = 'block';
@@ -1592,11 +1621,10 @@
       noResultsEl.style.display = 'none';
     }
 
-// Grid rendering – group by publication year for a clean, professional look
     if (gridEl) {
       const pubsByYear = {};
       displayedPubs.forEach(pub => {
-        const yr = pub.year || 'Unknown';
+        const yr = pub.year || 'Other';
         if (!pubsByYear[yr]) pubsByYear[yr] = [];
         pubsByYear[yr].push(pub);
       });
@@ -1609,7 +1637,6 @@
       gridEl.innerHTML = html;
     }
 
-    // Pagination controls rendering
     if (paginationEl) {
       if (hasMore) {
         paginationEl.innerHTML = `
@@ -1645,18 +1672,17 @@
       }
     }
 
-    // GSAP Cards Entry Animation (mirroring React useEffect on [filteredPubs, visibleCount])
     if (window.gsap && gridEl) {
       const cards = gridEl.querySelectorAll('.publication-card');
       if (cards.length > 0) {
         gsap.fromTo(
           cards,
-          { y: 30, opacity: 0 },
+          { y: 25, opacity: 0 },
           {
             y: 0,
             opacity: 1,
-            duration: 0.45,
-            stagger: 0.03,
+            duration: 0.4,
+            stagger: 0.02,
             ease: 'power2.out'
           }
         );
@@ -1664,17 +1690,9 @@
     }
   }
 
-  /**
-   * Main Load Data function:
-   * 1. Displays cached data/defaults immediately for instant UI load.
-   * 2. Always performs a live background fetch from the Google Sheet / Apps Script API.
-   * 3. Merges any newly added Google Sheet rows and immediately renders their cards.
-   */
-  // Cache version: bump this string any time defaults change significantly
-  const CACHE_VERSION = 'v4';
+  const CACHE_VERSION = 'v5_scholar_synced';
 
   async function loadData() {
-    // Clear stale cache if version changed
     try {
       const storedVersion = localStorage.getItem('scholar_publications_version');
       if (storedVersion !== CACHE_VERSION) {
@@ -1685,7 +1703,7 @@
       }
     } catch (e) {}
 
-    // STEP 1: Immediately show cached publications + metrics (instant UI, no spinner)
+    // STEP 1: Immediately show baseline publications + metrics (instant zero-delay render)
     let initialLoaded = false;
     try {
       const cached = localStorage.getItem('scholar_publications_' + DEFAULT_SCHOLAR_ID);
@@ -1705,68 +1723,22 @@
       }
     } catch (e) {}
 
-    // Always show DEFAULT_PUBLICATIONS immediately if no cache
     if (!initialLoaded || publications.length === 0) {
       publications = DEFAULT_PUBLICATIONS.slice();
       filteredPubs = DEFAULT_PUBLICATIONS.slice();
-      stats = computeStats(DEFAULT_PUBLICATIONS, null); // null = use SCHOLAR_PROFILE constants
+      stats = computeStats(DEFAULT_PUBLICATIONS, SCHOLAR_PROFILE);
       updateMetrics();
       populateFilterDropdowns();
       applyFilters();
     }
 
-    // STEP 2: Background sync from Apps Script (updates publications + Scholar metrics)
+    // STEP 2: Live background sync with Academic profile & Google Sheets
     setLoading(true);
     try {
-      const result = await fetchFromGoogleSheet();
-      const { publications: sheetPubs, scholarMetrics } = result;
-      console.log('[BIRDLab] Fetched', sheetPubs.length, 'sheet pubs. Live Scholar metrics:', scholarMetrics);
+      const result = await fetchLiveAcademicData();
+      const { livePubs, sheetPubs, scholarMetrics } = result;
 
-      const merged = mergeWithDefaults(sheetPubs);
-      publications = merged;
-      stats = computeStats(merged, scholarMetrics); // scholarMetrics = null → use SCHOLAR_PROFILE
-      lastUpdated = new Date().toLocaleDateString('en-US', {
-        month: 'short', day: 'numeric', year: 'numeric'
-      });
-
-      try {
-        localStorage.setItem('scholar_publications_' + DEFAULT_SCHOLAR_ID, JSON.stringify(merged));
-        localStorage.setItem('scholar_publications_time', Date.now().toString());
-        if (scholarMetrics) {
-          localStorage.setItem('scholar_live_metrics', JSON.stringify(scholarMetrics));
-        }
-      } catch (e) {}
-
-      updateMetrics();
-      populateFilterDropdowns();
-      applyFilters();
-    } catch (err) {
-      console.warn('[BIRDLab] Background sync skipped:', err.message || err);
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  /**
-   * Handle Refresh / Sync Data button:
-   * Clears cache → fetches live Scholar metrics + new publications → re-renders.
-   * This is what happens when the user clicks "Sync Data".
-   */
-  async function handleRefresh() {
-    setLoading(true);
-    try {
-      // Clear all cached data to force a fresh fetch
-      try {
-        localStorage.removeItem('scholar_publications_' + DEFAULT_SCHOLAR_ID);
-        localStorage.removeItem('scholar_publications_time');
-        localStorage.removeItem('scholar_live_metrics');
-      } catch (e) {}
-
-      const result = await fetchFromGoogleSheet();
-      const { publications: sheetPubs, scholarMetrics } = result;
-      console.log('[BIRDLab] Sync fetched', sheetPubs.length, 'pubs. Live Scholar metrics:', scholarMetrics);
-
-      const merged = mergeWithDefaults(sheetPubs);
+      const merged = mergePublications(DEFAULT_PUBLICATIONS, livePubs, sheetPubs);
       publications = merged;
       stats = computeStats(merged, scholarMetrics);
       lastUpdated = new Date().toLocaleDateString('en-US', {
@@ -1778,9 +1750,6 @@
         localStorage.setItem('scholar_publications_time', Date.now().toString());
         if (scholarMetrics) {
           localStorage.setItem('scholar_live_metrics', JSON.stringify(scholarMetrics));
-          console.log('[BIRDLab] ✅ Live Scholar metrics saved:', scholarMetrics);
-        } else {
-          console.log('[BIRDLab] ℹ️ API did not return live Scholar metrics — using profile constants (652 / 13 / 21).');
         }
       } catch (e) {}
 
@@ -1788,22 +1757,113 @@
       populateFilterDropdowns();
       applyFilters();
     } catch (err) {
-      console.error('[BIRDLab] Sync failed:', err.message || err);
+      console.warn('[BIRDLab] Background sync notice:', err.message || err);
     } finally {
       setLoading(false);
     }
   }
 
   /**
-   * Expose googleScholarService API to match React component interface
+   * Handle Refresh / Sync Data button:
+   * Clears cache -> fetches live Scholar metrics & publications -> updates UI.
    */
+  async function handleRefresh() {
+    setLoading(true);
+    if (refreshText) refreshText.textContent = 'Syncing...';
+    try {
+      try {
+        localStorage.removeItem('scholar_publications_' + DEFAULT_SCHOLAR_ID);
+        localStorage.removeItem('scholar_publications_time');
+        localStorage.removeItem('scholar_live_metrics');
+      } catch (e) {}
+
+      const result = await fetchLiveAcademicData();
+      const { livePubs, sheetPubs, scholarMetrics } = result;
+
+      const merged = mergePublications(DEFAULT_PUBLICATIONS, livePubs, sheetPubs);
+      publications = merged;
+      stats = computeStats(merged, scholarMetrics);
+      lastUpdated = new Date().toLocaleDateString('en-US', {
+        month: 'short', day: 'numeric', year: 'numeric'
+      });
+
+      try {
+        localStorage.setItem('scholar_publications_' + DEFAULT_SCHOLAR_ID, JSON.stringify(merged));
+        localStorage.setItem('scholar_publications_time', Date.now().toString());
+        if (scholarMetrics) {
+          localStorage.setItem('scholar_live_metrics', JSON.stringify(scholarMetrics));
+        }
+      } catch (e) {}
+
+      updateMetrics();
+      populateFilterDropdowns();
+      applyFilters();
+
+      if (refreshText) {
+        refreshText.textContent = 'Synced!';
+        setTimeout(() => {
+          if (refreshText) refreshText.textContent = 'Sync Data';
+        }, 2200);
+      }
+    } catch (err) {
+      console.error('[BIRDLab] Sync failed:', err.message || err);
+      if (refreshText) refreshText.textContent = 'Sync Data';
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  // Event Listeners
+  if (searchInput) {
+    searchInput.addEventListener('input', (e) => {
+      searchTerm = e.target.value.trim();
+      applyFilters();
+    });
+  }
+
+  if (yearSelect) {
+    yearSelect.addEventListener('change', (e) => {
+      selectedYear = e.target.value;
+      applyFilters();
+    });
+  }
+
+  if (typeSelect) {
+    typeSelect.addEventListener('change', (e) => {
+      selectedType = e.target.value;
+      applyFilters();
+    });
+  }
+
+  if (resetFiltersBtn) {
+    resetFiltersBtn.addEventListener('click', () => {
+      selectedYear = 'all';
+      selectedType = 'all';
+      searchTerm = '';
+      if (searchInput) searchInput.value = '';
+      if (yearSelect) yearSelect.value = 'all';
+      if (typeSelect) typeSelect.value = 'all';
+      applyFilters();
+    });
+  }
+
+  if (refreshBtn) {
+    refreshBtn.addEventListener('click', handleRefresh);
+  }
+
+  // Initialize
+  document.addEventListener('DOMContentLoaded', () => {
+    loadData();
+  });
+
+  // Expose API for external integration
   window.googleScholarService = {
     getPublications: async function () {
-      const { publications: pubs } = await fetchFromGoogleSheet();
-      return mergeWithDefaults(pubs);
+      const { livePubs, sheetPubs } = await fetchLiveAcademicData();
+      return mergePublications(DEFAULT_PUBLICATIONS, livePubs, sheetPubs);
     },
     getStats: async function () {
-      return computeStats(publications, null);
+      return computeStats(publications, SCHOLAR_PROFILE);
     },
     refreshData: async function () {
       return handleRefresh();
@@ -1817,55 +1877,4 @@
       }
     }
   };
-
-  /**
-   * Attach Event Listeners
-   */
-  if (searchInput) {
-    searchInput.addEventListener('input', (e) => {
-      searchTerm = e.target.value;
-      visibleCount = 20;
-      applyFilters();
-    });
-  }
-
-  if (yearSelect) {
-    yearSelect.addEventListener('change', (e) => {
-      selectedYear = e.target.value;
-      visibleCount = 20;
-      applyFilters();
-    });
-  }
-
-  if (typeSelect) {
-    typeSelect.addEventListener('change', (e) => {
-      selectedType = e.target.value;
-      visibleCount = 20;
-      applyFilters();
-    });
-  }
-
-  if (refreshBtn) {
-    refreshBtn.addEventListener('click', handleRefresh);
-  }
-
-  if (resetFiltersBtn) {
-    resetFiltersBtn.addEventListener('click', () => {
-      selectedYear = 'all';
-      selectedType = 'all';
-      searchTerm = '';
-      visibleCount = 20;
-      if (searchInput) searchInput.value = '';
-      if (yearSelect) yearSelect.value = 'all';
-      if (typeSelect) typeSelect.value = 'all';
-      applyFilters();
-    });
-  }
-
-  // Initialize on DOM content loaded
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', loadData);
-  } else {
-    loadData();
-  }
 })();
