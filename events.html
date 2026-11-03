@@ -8,8 +8,7 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>BIRD Lab - Events</title>
-
+    <title>BIRD Lab - Events & Activities</title>
 
     <!-- Font Awesome -->
     <link
@@ -28,7 +27,7 @@
 
 
     <!-- =====================================================
-         LOGO
+         LOGO / TOP-LEFT HEADER
     ====================================================== -->
 
     <header class="site-header">
@@ -51,7 +50,7 @@
 
 
     <!-- =====================================================
-         EVENTS SECTION
+         PAGE LAYOUT
     ====================================================== -->
 
     <div class="page-layout">
@@ -69,82 +68,156 @@
 
                 <div class="events-header">
 
-
                     <span class="section-badge">
-                        EVENTS
+                        <i class="fa-solid fa-calendar-star"></i> EVENTS
                     </span>
-
 
                     <h1>
                         Events & Activities
                     </h1>
 
-
                     <p>
-                        Stay updated with conferences, workshops, lectures,
-                        and other activities at BIRD Lab.
+                        Stay updated with upcoming conferences, workshops, guest lectures, and explore our past archives at BIRD Lab.
                     </p>
-
 
                 </div>
 
 
+                <!-- =================================================
+                     FILTER & SEARCH CONTROLS
+                ================================================== -->
 
-<!-- EVENT FILTERS -->
-<section class="event-filters" aria-label="Filter events">
+                <div class="events-controls-wrapper">
 
-    <div class="filter-group">
-        <label for="eventDate">Filter by date</label>
-        <input type="date" id="eventDate">
-    </div>
+                    <!-- Status Quick Jump Tabs -->
+                    <div class="status-tabs-nav">
+                        <button class="status-tab-btn active" data-tab="all">
+                            <i class="fa-solid fa-layer-group"></i> All Events (<span id="tabCountAll">0</span>)
+                        </button>
+                        <button class="status-tab-btn" data-tab="upcoming">
+                            <i class="fa-solid fa-clock"></i> Upcoming Events (<span id="tabCountUpcoming">0</span>)
+                        </button>
+                        <button class="status-tab-btn" data-tab="past">
+                            <i class="fa-solid fa-box-archive"></i> Past Events (<span id="tabCountPast">0</span>)
+                        </button>
+                    </div>
 
-    <div class="filter-group">
-        <label for="eventYear">Filter by year</label>
-        <select id="eventYear">
-            <option value="all">All years</option>
-        </select>
-    </div>
+                    <!-- Filter Pills & Search Input Row -->
+                    <div class="filters-search-row">
 
-    <div class="filter-group">
-        <label for="eventCategory">Filter by category</label>
-        <select id="eventCategory">
-            <option value="all">All categories</option>
-            <option value="conference">Conferences</option>
-            <option value="workshop">Workshops</option>
-            <option value="seminar">Seminars</option>
-            <option value="other">Other events & activities</option>
-        </select>
-    </div>
+                        <!-- Category Filters -->
+                        <div class="category-pills" id="categoryPills">
+                            <button class="cat-pill-btn active" data-cat="all">All Types</button>
+                            <button class="cat-pill-btn" data-cat="workshop">Workshops</button>
+                            <button class="cat-pill-btn" data-cat="conference">Conferences</button>
+                            <button class="cat-pill-btn" data-cat="symposium">Symposiums</button>
+                            <button class="cat-pill-btn" data-cat="guest lecture">Guest Lectures</button>
+                            <button class="cat-pill-btn" data-cat="seminar">Seminars</button>
+                        </div>
 
-    <button type="button" id="clearFilters" class="clear-filters">
-        Clear Filters
-    </button>
+                        <!-- Live Search Bar -->
+                        <div class="events-search-box">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <input
+                                type="text"
+                                id="eventSearchInput"
+                                placeholder="Search by title, topic, or venue..."
+                            >
+                            <button id="clearSearchBtn" class="clear-search-btn" title="Clear search" style="display: none;">
+                                &times;
+                            </button>
+                        </div>
 
-</section>
+                    </div>
 
-<!-- UPCOMING EVENTS -->
-<section class="event-section">
-    <h2 class="event-section-title">Upcoming Events</h2>
-    <p class="event-section-description">
-        Explore upcoming conferences, workshops, seminars, and activities.
-    </p>
+                </div>
 
-    <div class="events-grid" id="upcomingEventsGrid">
-        <p class="events-message">Loading upcoming events...</p>
-    </div>
-</section>
 
-<!-- PAST EVENTS -->
-<section class="event-section">
-    <h2 class="event-section-title">Past Events</h2>
-    <p class="event-section-description">
-        Explore previous events and activities organized by BIRD Lab.
-    </p>
+                <!-- =================================================
+                     UPCOMING EVENTS SECTION
+                ================================================== -->
 
-    <div class="events-grid" id="pastEventsGrid">
-        <p class="events-message">Loading past events...</p>
-    </div>
-</section>
+                <section class="events-section-block" id="upcomingSection">
+
+                    <div class="events-section-header">
+
+                        <div class="section-title-wrap">
+                            <span class="section-status-pill upcoming">
+                                <i class="fa-solid fa-clock"></i> UPCOMING
+                            </span>
+                            <h2>Upcoming Events</h2>
+                            <p>Discover our scheduled workshops, symposiums, and conferences. Join and participate!</p>
+                        </div>
+
+                        <span class="section-count-badge" id="upcomingCountBadge">
+                            0 Events
+                        </span>
+
+                    </div>
+
+                    <!-- Upcoming Grid -->
+                    <div class="events-grid" id="upcomingEventsGrid">
+                        <!-- Loaded dynamically -->
+                    </div>
+
+                </section>
+
+
+                <!-- =================================================
+                     PAST EVENTS SECTION
+                ================================================== -->
+
+                <section class="events-section-block" id="pastSection">
+
+                    <div class="events-section-header">
+
+                        <div class="section-title-wrap">
+                            <span class="section-status-pill past">
+                                <i class="fa-solid fa-box-archive"></i> PAST ARCHIVE
+                            </span>
+                            <h2>Past Events & Activities</h2>
+                            <p>Browse previously concluded research workshops, keynote lectures, and lab activities.</p>
+                        </div>
+
+                        <span class="section-count-badge" id="pastCountBadge">
+                            0 Events
+                        </span>
+
+                    </div>
+
+                    <!-- Past Grid -->
+                    <div class="events-grid" id="pastEventsGrid">
+                        <!-- Loaded dynamically -->
+                    </div>
+
+                </section>
+
+
+                <!-- Hidden fallback element for backwards compatibility -->
+                <div id="eventsGrid" style="display: none;"></div>
+
+
+                <!-- =================================================
+                     ADMIN ACCESS & SHEET LINKS
+                ================================================== -->
+
+                <div class="events-admin-links">
+
+                    <a href="admin-events.html" class="admin-portal-btn">
+                        <i class="fa-solid fa-shield-halved"></i> Events Admin Access
+                    </a>
+
+                    <a
+                        href="https://docs.google.com/spreadsheets/d/1CSlzKRnWN2CtiKCHTJUowHMF13_MdQBHNAUml7ouAvI/edit?gid=0#gid=0"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="sheet-access-btn"
+                    >
+                        <i class="fa-solid fa-table"></i> View Connected Google Sheet
+                    </a>
+
+                </div>
+
 
             </main>
 
@@ -233,12 +306,80 @@
                 >
                     Calender
                 </a>
-  <a href="LabAchievements.html" class="nav-button">LabAchievements </a>
+
             </nav>
 
 
         </div>
 
+
+    </div>
+
+
+
+    <!-- =====================================================
+         POSTER LIGHTBOX MODAL (Full Screen Poster Viewer)
+    ====================================================== -->
+
+    <div id="eventPosterModal" class="poster-modal">
+
+        <span class="close-modal" id="closeEventModalBtn" title="Close (ESC)">&times;</span>
+
+        <div class="modal-inner">
+
+            <div class="modal-header-info">
+                <span id="modalEventTypeBadge" class="modal-type-badge">Event Flyer</span>
+                <h3 id="modalEventTitle">Event Poster</h3>
+                <p id="modalEventSubtitle" style="font-size: 13px; color: #94a3b8; margin-top: 2px;">Click picture or use controls below to inspect details at 100% full scale</p>
+            </div>
+
+            <div class="modal-image-wrapper" id="modalImageWrapper">
+                <img
+                    class="modal-content"
+                    id="modalPosterImg"
+                    src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3C/svg%3E"
+                    alt="Event Poster Flyer"
+                    title="Click image to toggle 100% zoom"
+                >
+            </div>
+
+            <div class="modal-caption">
+
+                <div class="modal-actions-bar">
+                    <button
+                        type="button"
+                        id="modalZoomBtn"
+                        class="modal-action-btn"
+                        title="Toggle 100% Full Size"
+                    >
+                        <i class="fa-solid fa-magnifying-glass-plus"></i> <span id="modalZoomBtnText">Zoom 100%</span>
+                    </button>
+
+                    <a
+                        id="modalNewTabBtn"
+                        href="#"
+                        class="modal-action-btn primary"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        title="Open unscaled raw picture in a new browser tab"
+                    >
+                        <i class="fa-solid fa-arrow-up-right-from-square"></i> Open in New Tab (Full Res)
+                    </a>
+
+                    <a
+                        id="modalDownloadBtn"
+                        href="#"
+                        download="birdlab_event_poster"
+                        class="modal-action-btn"
+                        title="Download poster to your computer"
+                    >
+                        <i class="fa-solid fa-download"></i> Download Image
+                    </a>
+                </div>
+
+            </div>
+
+        </div>
 
     </div>
 
@@ -275,19 +416,53 @@
                     partnerships.
                 </p>
 
- <p>© 2026 BIRDLab, IIT Jodhpur. All rights reserved. Designed by IIT Jodhpur.</p>
- <br>
- 
+
+                <a
+                    href="#"
+                    class="git-link"
+                >
+                    View in Git ▶
+                </a>
+
+
                 <div class="social-links">
 
 
-                    <a href="https://www.linkedin.com/in/bhivraj-s-823528294" class="social" aria-label="LinkedIn">
+                    <a
+                        href="#"
+                        class="social"
+                        aria-label="X"
+                    >
+                        𝕏
+                    </a>
+
+
+                    <a
+                        href="#"
+                        class="social"
+                        aria-label="LinkedIn"
+                    >
                         in
                     </a>
 
-                    <a href="https://www.youtube.com/@bhivrajsuthar2234" class="social" aria-label="YouTube">
+
+                    <a
+                        href="#"
+                        class="social"
+                        aria-label="GitHub"
+                    >
+                        ●
+                    </a>
+
+
+                    <a
+                        href="#"
+                        class="social"
+                        aria-label="YouTube"
+                    >
                         ▶
                     </a>
+
 
                 </div>
 
@@ -317,10 +492,7 @@
 
 
                     <p>
-                        W10, Department of Electrical Engineering
-Indian Institute of Technology Jodhpur
-NH-62, Karwar Road
-Jodhpur – 342037, Rajasthan, India
+                        SAIDE, IIT Jodhpur Permanent Campus
                     </p>
 
 
