@@ -6,6 +6,9 @@ const EVENTS_API =
     "https://script.google.com/macros/s/AKfycbxbe2jNcLtEtUN3myTvIgZE_R_cscvcaWNXezXAIKY3hQgz2Ko3fpJGGf3FLGiDyXdA/exec";
 
 const EVENTS_STORAGE_KEY = "birdlab_custom_events";
+const REGISTRATIONS_STORAGE_KEY = "birdlab_event_registrations";
+const CONNECTED_SHEET_URL = "https://docs.google.com/spreadsheets/d/1CSlzKRnWN2CtiKCHTJUowHMF13_MdQBHNAUml7ouAvI/edit?gid=0#gid=0";
+const ADMIN_NOTIFICATION_EMAIL = "nextgenlab1234@gmail.com";
 
 // ============================================================
 // DIVERSE LAB GALLERY (EACH EVENT RECEIVES A UNIQUE PICTURE)
@@ -144,7 +147,7 @@ const DEFAULT_LAB_EVENTS = [
         Date: "November 18-22, 2026",
         Time: "09:30 AM - 05:00 PM IST",
         Location: "SAIDE Seminar Hall & Robotics Lab, IIT Jodhpur",
-        "Registration Link": "https://docs.google.com/forms",
+        "Registration Link": "",
         Description: "Hands-on masterclass exploring avian locomotion, soft actuators, neuromorphic tactile perception, and bio-inspired flight dynamics led by distinguished international researchers.",
         Poster: "bio-inspired.jpg"
     },
@@ -156,7 +159,7 @@ const DEFAULT_LAB_EVENTS = [
         Date: "December 08, 2026",
         Time: "10:00 AM - 04:30 PM IST",
         Location: "Auditorium Complex, IIT Jodhpur Permanent Campus",
-        "Registration Link": "https://docs.google.com/forms",
+        "Registration Link": "",
         Description: "A premier gathering of roboticists, clinicians, and biomedical engineers discussing human-robot sensorimotor interfacing, biomechanics, and rehabilitation exoskeletons.",
         Poster: "wearable-robotics.jpg"
     },
@@ -168,7 +171,7 @@ const DEFAULT_LAB_EVENTS = [
         Date: "January 14-16, 2027",
         Time: "09:00 AM - 06:00 PM IST",
         Location: "IIT Jodhpur Permanent Campus & Virtual Hybrid",
-        "Registration Link": "https://docs.google.com/forms",
+        "Registration Link": "",
         Description: "Focusing on reinforcement learning for quadrupeds, vision-language-action (VLA) foundation models for manipulation, and sim-to-real transfer.",
         Poster: "applied-ai-robotics.jpg"
     },
@@ -355,6 +358,17 @@ async function loadEvents() {
 
         evt.Poster = poster;
         usedImages.add(poster);
+
+        // Sanitize any generic Google Forms links from previous sessions
+        const rawLink = String(evt["Registration Link"] || "").trim();
+        if (
+            rawLink === "https://docs.google.com/forms" ||
+            rawLink === "https://docs.google.com/forms/" ||
+            rawLink === "https://docs.google.com/forms/u/0" ||
+            rawLink === "https://docs.google.com/forms/u/0/"
+        ) {
+            evt["Registration Link"] = "";
+        }
     });
 
     // Save back to localStorage so user gets permanent unique pictures
@@ -373,6 +387,9 @@ async function loadEvents() {
 
     // Initialize poster lightbox modal
     setupPosterLightboxModal();
+
+    // Initialize course & event registration modal
+    setupEventRegistrationModal();
 }
 
 // ============================================================
@@ -488,6 +505,9 @@ function renderOrganizedEvents() {
             pastGrid.appendChild(createEventCard(event, false, i));
         });
     }
+
+    // Attach registration modal handlers to newly rendered cards
+    setupEventRegistrationModal();
 }
 
 // ============================================================
@@ -531,16 +551,29 @@ function createEventCard(event, isUpcoming, index) {
     const registrationLink = String(event["Registration Link"] || "").trim();
     let actionButtonsHtml = "";
 
-    if (registrationLink !== "") {
+    // For any upcoming event (or any event with an active registration link), show the interactive Register Now button
+    const isGenericLink =
+        registrationLink === "https://docs.google.com/forms" ||
+        registrationLink === "https://docs.google.com/forms/" ||
+        registrationLink === "https://docs.google.com/forms/u/0" ||
+        registrationLink === "https://docs.google.com/forms/u/0/";
+    const customLink = isGenericLink ? "" : registrationLink;
+
+    if (isUpcoming || customLink !== "") {
         actionButtonsHtml += `
-            <a
-                href="${escapeAttr(registrationLink)}"
-                class="event-register"
-                target="_blank"
-                rel="noopener noreferrer"
+            <button
+                type="button"
+                class="event-register-btn"
+                data-event-id="${escapeAttr(event.id || '')}"
+                data-event-title="${escapeAttr(event.Title || 'Lab Course / Event')}"
+                data-event-type="${escapeAttr(typeLabel)}"
+                data-event-date="${escapeAttr(event.Date || '')}"
+                data-event-location="${escapeAttr(event.Location || '')}"
+                data-custom-link="${escapeAttr(customLink)}"
+                title="Register for ${escapeAttr(event.Title || 'this course/event')}"
             >
-                Register Now <i class="fa-solid fa-arrow-right"></i>
-            </a>
+                <i class="fa-solid fa-graduation-cap"></i> Register Now <i class="fa-solid fa-arrow-right"></i>
+            </button>
         `;
     }
 
@@ -806,9 +839,231 @@ function closePosterModal() {
 }
 
 // ============================================================
+// EVENT & COURSE REGISTRATION CONTROLLER
+// ============================================================
+
+function setupEventRegistrationModal() {
+    const modal = document.getElementById("eventRegistrationModal");
+    const form = document.getElementById("eventRegistrationForm");
+    const formView = document.getElementById("regFormView");
+    const successView = document.getElementById("regSuccessView");
+    const closeBtn = document.getElementById("closeRegModalBtn");
+    const cancelBtn = document.getElementById("cancelRegBtn");
+    const doneBtn = document.getElementById("doneRegBtn");
+
+    if (!modal) return;
+
+    // Attach click listener to all Register Now buttons on event cards
+    const registerButtons = document.querySelectorAll(".event-register-btn");
+    registerButtons.forEach(function (btn) {
+        if (btn.dataset.regAttached === "true") return;
+        btn.dataset.regAttached = "true";
+
+        btn.addEventListener("click", function (e) {
+            e.preventDefault();
+            const eventId = btn.getAttribute("data-event-id") || "";
+            const eventTitle = btn.getAttribute("data-event-title") || "Lab Course / Event";
+            const eventType = btn.getAttribute("data-event-type") || "Course";
+            const eventDate = btn.getAttribute("data-event-date") || "Upcoming Schedule";
+            const eventLocation = btn.getAttribute("data-event-location") || "IIT Jodhpur Permanent Campus";
+            const customLink = btn.getAttribute("data-custom-link") || "";
+
+            // If a specific, valid non-generic Google Form URL was configured with /d/e/, open that directly
+            if (customLink && customLink.includes("docs.google.com/forms/d/e/")) {
+                window.open(customLink, "_blank", "noopener,noreferrer");
+                return;
+            }
+
+            openRegistrationModal({
+                id: eventId,
+                title: eventTitle,
+                type: eventType,
+                date: eventDate,
+                location: eventLocation
+            });
+        });
+    });
+
+    // Close Modal Listeners
+    if (closeBtn) closeBtn.onclick = closeRegistrationModal;
+    if (cancelBtn) cancelBtn.onclick = closeRegistrationModal;
+    if (doneBtn) doneBtn.onclick = closeRegistrationModal;
+
+    modal.onclick = function (e) {
+        if (e.target === modal) {
+            closeRegistrationModal();
+        }
+    };
+
+    if (!document.body.dataset.regKeyAttached) {
+        document.body.dataset.regKeyAttached = "true";
+        document.addEventListener("keydown", function (e) {
+            if (e.key === "Escape" && modal.style.display !== "none") {
+                closeRegistrationModal();
+            }
+        });
+    }
+
+    // Handle Form Submission
+    if (form && !form.dataset.listenerAttached) {
+        form.dataset.listenerAttached = "true";
+        form.addEventListener("submit", function (e) {
+            e.preventDefault();
+
+            const fullName = (document.getElementById("regFullName")?.value || "").trim();
+            const rollNumber = (document.getElementById("regRollNumber")?.value || "").trim();
+            const email = (document.getElementById("regEmail")?.value || "").trim();
+            const qualification = (document.getElementById("regQualification")?.value || "").trim();
+            const institution = (document.getElementById("regInstitution")?.value || "").trim();
+            const phone = (document.getElementById("regPhone")?.value || "").trim();
+            const eventTitle = (document.getElementById("regFormEventTitle")?.value || "").trim();
+            const eventId = (document.getElementById("regEventId")?.value || "").trim();
+
+            if (!fullName || !rollNumber || !email || !qualification) {
+                alert("Please fill in all required fields: Full Name, Student Roll Number, Gmail, and Educational Qualifications.");
+                return;
+            }
+
+            const timestamp = new Date().toISOString();
+            const dateFormatted = new Date().toLocaleString("en-US", {
+                dateStyle: "medium",
+                timeStyle: "short"
+            });
+
+            const registrationRecord = {
+                id: "reg_" + Date.now() + "_" + Math.random().toString(36).substring(2, 7),
+                eventId: eventId,
+                eventTitle: eventTitle,
+                fullName: fullName,
+                rollNumber: rollNumber,
+                email: email,
+                qualification: qualification,
+                institution: institution || "IIT Jodhpur / Affiliated",
+                phone: phone || "Not Provided",
+                timestamp: timestamp,
+                dateFormatted: dateFormatted,
+                targetAdmin: ADMIN_NOTIFICATION_EMAIL
+            };
+
+            // 1. Save to local storage for instant dashboard viewing, backup & persistence
+            try {
+                const existing = JSON.parse(localStorage.getItem(REGISTRATIONS_STORAGE_KEY) || "[]");
+                existing.unshift(registrationRecord);
+                localStorage.setItem(REGISTRATIONS_STORAGE_KEY, JSON.stringify(existing));
+            } catch (err) {
+                console.warn("Storage save error:", err);
+            }
+
+            // 2. Dispatch background request to Google Apps Script / Webhook
+            try {
+                fetch(EVENTS_API, {
+                    method: "POST",
+                    mode: "no-cors",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        action: "event_registration",
+                        ...registrationRecord
+                    })
+                }).catch(() => {});
+            } catch (err) {}
+
+            // 3. Prepare formatted mailto link addressed to nextgenlab1234@gmail.com
+            const emailSubject = encodeURIComponent(`[BIRD Lab Event Registration] ${eventTitle} - ${fullName} (${rollNumber})`);
+            const emailBody = encodeURIComponent(
+`BIRD LAB COURSE & EVENT REGISTRATION RECEIPT
+=====================================================
+Course / Event: ${eventTitle}
+Participant Full Name: ${fullName}
+Student Roll Number / College ID: ${rollNumber}
+Gmail / Email: ${email}
+Educational Qualifications: ${qualification}
+Institution / College: ${institution || 'Not Provided'}
+Contact Phone / WhatsApp: ${phone || 'Not Provided'}
+Submitted At: ${dateFormatted}
+Routing Recipient: ${ADMIN_NOTIFICATION_EMAIL}
+
+Connected Google Sheet:
+${CONNECTED_SHEET_URL}
+=====================================================`
+            );
+            const mailtoUrl = `mailto:${ADMIN_NOTIFICATION_EMAIL}?subject=${emailSubject}&body=${emailBody}`;
+
+            // 4. Populate Success Receipt View
+            const receiptTitle = document.getElementById("receiptEventTitle");
+            const receiptName = document.getElementById("receiptName");
+            const receiptRoll = document.getElementById("receiptRoll");
+            const receiptEmail = document.getElementById("receiptEmail");
+            const receiptQual = document.getElementById("receiptQual");
+            const mailtoBtn = document.getElementById("receiptMailtoBtn");
+            const sheetBtn = document.getElementById("receiptSheetBtn");
+
+            if (receiptTitle) receiptTitle.textContent = eventTitle;
+            if (receiptName) receiptName.textContent = fullName;
+            if (receiptRoll) receiptRoll.textContent = rollNumber;
+            if (receiptEmail) receiptEmail.textContent = email;
+            if (receiptQual) receiptQual.textContent = qualification;
+            if (mailtoBtn) mailtoBtn.href = mailtoUrl;
+            if (sheetBtn) sheetBtn.href = CONNECTED_SHEET_URL;
+
+            // Switch from Form to Success view
+            if (formView) formView.style.display = "none";
+            if (successView) successView.style.display = "block";
+        });
+    }
+}
+
+function openRegistrationModal(eventInfo) {
+    const modal = document.getElementById("eventRegistrationModal");
+    const formView = document.getElementById("regFormView");
+    const successView = document.getElementById("regSuccessView");
+    const form = document.getElementById("eventRegistrationForm");
+
+    const badge = document.getElementById("regCourseTypeBadge");
+    const title = document.getElementById("regCourseTitle");
+    const date = document.getElementById("regCourseDate");
+    const loc = document.getElementById("regCourseLocation");
+    const hiddenTitle = document.getElementById("regFormEventTitle");
+    const hiddenId = document.getElementById("regEventId");
+
+    if (!modal) return;
+
+    if (badge) badge.textContent = eventInfo.type || "Course";
+    if (title) title.textContent = eventInfo.title || "Lab Course / Event";
+    if (date) date.textContent = eventInfo.date || "Scheduled Program";
+    if (loc) loc.textContent = eventInfo.location || "IIT Jodhpur";
+    if (hiddenTitle) hiddenTitle.value = eventInfo.title || "";
+    if (hiddenId) hiddenId.value = eventInfo.id || "";
+
+    // Reset inputs
+    if (form) form.reset();
+    if (hiddenTitle) hiddenTitle.value = eventInfo.title || "";
+    if (hiddenId) hiddenId.value = eventInfo.id || "";
+
+    // Show form view, hide success view
+    if (formView) formView.style.display = "block";
+    if (successView) successView.style.display = "none";
+
+    modal.style.display = "flex";
+    document.body.style.overflow = "hidden";
+}
+
+function closeRegistrationModal() {
+    const modal = document.getElementById("eventRegistrationModal");
+    if (!modal) return;
+    modal.style.display = "none";
+    document.body.style.overflow = "";
+}
+
+// ============================================================
 // INITIALIZE
 // ============================================================
 
 document.addEventListener("DOMContentLoaded", function () {
     loadEvents();
+
+    // Ensure sheet access button points to the connected responses Google Sheet
+    const sheetBtn = document.querySelector(".sheet-access-btn");
+    if (sheetBtn) {
+        sheetBtn.href = CONNECTED_SHEET_URL;
+    }
 });

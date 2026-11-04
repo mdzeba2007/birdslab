@@ -386,6 +386,229 @@
 
 
     <!-- =====================================================
+         COURSE & EVENT REGISTRATION MODAL
+    ====================================================== -->
+
+    <div id="eventRegistrationModal" class="reg-modal-backdrop" style="display: none;">
+
+        <div class="reg-modal-container">
+
+            <span class="reg-modal-close" id="closeRegModalBtn" title="Close (ESC)">&times;</span>
+
+            <!-- MODAL HEADER -->
+            <div class="reg-modal-header">
+                <div class="reg-header-icon">
+                    <i class="fa-solid fa-graduation-cap"></i>
+                </div>
+                <div class="reg-header-titles">
+                    <h2>Course & Event Registration</h2>
+                    <p class="reg-header-sub">Bio-Inspired Robotics & Design Laboratory (BIRD Lab), IIT Jodhpur</p>
+                </div>
+            </div>
+
+            <!-- REGISTRATION FORM VIEW -->
+            <div id="regFormView">
+
+                <!-- SELECTED COURSE BANNER -->
+                <div class="reg-course-banner">
+                    <div class="reg-course-badge-wrap">
+                        <span class="reg-course-badge" id="regCourseTypeBadge">Course</span>
+                        <span class="reg-badge-label">Selected Program</span>
+                    </div>
+                    <h3 id="regCourseTitle">International Robotics Program</h3>
+                    <div class="reg-course-meta">
+                        <span><i class="fa-solid fa-calendar-days"></i> <span id="regCourseDate">Date</span></span>
+                        <span><i class="fa-solid fa-location-dot"></i> <span id="regCourseLocation">IIT Jodhpur</span></span>
+                    </div>
+                </div>
+
+                <!-- ROUTING & CONNECTED SHEET NOTICE -->
+                <div class="reg-routing-notice">
+                    <i class="fa-solid fa-circle-info"></i>
+                    <div>
+                        <strong>Administrative Routing Notice:</strong>
+                        <p>All submitted responses are delivered directly to <strong>nextgenlab1234@gmail.com</strong> and logged in the connected Google Sheet.</p>
+                    </div>
+                </div>
+
+                <!-- REGISTRATION FORM -->
+                <form id="eventRegistrationForm" class="reg-form">
+                    <input type="hidden" id="regEventId">
+                    <input type="hidden" id="regFormEventTitle">
+
+                    <!-- 1. Participant Full Name -->
+                    <div class="reg-form-group">
+                        <label for="regFullName">
+                            <i class="fa-solid fa-user"></i> Full Name <span class="reg-req">*</span>
+                        </label>
+                        <input
+                            type="text"
+                            id="regFullName"
+                            class="reg-input"
+                            placeholder="e.g. Rahul Sharma"
+                            required
+                        >
+                    </div>
+
+                    <!-- 2. Student Roll Number -->
+                    <div class="reg-form-group">
+                        <label for="regRollNumber">
+                            <i class="fa-solid fa-id-card"></i> Student Roll Number / College ID <span class="reg-req">*</span>
+                        </label>
+                        <input
+                            type="text"
+                            id="regRollNumber"
+                            class="reg-input"
+                            placeholder="e.g. B23CI012, M23ME005, or Student Roll No."
+                            required
+                        >
+                    </div>
+
+                    <!-- 3. Gmail / Email Address -->
+                    <div class="reg-form-group">
+                        <label for="regEmail">
+                            <i class="fa-solid fa-envelope"></i> Gmail / Email Address <span class="reg-req">*</span>
+                        </label>
+                        <input
+                            type="email"
+                            id="regEmail"
+                            class="reg-input"
+                            placeholder="e.g. rahul.sharma@gmail.com"
+                            required
+                        >
+                        <span class="reg-hint">A registration acknowledgement will be recorded for nextgenlab1234@gmail.com</span>
+                    </div>
+
+                    <!-- 4. Educational Qualifications -->
+                    <div class="reg-form-group">
+                        <label for="regQualification">
+                            <i class="fa-solid fa-user-graduate"></i> Educational Qualifications <span class="reg-req">*</span>
+                        </label>
+                        <select id="regQualification" class="reg-select" required>
+                            <option value="">-- Select Educational Qualification --</option>
+                            <option value="Undergraduate (B.Tech / B.E. / B.Sc / BCA)">Undergraduate (B.Tech / B.E. / B.Sc / BCA)</option>
+                            <option value="Postgraduate (M.Tech / M.E. / M.Sc / MS / MCA)">Postgraduate (M.Tech / M.E. / M.Sc / MS / MCA)</option>
+                            <option value="Ph.D. / Research Scholar">Ph.D. / Research Scholar</option>
+                            <option value="Post-Doctoral Fellow">Post-Doctoral Fellow</option>
+                            <option value="Faculty / Academic Staff">Faculty / Academic Staff</option>
+                            <option value="Industry Professional / Scientist">Industry Professional / Scientist</option>
+                            <option value="Other">Other Qualifications</option>
+                        </select>
+                    </div>
+
+                    <!-- 5. Optional Institution & Phone -->
+                    <div class="reg-form-row">
+                        <div class="reg-form-group">
+                            <label for="regInstitution">
+                                <i class="fa-solid fa-building-columns"></i> College / University / Organization
+                            </label>
+                            <input
+                                type="text"
+                                id="regInstitution"
+                                class="reg-input"
+                                placeholder="e.g. IIT Jodhpur"
+                            >
+                        </div>
+                        <div class="reg-form-group">
+                            <label for="regPhone">
+                                <i class="fa-solid fa-phone"></i> Phone / WhatsApp Number
+                            </label>
+                            <input
+                                type="tel"
+                                id="regPhone"
+                                class="reg-input"
+                                placeholder="e.g. +91 98765 43210"
+                            >
+                        </div>
+                    </div>
+
+                    <!-- ACTION BUTTONS -->
+                    <div class="reg-form-actions">
+                        <button type="submit" class="reg-btn-submit" id="submitRegBtn">
+                            <i class="fa-solid fa-paper-plane"></i> Submit Registration
+                        </button>
+                        <button type="button" class="reg-btn-cancel" id="cancelRegBtn">
+                            Cancel
+                        </button>
+                    </div>
+
+                </form>
+
+            </div>
+
+            <!-- REGISTRATION SUCCESS CONFIRMATION VIEW -->
+            <div id="regSuccessView" class="reg-success-view" style="display: none;">
+
+                <div class="reg-success-icon">
+                    <i class="fa-solid fa-circle-check"></i>
+                </div>
+
+                <h3>Registration Submitted Successfully!</h3>
+                <p class="reg-success-desc">
+                    Thank you! Your registration details have been confirmed and dispatched to lab administration at <strong>nextgenlab1234@gmail.com</strong>.
+                </p>
+
+                <!-- Detailed Summary Receipt -->
+                <div class="reg-receipt-card">
+                    <div class="reg-receipt-row">
+                        <span class="reg-receipt-label">Course / Event:</span>
+                        <strong class="reg-receipt-value" id="receiptEventTitle">-</strong>
+                    </div>
+                    <div class="reg-receipt-row">
+                        <span class="reg-receipt-label">Participant Name:</span>
+                        <span class="reg-receipt-value" id="receiptName">-</span>
+                    </div>
+                    <div class="reg-receipt-row">
+                        <span class="reg-receipt-label">Student Roll Number:</span>
+                        <span class="reg-receipt-value" id="receiptRoll">-</span>
+                    </div>
+                    <div class="reg-receipt-row">
+                        <span class="reg-receipt-label">Gmail Address:</span>
+                        <span class="reg-receipt-value" id="receiptEmail">-</span>
+                    </div>
+                    <div class="reg-receipt-row">
+                        <span class="reg-receipt-label">Educational Qualification:</span>
+                        <span class="reg-receipt-value" id="receiptQual">-</span>
+                    </div>
+                    <div class="reg-receipt-row">
+                        <span class="reg-receipt-label">Administrative Recipient:</span>
+                        <span class="reg-receipt-value highlight">nextgenlab1234@gmail.com</span>
+                    </div>
+                </div>
+
+                <div class="reg-success-actions">
+                    <a
+                        href="https://docs.google.com/spreadsheets/d/1CSlzKRnWN2CtiKCHTJUowHMF13_MdQBHNAUml7ouAvI/edit?gid=0#gid=0"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="reg-action-btn sheet-btn"
+                        id="receiptSheetBtn"
+                    >
+                        <i class="fa-solid fa-table"></i> View Connected Google Sheet
+                    </a>
+
+                    <a
+                        href="#"
+                        class="reg-action-btn email-btn"
+                        id="receiptMailtoBtn"
+                    >
+                        <i class="fa-solid fa-envelope"></i> Send Copy to nextgenlab1234@gmail.com
+                    </a>
+
+                    <button type="button" class="reg-action-btn close-btn" id="doneRegBtn">
+                        <i class="fa-solid fa-check"></i> Done
+                    </button>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- =====================================================
          FOOTER
     ====================================================== -->
 

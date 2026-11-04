@@ -1,0 +1,1460 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BIRDLab Events Administration & Poster Portal</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- STRICT ACCESS CONTROL GUARD: Block unauthorized direct access -->
+    <script>
+        if (!sessionStorage.getItem("birdlab_events_admin_auth")) {
+            window.location.replace("admin-events.html");
+        }
+    </script>
+
+    <style>
+        :root {
+            --primary: #1d4ed8;
+            --primary-hover: #1e40af;
+            --primary-light: #eff6ff;
+            --danger: #dc2626;
+            --danger-hover: #b91c1c;
+            --success: #16a34a;
+            --success-light: #f0fdf4;
+            --warning: #d97706;
+            --text-dark: #0f172a;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --bg-light: #f8fafc;
+            --radius-lg: 16px;
+            --radius-md: 10px;
+            --radius-sm: 6px;
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 20px 35px -10px rgba(0, 0, 0, 0.15);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #1e293b 0%, #334155 50%, #1e3a8a 100%);
+            color: var(--text-dark);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 30px 16px 60px;
+        }
+
+        /* =====================================================
+           DASHBOARD WRAPPER
+        ===================================================== */
+        .dash-container {
+            width: 100%;
+            max-width: 1300px;
+            background: #ffffff;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-8px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Top Header */
+        .dash-header {
+            background: #0f172a;
+            color: #ffffff;
+            padding: 22px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .dash-brand {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .dash-brand img {
+            width: 46px;
+            height: 46px;
+            object-fit: contain;
+        }
+
+        .dash-brand h1 {
+            font-size: 20px;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        .dash-brand p {
+            font-size: 12px;
+            color: #94a3b8;
+        }
+
+        .dash-user-bar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .admin-badge {
+            background: rgba(255, 255, 255, 0.12);
+            color: #e2e8f0;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .btn-header {
+            padding: 8px 16px;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s ease;
+            border: none;
+        }
+
+        .btn-view-site {
+            background: #3b82f6;
+            color: #ffffff;
+        }
+
+        .btn-view-site:hover {
+            background: #2563eb;
+        }
+
+        .btn-sheet {
+            background: rgba(34, 197, 94, 0.18);
+            color: #4ade80;
+            border: 1px solid rgba(74, 222, 128, 0.3);
+        }
+
+        .btn-sheet:hover {
+            background: #16a34a;
+            color: #ffffff;
+        }
+
+        .btn-logout {
+            background: rgba(239, 68, 68, 0.15);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .btn-logout:hover {
+            background: #dc2626;
+            color: #ffffff;
+        }
+
+        /* Stats Strip */
+        .dash-stats-strip {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            padding: 24px 32px;
+            background: #f1f5f9;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .stat-card {
+            background: #ffffff;
+            padding: 18px 20px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .stat-icon.blue {
+            background: #dbeafe;
+            color: #1d4ed8;
+        }
+
+        .stat-icon.green {
+            background: #dcfce7;
+            color: #16a34a;
+        }
+
+        .stat-icon.gray {
+            background: #e2e8f0;
+            color: #475569;
+        }
+
+        .stat-icon.purple {
+            background: #f3e8ff;
+            color: #7e22ce;
+        }
+
+        .stat-info h3 {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--text-dark);
+            line-height: 1.1;
+        }
+
+        .stat-info p {
+            font-size: 12px;
+            color: var(--text-muted);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 2px;
+        }
+
+        /* Dashboard Body Layout */
+        .dash-body {
+            padding: 32px;
+            display: grid;
+            grid-template-columns: 460px 1fr;
+            gap: 28px;
+            background: #f8fafc;
+        }
+
+        @media (max-width: 1050px) {
+            .dash-body {
+                grid-template-columns: 1fr;
+                padding: 20px;
+            }
+
+            .dash-stats-strip {
+                grid-template-columns: repeat(2, 1fr);
+                padding: 20px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .dash-stats-strip {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Dash Card */
+        .dash-card {
+            background: #ffffff;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 24px;
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .dash-card-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-dark);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .dash-card-title span.title-text {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Form Styles */
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+            margin-bottom: 14px;
+        }
+
+        @media (max-width: 480px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .form-group {
+            margin-bottom: 14px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: #334155;
+            margin-bottom: 6px;
+        }
+
+        .form-group label span.req {
+            color: var(--danger);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px 13px;
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: 13.5px;
+            color: var(--text-dark);
+            background: #f8fafc;
+            transition: all 0.2s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: #ffffff;
+            box-shadow: 0 0 0 3px rgba(29, 78, 216, 0.12);
+        }
+
+        textarea.form-control {
+            resize: vertical;
+            min-height: 90px;
+            line-height: 1.5;
+        }
+
+        /* Section / Status Selector */
+        .status-radio-group {
+            display: flex;
+            gap: 12px;
+            background: #f1f5f9;
+            padding: 6px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+        }
+
+        .status-radio-option {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            user-select: none;
+        }
+
+        .status-radio-option input[type="radio"] {
+            display: none;
+        }
+
+        .status-radio-option.upcoming-opt {
+            color: #475569;
+        }
+
+        .status-radio-option.upcoming-opt.active {
+            background: #16a34a;
+            color: #ffffff;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .status-radio-option.past-opt {
+            color: #475569;
+        }
+
+        .status-radio-option.past-opt.active {
+            background: #475569;
+            color: #ffffff;
+            box-shadow: var(--shadow-sm);
+        }
+
+        /* Poster Upload Box */
+        .poster-upload-section {
+            background: #f8fafc;
+            border: 1.5px dashed #93c5fd;
+            border-radius: var(--radius-md);
+            padding: 16px;
+            margin-bottom: 16px;
+            transition: all 0.2s ease;
+        }
+
+        .poster-upload-section.dragover {
+            background: #eff6ff;
+            border-color: var(--primary);
+        }
+
+        .poster-dropzone {
+            text-align: center;
+            cursor: pointer;
+            padding: 12px 8px;
+        }
+
+        .poster-dropzone i {
+            font-size: 32px;
+            color: var(--primary);
+            margin-bottom: 6px;
+        }
+
+        .poster-dropzone p {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .poster-dropzone strong {
+            color: var(--primary);
+        }
+
+        .poster-preview-wrapper {
+            margin-top: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: #ffffff;
+            padding: 10px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+        }
+
+        .poster-preview-thumb {
+            width: 70px;
+            height: 70px;
+            object-fit: cover;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+            cursor: pointer;
+        }
+
+        .poster-preview-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .poster-preview-info h5 {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-dark);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .poster-preview-info p {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .btn-remove-poster {
+            background: #fee2e2;
+            color: #dc2626;
+            border: 1px solid #fecaca;
+            padding: 6px 10px;
+            border-radius: var(--radius-sm);
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-remove-poster:hover {
+            background: #dc2626;
+            color: #ffffff;
+        }
+
+        .btn-preset-poster {
+            background: #eff6ff;
+            color: #1d4ed8;
+            border: 1px solid #bfdbfe;
+            border-radius: 6px;
+            padding: 5px 10px;
+            font-size: 11.5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-preset-poster:hover {
+            background: #dbeafe;
+            border-color: #93c5fd;
+            transform: translateY(-1px);
+        }
+
+        /* Form Buttons */
+        .form-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .btn-primary {
+            flex: 1;
+            background: var(--primary);
+            color: #ffffff;
+            padding: 12px 18px;
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            font-weight: 700;
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-hover);
+        }
+
+        .btn-secondary {
+            background: #f1f5f9;
+            color: #475569;
+            padding: 12px 16px;
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            font-weight: 600;
+            border: 1px solid var(--border);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-secondary:hover {
+            background: #e2e8f0;
+            color: var(--text-dark);
+        }
+
+        /* Right Column: Events Manager */
+        .events-toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 18px;
+            flex-wrap: wrap;
+        }
+
+        .events-search {
+            position: relative;
+            flex: 1;
+            min-width: 220px;
+        }
+
+        .events-search i {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+            font-size: 14px;
+        }
+
+        .events-search input {
+            width: 100%;
+            padding: 9px 12px 9px 36px;
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: 13.5px;
+            background: #ffffff;
+        }
+
+        .events-search input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .filter-tabs {
+            display: flex;
+            gap: 6px;
+            background: #f1f5f9;
+            padding: 4px;
+            border-radius: var(--radius-sm);
+        }
+
+        .filter-tab-btn {
+            padding: 7px 14px;
+            border: none;
+            background: transparent;
+            font-size: 12.5px;
+            font-weight: 600;
+            color: #64748b;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .filter-tab-btn.active {
+            background: #ffffff;
+            color: var(--primary);
+            box-shadow: var(--shadow-sm);
+        }
+
+        /* Events List Cards */
+        .events-list-container {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            max-height: 720px;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+
+        .event-item-card {
+            background: #ffffff;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 16px;
+            display: flex;
+            gap: 16px;
+            align-items: flex-start;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .event-item-card:hover {
+            border-color: #93c5fd;
+            box-shadow: var(--shadow-md);
+        }
+
+        .event-item-card.is-upcoming {
+            border-left: 4px solid var(--success);
+        }
+
+        .event-item-card.is-past {
+            border-left: 4px solid #64748b;
+        }
+
+        .event-poster-thumb-box {
+            width: 100px;
+            height: 100px;
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+            background: #0f172a;
+            flex-shrink: 0;
+            position: relative;
+            cursor: pointer;
+            border: 1px solid var(--border);
+        }
+
+        .event-poster-thumb-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.2s ease;
+        }
+
+        .event-poster-thumb-box:hover img {
+            transform: scale(1.08);
+        }
+
+        .poster-zoom-pill {
+            position: absolute;
+            bottom: 4px;
+            right: 4px;
+            background: rgba(0, 0, 0, 0.65);
+            color: #ffffff;
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            backdrop-filter: blur(4px);
+        }
+
+        .no-poster-thumb {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: #f1f5f9;
+            color: #94a3b8;
+            font-size: 10px;
+            text-align: center;
+            padding: 6px;
+        }
+
+        .no-poster-thumb i {
+            font-size: 22px;
+            margin-bottom: 4px;
+        }
+
+        .event-item-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .event-badge-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 6px;
+            flex-wrap: wrap;
+        }
+
+        .type-pill {
+            font-size: 11px;
+            font-weight: 700;
+            padding: 3px 10px;
+            border-radius: 12px;
+            background: #f3e8ff;
+            color: #7e22ce;
+            border: 1px solid #e9d5ff;
+        }
+
+        .status-pill {
+            font-size: 11px;
+            font-weight: 700;
+            padding: 3px 10px;
+            border-radius: 12px;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .status-pill.upcoming {
+            background: #dcfce7;
+            color: #15803d;
+            border: 1px solid #bbf7d0;
+        }
+
+        .status-pill.past {
+            background: #f1f5f9;
+            color: #475569;
+            border: 1px solid #cbd5e1;
+        }
+
+        .event-item-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 6px;
+            line-height: 1.3;
+        }
+
+        .event-meta-row {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            color: #64748b;
+            font-size: 12.5px;
+            margin-bottom: 8px;
+            flex-wrap: wrap;
+        }
+
+        .event-meta-row span {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .event-item-desc {
+            font-size: 13px;
+            color: #334e68;
+            line-height: 1.5;
+            display: block;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-height: 2.8em;
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 2;
+            line-clamp: 2;
+            margin-bottom: 12px;
+        }
+
+        .event-card-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .btn-act {
+            padding: 6px 12px;
+            border-radius: var(--radius-sm);
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.2s ease;
+            border: 1px solid var(--border);
+            background: #ffffff;
+            color: #334155;
+        }
+
+        .btn-act:hover {
+            background: #f8fafc;
+            border-color: #94a3b8;
+        }
+
+        .btn-act.btn-toggle-status {
+            background: #f0fdf4;
+            color: #15803d;
+            border-color: #bbf7d0;
+        }
+
+        .btn-act.btn-toggle-status:hover {
+            background: #dcfce7;
+        }
+
+        .btn-act.btn-toggle-status.mark-past {
+            background: #f8fafc;
+            color: #475569;
+            border-color: #cbd5e1;
+        }
+
+        .btn-act.btn-toggle-status.mark-past:hover {
+            background: #e2e8f0;
+        }
+
+        .btn-act.btn-edit {
+            color: var(--primary);
+            border-color: #bfdbfe;
+            background: #eff6ff;
+        }
+
+        .btn-act.btn-edit:hover {
+            background: #dbeafe;
+        }
+
+        .btn-act.btn-delete {
+            color: var(--danger);
+            border-color: #fecaca;
+            background: #fef2f2;
+        }
+
+        .btn-act.btn-delete:hover {
+            background: #fee2e2;
+        }
+
+        /* Utilities Strip at bottom */
+        .utilities-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 24px;
+            background: #ffffff;
+            border-top: 1px solid var(--border);
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .utilities-left,
+        .utilities-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn-util {
+            padding: 8px 14px;
+            border-radius: var(--radius-sm);
+            font-size: 12.5px;
+            font-weight: 600;
+            cursor: pointer;
+            border: 1px solid var(--border);
+            background: #ffffff;
+            color: #475569;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-util:hover {
+            background: #f1f5f9;
+            color: var(--text-dark);
+        }
+
+        /* Lightbox Modal */
+        .lightbox-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.85);
+            z-index: 999999;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            backdrop-filter: blur(5px);
+        }
+
+        .lightbox-modal.active {
+            display: flex;
+        }
+
+        .lightbox-content-box {
+            position: relative;
+            max-width: 90%;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .lightbox-img {
+            max-width: 100%;
+            max-height: 80vh;
+            object-fit: contain;
+            border-radius: 8px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .lightbox-close {
+            position: absolute;
+            top: -40px;
+            right: 0;
+            color: #ffffff;
+            font-size: 32px;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        .lightbox-close:hover {
+            color: #38bdf8;
+        }
+
+        .lightbox-caption {
+            color: #e2e8f0;
+            font-size: 14px;
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        /* Toast Notifications */
+        #toast {
+            display: none;
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #0f172a;
+            color: #ffffff;
+            padding: 14px 22px;
+            border-radius: var(--radius-md);
+            font-size: 14px;
+            font-weight: 500;
+            align-items: center;
+            gap: 10px;
+            box-shadow: var(--shadow-lg);
+            z-index: 100000;
+            animation: slideUp 0.25s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        #toast.success {
+            border-left: 4px solid var(--success);
+        }
+
+        #toast.error {
+            border-left: 4px solid var(--danger);
+        }
+
+        #toast.warning {
+            border-left: 4px solid var(--warning);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="dash-container">
+
+        <!-- =====================================================
+             TOP HEADER BAR
+        ====================================================== -->
+        <header class="dash-header">
+            <div class="dash-brand">
+                <img src="iitjlogo.png" alt="IIT Jodhpur BIRDLab">
+                <div>
+                    <h1>Events & Poster Admin Portal</h1>
+                    <p>BIRDLab • Bio-Inspired Robotics & Design Laboratory</p>
+                </div>
+            </div>
+
+            <div class="dash-user-bar">
+                <div class="admin-badge">
+                    <i class="fa-solid fa-user-shield"></i>
+                    <span id="userEmailBadge">admin@iitj.ac.in</span>
+                </div>
+
+                <a href="events.html" class="btn-header btn-view-site">
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i> View Events Site
+                </a>
+
+                <a href="https://docs.google.com/spreadsheets/d/1CSlzKRnWN2CtiKCHTJUowHMF13_MdQBHNAUml7ouAvI/edit?gid=0#gid=0"
+                    target="_blank" rel="noopener noreferrer" class="btn-header btn-sheet"
+                    title="Open Connected Google Sheet">
+                    <i class="fa-solid fa-table"></i> Google Sheet
+                </a>
+
+                <button id="logoutBtn" class="btn-header btn-logout">
+                    <i class="fa-solid fa-arrow-right-from-bracket"></i> Logout
+                </button>
+            </div>
+        </header>
+
+        <!-- =====================================================
+             STATS STRIP
+        ====================================================== -->
+        <section class="dash-stats-strip">
+            <div class="stat-card">
+                <div class="stat-icon blue">
+                    <i class="fa-solid fa-calendar-days"></i>
+                </div>
+                <div class="stat-info">
+                    <h3 id="statTotalEvents">0</h3>
+                    <p>Total Events</p>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon green">
+                    <i class="fa-solid fa-clock"></i>
+                </div>
+                <div class="stat-info">
+                    <h3 id="statUpcomingEvents">0</h3>
+                    <p>Upcoming Events</p>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon gray">
+                    <i class="fa-solid fa-box-archive"></i>
+                </div>
+                <div class="stat-info">
+                    <h3 id="statPastEvents">0</h3>
+                    <p>Past Events</p>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon purple">
+                    <i class="fa-solid fa-image"></i>
+                </div>
+                <div class="stat-info">
+                    <h3 id="statPostersCount">0</h3>
+                    <p>With Posters</p>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon orange" style="background:#fff7ed; color:#ea580c;">
+                    <i class="fa-solid fa-graduation-cap"></i>
+                </div>
+                <div class="stat-info">
+                    <h3 id="statTotalRegistrations">0</h3>
+                    <p>Total Registrations</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- =====================================================
+             MAIN DASHBOARD BODY
+        ====================================================== -->
+        <div class="dash-body">
+
+            <!-- LEFT COLUMN: CREATE / EDIT EVENT FORM -->
+            <div class="dash-card" id="editorCard">
+                <div class="dash-card-title">
+                    <span class="title-text">
+                        <i class="fa-solid fa-pen-to-square" style="color: var(--primary);"></i>
+                        <span id="formTitle">Add New Event</span>
+                    </span>
+                    <span id="editModeBadge"
+                        style="display:none; font-size:11px; padding:3px 8px; border-radius:12px; background:#eff6ff; color:#1d4ed8; font-weight:700;">
+                        EDITING
+                    </span>
+                </div>
+
+                <form id="eventForm">
+                    <input type="hidden" id="eventId">
+
+                    <!-- Title -->
+                    <div class="form-group">
+                        <label for="eventTitle">Event Title <span class="req">*</span></label>
+                        <input type="text" id="eventTitle" class="form-control"
+                            placeholder="e.g. Bio-inspired Robotics Winter School 2026" required>
+                    </div>
+
+                    <!-- Category & Section/Status -->
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="eventType">Category / Type <span class="req">*</span></label>
+                            <select id="eventType" class="form-control" required>
+                                <option value="Workshop">Workshop</option>
+                                <option value="Conference">Conference</option>
+                                <option value="Guest Lecture">Guest Lecture</option>
+                                <option value="Seminar">Seminar</option>
+                                <option value="Symposium">Symposium</option>
+                                <option value="Hackathon">Hackathon</option>
+                                <option value="Exhibition">Exhibition</option>
+                                <option value="Lab Meeting">Lab Meeting</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Organize Into Section <span class="req">*</span></label>
+                            <div class="status-radio-group">
+                                <label class="status-radio-option upcoming-opt active" id="optUpcomingLabel">
+                                    <input type="radio" name="eventStatus" id="statusUpcoming" value="Upcoming" checked>
+                                    <i class="fa-solid fa-clock"></i> Upcoming
+                                </label>
+                                <label class="status-radio-option past-opt" id="optPastLabel">
+                                    <input type="radio" name="eventStatus" id="statusPast" value="Past">
+                                    <i class="fa-solid fa-box-archive"></i> Past
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Date & Time -->
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="eventDate">Date / Dates <span class="req">*</span></label>
+                            <input type="text" id="eventDate" class="form-control"
+                                placeholder="e.g. November 15-18, 2026" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="eventTime">Time (Optional)</label>
+                            <input type="text" id="eventTime" class="form-control"
+                                placeholder="e.g. 10:00 AM - 1:00 PM IST">
+                        </div>
+                    </div>
+
+                    <!-- Location & Registration Link -->
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="eventLocation">Location / Venue <span class="req">*</span></label>
+                            <input type="text" id="eventLocation" class="form-control"
+                                placeholder="e.g. SAIDE Seminar Hall, IIT Jodhpur" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="eventRegLink">Registration / Link</label>
+                            <input type="url" id="eventRegLink" class="form-control" placeholder="https://...">
+                        </div>
+                    </div>
+
+                    <!-- Poster Upload -->
+                    <div class="form-group">
+                        <label>Event Poster Flyer (Upload Image or Enter URL)</label>
+                        <div class="poster-upload-section" id="posterDropzone">
+                            <div class="poster-dropzone">
+                                <i class="fa-solid fa-cloud-arrow-up"></i>
+                                <p><strong>Click to browse</strong> or drag and drop poster image</p>
+                                <p style="font-size: 11px; margin-top: 4px; color: #94a3b8;">PNG, JPG, JPEG, WEBP
+                                    (Auto-optimized)</p>
+                            </div>
+                            <input type="file" id="posterFileInput" accept="image/*" style="display: none;">
+
+                            <!-- Poster Preview -->
+                            <div id="posterPreviewContainer" class="poster-preview-wrapper" style="display: none;">
+                                <img id="posterPreviewImg"
+                                    src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3C/svg%3E"
+                                    alt="Poster Preview" class="poster-preview-thumb">
+                                <div class="poster-preview-info">
+                                    <h5 id="posterFileName">poster_image.jpg</h5>
+                                    <p id="posterFileSize">Ready for display</p>
+                                </div>
+                                <button type="button" class="btn-remove-poster" id="btnRemovePoster">
+                                    <i class="fa-solid fa-trash-can"></i> Remove
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Quick Preset Poster Buttons -->
+                        <div class="preset-posters-wrap" style="margin-top: 10px;">
+                            <span
+                                style="font-size: 12px; color: #64748b; font-weight: 600; display: block; margin-bottom: 6px;">
+                                Quick Select from Lab Gallery:
+                            </span>
+                            <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+                                <button type="button" class="btn-preset-poster" data-src="iitj_campus_hd.jpg">IITJ
+                                    Campus</button>
+                                <button type="button" class="btn-preset-poster"
+                                    data-src="wheelchair-treadmill.png">Rehab Treadmill</button>
+                                <button type="button" class="btn-preset-poster" data-src="c2.jpeg">Autonomous
+                                    Rover</button>
+                                <button type="button" class="btn-preset-poster"
+                                    data-src="bio-inspired.jpg">Bio-Inspired</button>
+                                <button type="button" class="btn-preset-poster"
+                                    data-src="wearable-robotics.jpg">Exoskeleton</button>
+                                <button type="button" class="btn-preset-poster"
+                                    data-src="applied-ai-robotics.jpg">Applied AI</button>
+                                <button type="button" class="btn-preset-poster"
+                                    data-src="tele-robotics.jpg">Tele-Robotics</button>
+                                <button type="button" class="btn-preset-poster" data-src="pratham3.0.png">Pratham
+                                    3.0</button>
+                                <button type="button" class="btn-preset-poster" data-src="phrozen-mega-8k.png">3D
+                                    Micro-Fab</button>
+                                <button type="button" class="btn-preset-poster" data-src="research1.jpg">Wing
+                                    Kinematics</button>
+                            </div>
+                        </div>
+
+                        <!-- Optional URL input -->
+                        <input type="text" id="posterUrlInput" class="form-control"
+                            placeholder="Or paste external Poster Image URL here..."
+                            style="font-size: 12.5px; margin-top: 8px;">
+                    </div>
+
+                    <!-- Description -->
+                    <div class="form-group">
+                        <label for="eventDescription">Description & Event Details <span class="req">*</span></label>
+                        <textarea id="eventDescription" class="form-control" rows="4"
+                            placeholder="Provide details about the event schedule, speakers, topics, prerequisites..."
+                            required></textarea>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="form-actions">
+                        <button type="submit" class="btn-primary" id="saveEventBtn">
+                            <i class="fa-solid fa-floppy-disk"></i> <span id="saveBtnText">Add Event</span>
+                        </button>
+                        <button type="button" class="btn-secondary" id="cancelEditBtn" style="display: none;">
+                            Cancel
+                        </button>
+                        <button type="button" class="btn-secondary" id="clearFormBtn">
+                            Clear
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- RIGHT COLUMN: MANAGE & ORGANIZE EVENTS LIST -->
+            <div class="dash-card">
+                <div class="dash-card-title">
+                    <span class="title-text">
+                        <i class="fa-solid fa-list-check" style="color: var(--primary);"></i>
+                        Manage & Organize Events
+                    </span>
+                    <span style="font-size: 12px; color: var(--text-muted); font-weight: normal;">
+                        Quickly toggle between Upcoming & Past
+                    </span>
+                </div>
+
+                <!-- Toolbar: Search & Filter Tabs -->
+                <div class="events-toolbar">
+                    <div class="events-search">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" id="searchInput" placeholder="Search events by title, type, location...">
+                    </div>
+
+                    <div class="filter-tabs">
+                        <button class="filter-tab-btn active" data-filter="all">All (<span
+                                id="countAll">0</span>)</button>
+                        <button class="filter-tab-btn" data-filter="upcoming">Upcoming (<span
+                                id="countUpcoming">0</span>)</button>
+                        <button class="filter-tab-btn" data-filter="past">Past (<span id="countPast">0</span>)</button>
+                    </div>
+                </div>
+
+                <!-- Events List Container -->
+                <div class="events-list-container" id="adminEventsList">
+                    <!-- Event items dynamically rendered here -->
+                </div>
+            </div>
+
+        </div>
+
+        <!-- =====================================================
+             STUDENT REGISTRATIONS & GOOGLE FORM RESPONSES SECTION
+        ====================================================== -->
+        <div class="dash-card" style="margin-top: 24px; width: 100%;" id="registrationsSection">
+            <div class="dash-card-title"
+                style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+                <div>
+                    <span class="title-text">
+                        <i class="fa-solid fa-graduation-cap" style="color: #2563eb;"></i>
+                        Course Registrations & Form Responses
+                    </span>
+                    <span style="font-size: 12px; color: var(--text-muted); font-weight: normal; margin-left: 8px;">
+                        Responses routed to <strong>nextgenlab1234@gmail.com</strong>
+                    </span>
+                </div>
+
+                <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                    <a href="https://docs.google.com/spreadsheets/d/1CSlzKRnWN2CtiKCHTJUowHMF13_MdQBHNAUml7ouAvI/edit?gid=0#gid=0"
+                        target="_blank" rel="noopener noreferrer" class="btn-header btn-sheet" id="regConnectedSheetBtn"
+                        style="font-size: 12px; padding: 7px 14px; background: #10b981; border-radius: 6px; text-decoration: none; color: #ffffff; display: inline-flex; align-items: center; gap: 6px;"
+                        title="Open Connected Google Sheet in New Tab">
+                        <i class="fa-solid fa-table"></i> View Connected Google Sheet
+                    </a>
+
+                    <button type="button" class="btn-util" id="btnExportRegistrationsCsv"
+                        style="font-size: 12px; padding: 7px 12px;" title="Export all responses to CSV file">
+                        <i class="fa-solid fa-file-csv"></i> Export CSV
+                    </button>
+
+                    <button type="button" class="btn-util" id="btnClearRegistrations"
+                        style="font-size: 12px; padding: 7px 12px; color: #ef4444;" title="Clear local submissions log">
+                        <i class="fa-solid fa-trash-can"></i> Clear
+                    </button>
+                </div>
+            </div>
+
+            <!-- Toolbar: Search & Event Filter -->
+            <div class="events-toolbar" style="margin-top: 14px; margin-bottom: 14px;">
+                <div class="events-search" style="flex: 2;">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" id="regSearchInput"
+                        placeholder="Search by student name, roll number, gmail, or qualification...">
+                </div>
+
+                <div style="min-width: 220px;">
+                    <select id="regEventFilter" class="form-control" style="font-size: 13px; height: 38px;">
+                        <option value="all">All Events / Courses</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Registrations Table -->
+            <div style="overflow-x: auto; width: 100%; border: 1px solid #e2e8f0; border-radius: 8px;">
+                <table
+                    style="width: 100%; border-collapse: collapse; font-size: 13px; text-align: left; background: #ffffff;">
+                    <thead>
+                        <tr
+                            style="background: #f8fafc; border-bottom: 2px solid #e2e8f0; color: #475569; font-weight: 700;">
+                            <th style="padding: 10px 12px; width: 40px;">#</th>
+                            <th style="padding: 10px 12px;">Participant Name</th>
+                            <th style="padding: 10px 12px;">Student Roll No</th>
+                            <th style="padding: 10px 12px;">Gmail</th>
+                            <th style="padding: 10px 12px;">Qualification</th>
+                            <th style="padding: 10px 12px;">Course / Event</th>
+                            <th style="padding: 10px 12px;">Institution</th>
+                            <th style="padding: 10px 12px;">Submitted At</th>
+                            <th style="padding: 10px 12px; text-align: center;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="registrationsTableBody">
+                        <!-- Rendered dynamically -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div id="noRegistrationsMsg"
+                style="text-align: center; padding: 32px 20px; color: #64748b; font-size: 13.5px; display: none;">
+                <i class="fa-regular fa-clipboard"
+                    style="font-size: 32px; color: #94a3b8; display: block; margin-bottom: 8px;"></i>
+                <p style="margin: 0; font-weight: 600; color: #334155;">No Registrations Yet</p>
+                <p style="margin: 4px 0 0 0; font-size: 12.5px;">When participants click 'Register Now' on the events
+                    site, their submissions will be recorded here and linked to the Google Sheet.</p>
+            </div>
+        </div>
+
+        <!-- =====================================================
+             UTILITIES & BACKUP BAR
+        ====================================================== -->
+        <footer class="utilities-bar">
+            <div class="utilities-left">
+                <button class="btn-util" id="btnRestoreDefaults" title="Restore sample lab events">
+                    <i class="fa-solid fa-rotate-left"></i> Restore Lab Default Events
+                </button>
+                <button class="btn-util" id="btnSyncGoogleSheet" title="Sync live events from Google Sheet">
+                    <i class="fa-solid fa-cloud-arrow-down"></i> Sync from Google Sheet
+                </button>
+            </div>
+
+            <div class="utilities-right">
+                <button class="btn-util" id="btnExportJson" title="Backup all events as JSON">
+                    <i class="fa-solid fa-file-export"></i> Export JSON
+                </button>
+                <label class="btn-util" style="margin: 0; cursor: pointer;" title="Import events from backup JSON">
+                    <i class="fa-solid fa-file-import"></i> Import JSON
+                    <input type="file" id="importJsonInput" accept=".json" style="display: none;">
+                </label>
+            </div>
+        </footer>
+
+    </div>
+
+    <!-- =====================================================
+         POSTER LIGHTBOX MODAL (PREVIEW)
+    ====================================================== -->
+    <div id="lightboxModal" class="lightbox-modal">
+        <div class="lightbox-content-box">
+            <span class="lightbox-close" id="closeLightboxBtn">&times;</span>
+            <img id="lightboxImg"
+                src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3C/svg%3E"
+                alt="Event Poster" class="lightbox-img">
+            <div style="text-align: center; margin-top: 10px;">
+                <p id="lightboxCaption" class="lightbox-caption"
+                    style="font-weight: 700; color: #ffffff; margin-bottom: 8px;">Event Poster Preview</p>
+                <a id="adminLightboxNewTab" href="#" target="_blank" rel="noopener noreferrer"
+                    style="color: #60a5fa; font-size: 13px; text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; background: rgba(255,255,255,0.12); border-radius: 20px;">
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i> Open in New Tab (Full Resolution)
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- =====================================================
+         TOAST NOTIFICATION
+    ====================================================== -->
+    <div id="toast">
+        <i class="fa-solid fa-circle-check"></i>
+        <span id="toastMsg">Operation successful!</span>
+    </div>
+
+    <script type="module" src="admin-events-dashboard.js"></script>
+
+</body>
+
+</html>

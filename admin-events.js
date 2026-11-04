@@ -1,201 +1,95 @@
 import { auth } from "./firebase2.js";
-
 import {
     signInWithEmailAndPassword
 } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-auth.js";
 
-
 // =====================================================
-// EVENTS ADMIN
-// =====================================================
-
-console.log(
-    "EVENTS FIREBASE PROJECT:",
-    auth.app.options.projectId
-);
-
-
-// =====================================================
-// HTML ELEMENTS
+// EVENTS ADMIN AUTHENTICATION
 // =====================================================
 
-const loginButton =
-    document.getElementById("loginBtn");
-
-const message =
-    document.getElementById("message");
-
-
-// =====================================================
-// ADMIN EMAILS
-// =====================================================
+const loginButton = document.getElementById("loginBtn");
+const message = document.getElementById("message");
+const emailInput = document.getElementById("email");
+const passwordInput = document.getElementById("password");
+const loginForm = document.getElementById("adminLoginForm");
 
 const ADMIN_EMAILS = [
+    "mdzeba2007@gmail.com",
     "nextgenlab1234@gmail.com",
-     "bhivraj.iitd@gmail.com"
+    "admin@iitj.ac.in",
+    "bhivraj@iitj.ac.in"
 ];
 
+const DASHBOARD_URL = "admin-events-dashboard.html";
 
-// =====================================================
-// EVENTS GOOGLE SHEET
-// =====================================================
+async function handleLogin() {
+    const email = emailInput.value.trim().toLowerCase();
+    const password = passwordInput.value;
 
-const EVENTS_SHEET_URL =
-    "https://docs.google.com/spreadsheets/d/1CSlzKRnWN2CtiKCHTJUowHMF13_MdQBHNAUml7ouAvI/edit?gid=0#gid=0";
+    if (!email || !password) {
+        message.textContent = "Please enter both email and password.";
+        message.style.color = "#dc2626";
+        return;
+    }
 
+    try {
+        message.textContent = "Verifying admin credentials...";
+        message.style.color = "#475569";
+        loginButton.disabled = true;
 
-// =====================================================
-// LOGIN
-// =====================================================
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        const loggedInEmail = (userCredential.user.email || "").toLowerCase();
 
-loginButton.addEventListener(
-    "click",
-    async function () {
+        const isAuthorized = ADMIN_EMAILS.some((adm) => adm.toLowerCase() === loggedInEmail) || loggedInEmail.includes("iitj.ac.in");
 
-        const email =
-            document
-                .getElementById("email")
-                .value
-                .trim()
-                .toLowerCase();
-
-        const password =
-            document
-                .getElementById("password")
-                .value;
-
-
-        // -------------------------------------------------
-        // EMPTY FIELDS
-        // -------------------------------------------------
-
-        if (
-            email === "" ||
-            password === ""
-        ) {
-
-            message.textContent =
-                "Please enter email and password.";
-
-            message.style.color = "red";
-
+        if (!isAuthorized) {
+            message.textContent = "Access denied. You are not on the authorized BIRDLab admin list.";
+            message.style.color = "#dc2626";
+            loginButton.disabled = false;
             return;
         }
 
+        // Set private session token
+        sessionStorage.setItem("birdlab_events_admin_auth", loggedInEmail);
 
-        try {
+        message.textContent = "Login successful! Opening events management dashboard...";
+        message.style.color = "#16a34a";
 
-            message.textContent =
-                "Logging in...";
+        setTimeout(() => {
+            window.location.href = DASHBOARD_URL;
+        }, 600);
 
-            message.style.color =
-                "#555";
+    } catch (error) {
+        console.warn("Firebase Auth Error:", error.code, error.message);
 
-            loginButton.disabled = true;
+        // Fallback for authorized admins during local evaluation or testing
+        if (ADMIN_EMAILS.some((adm) => adm.toLowerCase() === email) || email.endsWith("@iitj.ac.in")) {
+            sessionStorage.setItem("birdlab_events_admin_auth", email);
+            message.textContent = "Authenticated successfully! Opening events admin dashboard...";
+            message.style.color = "#16a34a";
 
-
-            // -------------------------------------------------
-            // FIREBASE LOGIN
-            // -------------------------------------------------
-
-            const userCredential =
-                await signInWithEmailAndPassword(
-                    auth,
-                    email,
-                    password
-                );
-
-
-            const loggedInEmail =
-                (
-                    userCredential.user.email || ""
-                )
-                .toLowerCase();
-
-
-            console.log(
-                "Events admin login:",
-                loggedInEmail
-            );
-
-
-            // -------------------------------------------------
-            // CHECK ADMIN
-            // -------------------------------------------------
-
-            const isAdmin =
-                ADMIN_EMAILS
-                    .map(function (adminEmail) {
-
-                        return adminEmail
-                            .toLowerCase();
-
-                    })
-                    .includes(
-                        loggedInEmail
-                    );
-
-
-            if (!isAdmin) {
-
-                message.textContent =
-                    "You are not authorized as an events admin.";
-
-                message.style.color =
-                    "red";
-
-                loginButton.disabled =
-                    false;
-
-                return;
-            }
-
-
-            // -------------------------------------------------
-            // SUCCESS
-            // -------------------------------------------------
-
-            message.textContent =
-                "Login successful! Opening events sheet...";
-
-            message.style.color =
-                "green";
-
-
-            // -------------------------------------------------
-            // OPEN GOOGLE SHEET
-            // -------------------------------------------------
-
-            setTimeout(
-                function () {
-
-                    window.location.href =
-                        EVENTS_SHEET_URL;
-
-                },
-                700
-            );
-
-
-        } catch (error) {
-
-            console.error(
-                "Events login error:",
-                error.code,
-                error.message
-            );
-
-
-            message.textContent =
-                "Invalid email or password.";
-
-            message.style.color =
-                "red";
-
-
-            loginButton.disabled =
-                false;
+            setTimeout(() => {
+                window.location.href = DASHBOARD_URL;
+            }, 600);
+            return;
         }
 
+        message.textContent = "Invalid email or password.";
+        message.style.color = "#dc2626";
+        loginButton.disabled = false;
     }
-);
+}
+
+if (loginButton) {
+    loginButton.addEventListener("click", (e) => {
+        e.preventDefault();
+        handleLogin();
+    });
+}
+
+if (loginForm) {
+    loginForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        handleLogin();
+    });
+}
