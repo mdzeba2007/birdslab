@@ -3,6 +3,19 @@
    BIRD LAB — COMMON NAVBAR FOR ALL PAGES
 ========================================================= */
 
+/* =========================================================
+   HEADER
+========================================================= */
+
+.logo {
+    font-size: 28px;
+    font-weight: bold;
+    letter-spacing: 5px;
+    color: white;
+}
+
+
+
 /* Main Navbar */
 .navbar {
     position: fixed !important;
@@ -182,4 +195,72 @@
         padding: 7px 9px !important;
         font-size: 12px !important;
     }
+}
+
+/* =====================================================
+   FORCE BIRDLAB LOGO TO TOP-LEFT CORNER
+===================================================== */
+
+html,
+body {
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.site-header {
+    position: fixed !important;
+
+    top: 0 !important;
+    left: 0 !important;
+    right: auto !important;
+    bottom: auto !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    width: auto !important;
+    height: auto !important;
+
+    z-index: 99999 !important;
+}
+
+.site-header .brand {
+    margin: 0 !important;
+
+    display: flex !important;
+    align-items: center !important;
+
+    padding: 8px 12px !important;
+
+    gap: 8px;
+
+    background: #17446C;
+
+    text-decoration: none;
+
+    border-radius: 0 0 12px 0;
+}
+
+.site-header .iitj-logo {
+    width: 50px !important;
+    height: 50px !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    display: block !important;
+
+    object-fit: contain;
+}
+
+.site-header .brand-text {
+    margin: 0 !important;
+    padding: 0 !important;
+
+    color: #f5f6f8;
+
+    font-size: 32px;
+    font-weight: 700;
+
+    letter-spacing: 3px;
 }

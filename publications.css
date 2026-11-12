@@ -16,48 +16,8 @@ html, body {
   box-sizing: border-box;
 }
 
-/* =====================================================
-   SITE HEADER & BRAND LOGO
-===================================================== */
-.site-header {
-  position: fixed !important;
-  top: 10px !important;
-  left: 20px !important;
-  z-index: 10000 !important;
-}
 
-.site-header .brand {
-  display: inline-flex !important;
-  align-items: center !important;
-  gap: 8px !important;
-  background: #17446c !important;
-  padding: 6px 14px !important;
-  border-radius: 10px !important;
-  text-decoration: none !important;
-  box-shadow: 0 4px 12px rgba(23, 68, 108, 0.2) !important;
-  transition: transform 0.2s ease, box-shadow 0.2s ease !important;
-}
 
-.site-header .brand:hover {
-  transform: translateY(-1px) !important;
-  box-shadow: 0 6px 16px rgba(23, 68, 108, 0.3) !important;
-}
-
-.brand-logo {
-  width: 34px !important;
-  height: 34px !important;
-  object-fit: contain !important;
-  border-radius: 6px !important;
-  background: #ffffff !important;
-  padding: 2px !important;
-}
-
-.site-header .brand-text {
-  font-size: 20px !important;
-  font-weight: 800 !important;
-  letter-spacing: 2px !important;
-  color: #ffffff !important;
-}
 
 /* =====================================================
    FIXED TOP NAVBAR - BIRDLAB SITE NAVIGATION

@@ -30,66 +30,6 @@ body {
     text-decoration: none;
 }
 
-/* =========================================================
-   BIRDLAB LOGO - FIXED TOP LEFT
-========================================================= */
-
-.site-header {
-    position: fixed !important;
-    top: 0 !important;
-    left: 0 !important;
-
-    width: 150px !important;
-    height: 60px !important;
-
-    display: flex;
-    align-items: center;
-
-    margin: 0 !important;
-    padding: 0 !important;
-
-    z-index: 100002 !important;
-}
-
-.site-header .brand {
-    width: 280px;
-    height: 92px;
-
-    display: flex;
-    align-items: center;
-    gap: 10px;
-
-    padding: 8px 10px;
-
-    background: #17446c;
-    border-radius: 0 0 14px 0;
-
-    text-decoration: none;
-
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.20);
-}
-
-.site-header .brand-logo,
-.site-header .iitj-logo {
-    width: 60px !important;
-    height: 68px !important;
-
-    display: block;
-    flex-shrink: 0;
-
-    object-fit: contain;
-    background: #ffffff;
-}
-
-.site-header .brand-text {
-    color: #f5f6f8;
-
-    font-size: 34px;
-    font-weight: 700;
-    letter-spacing: 3px;
-
-    white-space: nowrap;
-}
 
 
 

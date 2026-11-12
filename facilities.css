@@ -27,69 +27,63 @@ body {
 }
 
 
-/* =========================================================
-   BIRDLAB LOGO - FIXED TOP LEFT
-========================================================= */
-
 .site-header {
     position: fixed !important;
+
     top: 0 !important;
     left: 0 !important;
-
-    width: 150px !important;
-    height: 60px !important;
-
-    display: flex;
-    align-items: center;
+    right: auto !important;
+    bottom: auto !important;
 
     margin: 0 !important;
     padding: 0 !important;
 
-    z-index: 100002 !important;
+    width: auto !important;
+    height: auto !important;
+
+    z-index: 99999 !important;
 }
 
 .site-header .brand {
-    width: 280px;
-    height: 92px;
+    margin: 0 !important;
 
-    display: flex;
-    align-items: center;
-    gap: 10px;
+    display: flex !important;
+    align-items: center !important;
 
-    padding: 8px 10px;
+    padding: 8px 12px !important;
 
-    background: #17446c;
-    border-radius: 0 0 14px 0;
+    gap: 8px;
+
+    background: #17446C;
 
     text-decoration: none;
 
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.20);
+    border-radius: 0 0 12px 0;
 }
 
-.site-header .brand-logo,
 .site-header .iitj-logo {
-    width: 60px !important;
-    height: 68px !important;
+    width: 5px !important;
+    height: 5px !important;
 
-    display: block;
-    flex-shrink: 0;
+    margin: 0 !important;
+    padding: 0 !important;
+
+    display: block !important;
 
     object-fit: contain;
-    background: #ffffff;
 }
 
 .site-header .brand-text {
+    margin: 0 !important;
+    padding: 0 !important;
+
     color: #f5f6f8;
 
-    font-size: 34px;
+    font-size: 32px;
     font-weight: 700;
+
     letter-spacing: 3px;
-
-    white-space: nowrap;
 }
-
-
-
 /* =========================================================
    PAGE HEADER
 ========================================================= */
@@ -990,41 +984,5 @@ body {
 
     .show-more {
         font-size: 16px;
-    }
-}
-
-/* ===== REDUCE NAVBAR SIZE ===== */
-
-body .navbar {
-    top: 8px !important;
-    height: 64px !important;
-    min-height: 0 !important;
-    padding: 6px 10px !important;
-    gap: 7px !important;
-}
-
-/* Make navigation buttons smaller */
-body .navbar .nav-button {
-    padding: 8px 11px !important;
-    font-size: 13px !important;
-    border-radius: 10px !important;
-}
-
-/* Keep logo size unchanged and align navbar vertically */
-body .site-header {
-    height: 78px !important;
-}
-
-/* Responsive adjustment */
-@media (max-width: 1150px) {
-    body .navbar {
-        height: auto !important;
-        padding: 8px !important;
-        gap: 6px !important;
-    }
-
-    body .navbar .nav-button {
-        padding: 7px 9px !important;
-        font-size: 12px !important;
     }
 }

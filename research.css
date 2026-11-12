@@ -42,15 +42,7 @@ body {
     padding: 70px 0 50px;
     text-align: center;
 
-    background:
-        linear-gradient(
-            135deg,
-            #ffffff 0%,
-            #acc6e7 50%,
-            #cbd0d3 100%
-        );
-
-    border-bottom: 1px solid #dce3eb;
+ 
 }
 
 .header h1 {
