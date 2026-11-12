@@ -517,7 +517,7 @@ main button:hover {
 .main-image {
     width: 100%;
 
-    height: 650px;
+    height: 750px;
 
     padding: 0;
 
@@ -623,7 +623,7 @@ main button:hover {
 }
 
 .image-row div {
-    height: 230px;
+    height: 350px;
 
     overflow: hidden;
 
@@ -1431,4 +1431,39 @@ body {
     font-weight: 700;
 
     letter-spacing: 3px;
+}
+/* RESEARCH 6 GALLERY */
+
+.gallery {
+    width: 100%;
+    min-height: 0;
+    padding: 25px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    background: #173c55;
+    border-radius: 22px;
+}
+
+.gallery > div {
+    width: 100% !important;
+    height: 350px !important;
+
+    overflow: hidden;
+    border-radius: 18px;
+}
+
+.gallery img {
+    width: 100% !important;
+    height: 100% !important;
+
+    max-width: none !important;
+
+    object-fit: cover;
+    object-position: center 20%;
+
+    display: block;
+    border-radius: 18px;
 }
