@@ -1,4 +1,3 @@
-
 // =========================================================
 // BIRD LAB — GOOGLE SHEETS MEMBER DIRECTORY
 // =========================================================
@@ -139,7 +138,19 @@ async function loadFeaturedProfileFromSheet() {
         );
 
         if (imageElement && photo) {
-            imageElement.src = convertDriveURL(photo);
+            imageElement.referrerPolicy = "no-referrer";
+            imageElement.src = convertDriveURL(photo, 1000);
+            const driveId = extractDriveId(photo);
+            if (driveId) {
+                imageElement.setAttribute("data-drive-id", driveId);
+                imageElement.onerror = function () {
+                    if (window.handleMemberPhotoError) {
+                        window.handleMemberPhotoError(this);
+                    } else {
+                        this.src = "Bhivrajsuthar.png";
+                    }
+                };
+            }
         }
 
 
@@ -641,7 +652,8 @@ function createMemberCard(data) {
     ]);
 
 
-    const photoURL = convertDriveURL(photo);
+    const driveId = extractDriveId(photo);
+    const photoURL = convertDriveURL(photo, 1000);
 
 
     // Member details HTML
@@ -773,6 +785,10 @@ function createMemberCard(data) {
                                     src="${escapeAttribute(photoURL)}"
                                     class="member-photo"
                                     alt="${escapeAttribute(name)}"
+                                    loading="lazy"
+                                    referrerpolicy="no-referrer"
+                                    data-drive-id="${escapeAttribute(driveId || "")}"
+                                    onerror="window.handleMemberPhotoError && window.handleMemberPhotoError(this)"
                                 >
 
                             </div>
@@ -780,7 +796,13 @@ function createMemberCard(data) {
 
                         : `
                             <div class="member-photo-placeholder">
-                                Photo not available
+                                <div class="photo-fallback-ui">
+                                    <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                        <circle cx="12" cy="7" r="4"></circle>
+                                    </svg>
+                                    <span class="fallback-name">${escapeHTML(name)}</span>
+                                </div>
                             </div>
                         `
                 }
@@ -812,48 +834,111 @@ function createMemberCard(data) {
 
 
 // =========================================================
-// GOOGLE DRIVE PHOTO URL CONVERSION
+// GOOGLE DRIVE ID EXTRACTION & PHOTO URL CONVERSION
 // =========================================================
 
-function convertDriveURL(url) {
-
-    if (!url) return "";
-
+export function extractDriveId(url) {
+    if (!url) return null;
     url = String(url).trim();
 
-
-    const match =
-
-        url.match(
-            /drive\.google\.com\/file\/d\/([^/?]+)/i
-        )
-
-        ||
-
-        url.match(
-            /drive\.google\.com\/open\?id=([^&]+)/i
-        )
-
-        ||
-
-        url.match(
-            /drive\.google\.com\/thumbnail\?id=([^&]+)/i
-        );
-
-
-    if (match) {
-
-        return (
-            "https://drive.google.com/thumbnail?id=" +
-            encodeURIComponent(match[1]) +
-            "&sz=w800"
-        );
-
+    // If already a Data URI or blob, do not treat as Drive URL
+    if (url.startsWith("data:") || url.startsWith("blob:")) {
+        return null;
     }
 
+    // If multiple URLs were entered (e.g. comma-separated in Google Forms), take the first
+    if (url.includes(",")) {
+        url = url.split(",")[0].trim();
+    }
+
+    // 1. Match /file/d/<id> or /d/<id>
+    const fileDMatch = url.match(/\/(?:file\/d|d)\/([a-zA-Z0-9_-]{20,})/i);
+    if (fileDMatch) return fileDMatch[1];
+
+    // 2. Match id=<id> in query params (uc?id=..., uc?export=view&id=..., open?id=..., thumbnail?id=..., etc.)
+    const idParamMatch = url.match(/[?&]id=([a-zA-Z0-9_-]{20,})/i);
+    if (idParamMatch) return idParamMatch[1];
+
+    // 3. Match drive.usercontent.google.com/download?id=<id>
+    const userContentMatch = url.match(/drive\.usercontent\.google\.com\/download\?.*id=([a-zA-Z0-9_-]{20,})/i);
+    if (userContentMatch) return userContentMatch[1];
+
+    // 4. Raw Google Drive File ID string (25-50 characters)
+    if (/^[a-zA-Z0-9_-]{25,50}$/.test(url)) {
+        return url;
+    }
+
+    return null;
+}
+
+export function convertDriveURL(url, width = 1000) {
+    if (!url) return "";
+    url = String(url).trim();
+
+    // Directly return Data URIs (Base64) or blob URLs
+    if (url.startsWith("data:") || url.startsWith("blob:")) {
+        return url;
+    }
+
+    const driveId = extractDriveId(url);
+    if (driveId) {
+        // High-resolution Google Drive CDN endpoint (crisp 1000px width)
+        return `https://lh3.googleusercontent.com/d/${encodeURIComponent(driveId)}=w${width}`;
+    }
 
     return url;
+}
 
+// Global handler for photo load errors with multi-stage fallback
+window.handleMemberPhotoError = function (img) {
+    if (!img) return;
+
+    const driveId = img.getAttribute("data-drive-id");
+    const step = parseInt(img.getAttribute("data-error-step") || "0", 10);
+
+    // If it's a data URI or local image that somehow failed, jump straight to fallback
+    const currentSrc = img.getAttribute("src") || "";
+    if (currentSrc.startsWith("data:")) {
+        showPhotoFallback(img);
+        return;
+    }
+
+    // Fallback step 1: Try drive.google.com/thumbnail with high resolution
+    if (driveId && step === 0) {
+        img.setAttribute("data-error-step", "1");
+        img.src = `https://drive.google.com/thumbnail?id=${encodeURIComponent(driveId)}&sz=w1000`;
+        return;
+    }
+
+    // Fallback step 2: Try drive.usercontent.google.com direct download endpoint
+    if (driveId && step === 1) {
+        img.setAttribute("data-error-step", "2");
+        img.src = `https://drive.usercontent.google.com/download?id=${encodeURIComponent(driveId)}&export=view`;
+        return;
+    }
+
+    // Final fallback: Show clean stylized avatar placeholder (no broken image icon)
+    showPhotoFallback(img);
+};
+
+function showPhotoFallback(img) {
+    const container = img.closest(".member-photo-container");
+    const memberName = img.getAttribute("alt") || "Member";
+
+    if (container) {
+        container.className = "member-photo-placeholder";
+        container.innerHTML = `
+            <div class="photo-fallback-ui">
+                <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+                <span class="fallback-name">${memberName.replace(/[<>&"']/g, "")}</span>
+            </div>
+        `;
+    } else {
+        img.style.display = "none";
+    }
 }
 
 
