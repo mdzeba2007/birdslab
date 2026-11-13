@@ -1,3 +1,4 @@
+
 import { auth } from "./firebase2.js";
 
 import {
@@ -6,11 +7,11 @@ import {
 
 
 // =====================================================
-// EVENTS ADMIN
+// LAB ACHIEVEMENTS ADMIN
 // =====================================================
 
 console.log(
-    "EVENTS FIREBASE PROJECT:",
+    "ACHIEVEMENTS FIREBASE PROJECT:",
     auth.app.options.projectId
 );
 
@@ -32,16 +33,16 @@ const message =
 
 const ADMIN_EMAILS = [
     "nextgenlab1234@gmail.com",
-     "bhivraj.iitd@gmail.com"
+    "bhivraj.iitd@gmail.com"
 ];
 
 
 // =====================================================
-// EVENTS GOOGLE SHEET
+// LAB ACHIEVEMENTS GOOGLE SHEET
 // =====================================================
 
-const EVENTS_SHEET_URL =
-    "https://docs.google.com/spreadsheets/d/1ueaSx37QqL3lmHIc4LWwJdU1aPocIHyp_0ckXplurCU/edit?gid=0#gid=0";
+const ACHIEVEMENTS_SHEET_URL =
+    "https://docs.google.com/spreadsheets/d/1Sket6UKE6VOuClrbq0UfgYJNlpkDqsX6C-CtE09OvGY/edit?gid=0#gid=0";
 
 
 // =====================================================
@@ -114,7 +115,7 @@ loginButton.addEventListener(
 
 
             console.log(
-                "Events admin login:",
+                "Lab Achievements admin login:",
                 loggedInEmail
             );
 
@@ -127,8 +128,7 @@ loginButton.addEventListener(
                 ADMIN_EMAILS
                     .map(function (adminEmail) {
 
-                        return adminEmail
-                            .toLowerCase();
+                        return adminEmail.toLowerCase();
 
                     })
                     .includes(
@@ -139,7 +139,7 @@ loginButton.addEventListener(
             if (!isAdmin) {
 
                 message.textContent =
-                    "You are not authorized as an events admin.";
+                    "You are not authorized as a Lab Achievements admin.";
 
                 message.style.color =
                     "red";
@@ -156,7 +156,7 @@ loginButton.addEventListener(
             // -------------------------------------------------
 
             message.textContent =
-                "Login successful! Opening events sheet...";
+                "Login successful! Opening Lab Achievements sheet...";
 
             message.style.color =
                 "green";
@@ -170,7 +170,7 @@ loginButton.addEventListener(
                 function () {
 
                     window.location.href =
-                        EVENTS_SHEET_URL;
+                        ACHIEVEMENTS_SHEET_URL;
 
                 },
                 700
@@ -180,7 +180,7 @@ loginButton.addEventListener(
         } catch (error) {
 
             console.error(
-                "Events login error:",
+                "Lab Achievements login error:",
                 error.code,
                 error.message
             );

@@ -1279,3 +1279,47 @@ header p {
         height: 280px;
     }
 }
+/* ---------- FIX MEMBER PROFILE PHOTOS ---------- */
+
+:is(
+    #postDoctoralMembers,
+    #phdMembers,
+    #projectStaffMembers,
+    #masterMembers,
+    #bachelorMembers,
+    #otherMembers
+) .member-photo-container {
+    display: block !important;
+    width: 100% !important;
+    height: 300px !important;
+    min-height: 300px !important;
+    overflow: hidden !important;
+    background: #ffffff !important;
+    border-radius: 14px;
+}
+
+:is(
+    #postDoctoralMembers,
+    #phdMembers,
+    #projectStaffMembers,
+    #masterMembers,
+    #bachelorMembers,
+    #otherMembers
+) .member-photo,
+:is(
+    #postDoctoralMembers,
+    #phdMembers,
+    #projectStaffMembers,
+    #masterMembers,
+    #bachelorMembers,
+    #otherMembers
+) .member-image {
+    display: block !important;
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 300px !important;
+    object-fit: cover !important;
+    object-position: center !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}

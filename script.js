@@ -1,13 +1,17 @@
+
 const canvas = document.getElementById("canvas");
-const ctx = canvas.getContext("2d");
+const ctx = canvas ? canvas.getContext("2d") : null;
 
 function resize() {
+    if (!canvas) return;
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 }
 
-resize();
-window.addEventListener("resize", resize);
+if (canvas && ctx) {
+    resize();
+    window.addEventListener("resize", resize);
+}
 
 const PARTICLE_COUNT = 35;
 const MAX_LINK_DIST = 160;
@@ -20,36 +24,30 @@ const LINE_COLOR = "rgba(180, 210, 255, 0.5)";
 let particles = [];
 
 function initParticles() {
+    if (!canvas) return;
 
     particles = [];
 
     for (let i = 0; i < PARTICLE_COUNT; i++) {
-
         particles.push({
             x: Math.random() * canvas.width,
             y: Math.random() * canvas.height,
-
             vx: (Math.random() - 0.5) * SPEED,
             vy: (Math.random() - 0.5) * SPEED
         });
-
     }
 }
 
-initParticles();
-
+if (canvas && ctx) {
+    initParticles();
+}
 
 function animate() {
+    if (!canvas || !ctx) return;
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-
-    // -----------------------------
-    // MOVE PARTICLES
-    // -----------------------------
-
     for (const p of particles) {
-
         p.x += p.vx;
         p.y += p.vy;
 
@@ -60,18 +58,10 @@ function animate() {
         if (p.y < 0 || p.y > canvas.height) {
             p.vy *= -1;
         }
-
     }
 
-
-    // -----------------------------
-    // DRAW NETWORK
-    // -----------------------------
-
     for (let i = 0; i < particles.length; i++) {
-
         for (let j = i + 1; j < particles.length; j++) {
-
             const a = particles[i];
             const b = particles[j];
 
@@ -82,10 +72,7 @@ function animate() {
                 dx * dx + dy * dy
             );
 
-
             if (distance < MAX_LINK_DIST) {
-
-                // Closer = brighter
                 const opacity =
                     1 - distance / MAX_LINK_DIST;
 
@@ -93,28 +80,17 @@ function animate() {
                     `rgba(180, 210, 255, ${opacity})`;
 
                 ctx.lineWidth = 1;
-
                 ctx.beginPath();
-
                 ctx.moveTo(a.x, a.y);
                 ctx.lineTo(b.x, b.y);
-
                 ctx.stroke();
             }
-
         }
-
     }
-
-
-    // -----------------------------
-    // DRAW PARTICLES
-    // -----------------------------
 
     ctx.fillStyle = DOT_COLOR;
 
     for (const p of particles) {
-
         ctx.beginPath();
 
         ctx.arc(
@@ -126,17 +102,18 @@ function animate() {
         );
 
         ctx.fill();
-
     }
-
 
     requestAnimationFrame(animate);
 }
 
-animate();
+if (canvas && ctx) {
+    animate();
+}
+
+
 // ============================================================
 // MEMBER DIRECTORY - app.js
-// FINAL VERSION
 // ============================================================
 
 
@@ -242,23 +219,15 @@ function displayBhivrajProfile() {
         return;
     }
 
-
     const card =
         document.createElement("div");
-
 
     card.className =
         "featured-profile";
 
-
     card.innerHTML = `
 
-        <!-- =====================================
-             LEFT SIDE
-        ====================================== -->
-
         <div class="featured-left">
-
 
             <div class="profile-image-container">
 
@@ -272,11 +241,7 @@ function displayBhivrajProfile() {
 
             </div>
 
-
-            <!-- BUTTONS -->
-
             <div class="profile-buttons">
-
 
                 ${
                     bhivrajProfile.linkedin
@@ -301,7 +266,6 @@ function displayBhivrajProfile() {
                     ""
                 }
 
-
                 ${
                     bhivrajProfile.email
                     ?
@@ -321,22 +285,11 @@ function displayBhivrajProfile() {
                     ""
                 }
 
-
             </div>
-
 
         </div>
 
-
-
-        <!-- =====================================
-             RIGHT SIDE
-        ====================================== -->
-
         <div class="featured-right">
-
-
-            <!-- NAME -->
 
             <div class="profile-heading">
 
@@ -346,7 +299,6 @@ function displayBhivrajProfile() {
                     )}
                 </h2>
 
-
                 <p class="profile-role">
 
                     ${escapeHTML(
@@ -354,7 +306,6 @@ function displayBhivrajProfile() {
                     )}
 
                 </p>
-
 
                 <p class="profile-organization">
 
@@ -366,13 +317,7 @@ function displayBhivrajProfile() {
 
             </div>
 
-
             <div class="profile-divider"></div>
-
-
-            <!-- =================================
-                 ABOUT
-            ================================== -->
 
             <div class="profile-section">
 
@@ -390,17 +335,11 @@ function displayBhivrajProfile() {
 
             </div>
 
-
-            <!-- =================================
-                 RESEARCH
-            ================================== -->
-
             <div class="profile-section">
 
                 <h3>
                     Research Interests
                 </h3>
-
 
                 <span class="research-pill">
 
@@ -412,24 +351,17 @@ function displayBhivrajProfile() {
 
             </div>
 
-
-            <!-- =================================
-                 EDUCATION
-            ================================== -->
-
             <div class="profile-section">
 
                 <h3>
                     Education
                 </h3>
 
-
                 <div class="education-box">
 
                     <strong>
                         PhD
                     </strong>
-
 
                     <span>
 
@@ -443,15 +375,18 @@ function displayBhivrajProfile() {
 
             </div>
 
-
         </div>
 
     `;
 
-
     profiles.appendChild(card);
 
 }
+
+
+// ============================================================
+// CONVERT GOOGLE DRIVE LINKS INTO IMAGE URLS
+// ============================================================
 
 
 // ============================================================
@@ -460,10 +395,8 @@ function displayBhivrajProfile() {
 
 function createMemberCard(data) {
 
-
     const card =
         document.createElement("div");
-
 
     card.className =
         "member-card";
@@ -472,6 +405,40 @@ function createMemberCard(data) {
     // ========================================================
     // GET DATA FROM GOOGLE SHEET
     // ========================================================
+
+function getDirectImageUrl(url) {
+
+    if (!url) {
+        return "";
+    }
+
+    url = String(url).trim();
+
+    // Extract URL from a Google Sheets Markdown link.
+    const markdownUrl = url.match(/https?:\/\/[^\s)]+/);
+
+    if (markdownUrl) {
+        url = markdownUrl[0];
+    }
+
+    // Clean escaped characters.
+    url = url
+        .replaceAll("&amp;", "&")
+        .replace(/\\&/g, "&");
+
+    // Extract Google Drive file ID.
+    const match = url.match(
+        /(?:[?&]id=|\/file\/d\/)([a-zA-Z0-9_-]+)/
+    );
+
+    if (match && match[1]) {
+
+        return `https://drive.google.com/thumbnail?id=${match[1]}&sz=w1000`;
+
+    }
+
+    return url;
+}
 
 
     const name =
@@ -485,6 +452,7 @@ function createMemberCard(data) {
         data["Position"] ||
         data["Designation"] ||
         data["Job Title"] ||
+        data["Current role"] ||
         "";
 
 
@@ -508,6 +476,7 @@ function createMemberCard(data) {
         data["Research"] ||
         data["Research / Interests"] ||
         data["Research Interests"] ||
+        data["Research (Currently working on or did in the past)"] ||
         "";
 
 
@@ -524,11 +493,13 @@ function createMemberCard(data) {
     const linkedin =
         data["LinkedIn"] ||
         data["LinkedIn Profile"] ||
+        data["Linkedin profile(URL LINK)"] ||
         "";
 
 
     const email =
         data["Email"] ||
+        data["Email ID(Institute)"] ||
         "";
 
 
@@ -537,6 +508,7 @@ function createMemberCard(data) {
     // ========================================================
 
     const image =
+        data["Upload your current photo"] ||
         data["Photo"] ||
         data["Profile Photo"] ||
         data["Image"] ||
@@ -545,14 +517,13 @@ function createMemberCard(data) {
         "";
 
 
-    /*
-       If there is no image in the response,
-       use a simple placeholder.
-    */
-
     const profileImage =
-        image ||
-        "https://via.placeholder.com/500x500.png?text=Profile";
+        image
+            ? getDirectImageUrl(image)
+            : "https://via.placeholder.com/500x500.png?text=Profile";
+
+
+    console.log("Profile image URL for", name, ":", profileImage);
 
 
     // ========================================================
@@ -561,35 +532,21 @@ function createMemberCard(data) {
 
     card.innerHTML = `
 
-
-        <!-- =================================================
-             LEFT SIDE
-        ================================================== -->
-
         <div class="member-left">
-
-
-            <!-- PHOTO -->
 
             <div class="member-image-container">
 
-                <img
-                    src="${escapeAttribute(
-                        profileImage
-                    )}"
-                    alt="${escapeAttribute(
-                        name
-                    )}"
-                    class="member-image"
-                >
+<img
+    src="${escapeAttribute(profileImage)}"
+    alt="${escapeAttribute(name)}"
+    class="member-photo"
+    onerror="console.error('Profile image failed:', this.src);"
+>
+
 
             </div>
 
-
-            <!-- BUTTONS -->
-
             <div class="member-buttons">
-
 
                 ${
                     linkedin
@@ -597,7 +554,9 @@ function createMemberCard(data) {
                     `
                     <a
                         href="${escapeAttribute(
-                            linkedin
+                            linkedin.startsWith("http")
+                                ? linkedin
+                                : "https://" + linkedin
                         )}"
                         target="_blank"
                         rel="noopener noreferrer"
@@ -615,7 +574,6 @@ function createMemberCard(data) {
                     :
                     ""
                 }
-
 
                 ${
                     email
@@ -636,27 +594,14 @@ function createMemberCard(data) {
                     ""
                 }
 
-
             </div>
-
 
         </div>
 
 
-
-        <!-- =================================================
-             RIGHT SIDE
-        ================================================== -->
-
         <div class="member-right">
 
-
-            <!-- =================================================
-                 NAME / ROLE / ORGANIZATION
-            ================================================== -->
-
             <div class="member-heading">
-
 
                 <h2>
 
@@ -665,7 +610,6 @@ function createMemberCard(data) {
                     )}
 
                 </h2>
-
 
                 ${
                     role
@@ -683,7 +627,6 @@ function createMemberCard(data) {
                     ""
                 }
 
-
                 ${
                     organization
                     ?
@@ -700,17 +643,10 @@ function createMemberCard(data) {
                     ""
                 }
 
-
             </div>
-
 
             <div class="member-divider"></div>
 
-
-
-            <!-- =================================================
-                 ABOUT
-            ================================================== -->
 
             ${
                 about
@@ -718,11 +654,9 @@ function createMemberCard(data) {
                 `
                 <div class="member-section">
 
-
                     <h3>
                         About
                     </h3>
-
 
                     <p>
 
@@ -732,7 +666,6 @@ function createMemberCard(data) {
 
                     </p>
 
-
                 </div>
                 `
                 :
@@ -740,22 +673,15 @@ function createMemberCard(data) {
             }
 
 
-
-            <!-- =================================================
-                 RESEARCH
-            ================================================== -->
-
             ${
                 research
                 ?
                 `
                 <div class="member-section">
 
-
                     <h3>
                         Research Interests
                     </h3>
-
 
                     <span class="member-research-pill">
 
@@ -765,7 +691,6 @@ function createMemberCard(data) {
 
                     </span>
 
-
                 </div>
                 `
                 :
@@ -773,30 +698,21 @@ function createMemberCard(data) {
             }
 
 
-
-            <!-- =================================================
-                 EDUCATION
-            ================================================== -->
-
             ${
                 education
                 ?
                 `
                 <div class="member-section">
 
-
                     <h3>
                         Education
                     </h3>
 
-
                     <div class="member-education-box">
-
 
                         <strong>
                             Education
                         </strong>
-
 
                         <span>
 
@@ -806,9 +722,7 @@ function createMemberCard(data) {
 
                         </span>
 
-
                     </div>
-
 
                 </div>
                 `
@@ -817,22 +731,15 @@ function createMemberCard(data) {
             }
 
 
-
-            <!-- =================================================
-                 EXPERIENCE
-            ================================================== -->
-
             ${
                 experience
                 ?
                 `
                 <div class="member-section">
 
-
                     <h3>
                         Experience
                     </h3>
-
 
                     <p>
 
@@ -842,18 +749,15 @@ function createMemberCard(data) {
 
                     </p>
 
-
                 </div>
                 `
                 :
                 ""
             }
 
-
         </div>
 
     `;
-
 
     return card;
 
@@ -865,7 +769,6 @@ function createMemberCard(data) {
 // ============================================================
 
 async function loadGoogleProfiles() {
-
 
     const otherMembers =
         document.getElementById(
@@ -901,9 +804,7 @@ async function loadGoogleProfiles() {
 
     try {
 
-
         // ====================================================
-        // IMPORTANT
         // ONLY APPROVED PROFILES
         // ====================================================
 
@@ -951,7 +852,6 @@ async function loadGoogleProfiles() {
             submittedProfiles.length === 0
         ) {
 
-
             otherMembers.innerHTML = `
 
                 <div class="no-members">
@@ -961,7 +861,6 @@ async function loadGoogleProfiles() {
                 </div>
 
             `;
-
 
             return;
 
@@ -975,33 +874,26 @@ async function loadGoogleProfiles() {
         submittedProfiles.forEach(
             (profile) => {
 
-
                 const card =
                     createMemberCard(
                         profile
                     );
 
-
                 otherMembers.appendChild(
                     card
                 );
 
-
             }
         );
 
-
     }
 
-
     catch (error) {
-
 
         console.error(
             "Error loading approved profiles:",
             error
         );
-
 
         otherMembers.innerHTML = `
 
@@ -1012,7 +904,6 @@ async function loadGoogleProfiles() {
             </div>
 
         `;
-
 
     }
 
@@ -1025,7 +916,6 @@ async function loadGoogleProfiles() {
 
 if (document.readyState === "loading") {
 
-
     document.addEventListener(
         "DOMContentLoaded",
         () => {
@@ -1037,10 +927,9 @@ if (document.readyState === "loading") {
         }
     );
 
-
 }
-else {
 
+else {
 
     displayBhivrajProfile();
 
